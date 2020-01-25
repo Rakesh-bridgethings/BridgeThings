@@ -1,10 +1,11 @@
 import { combineReducers } from "redux";
-import ThemeOptions from './ThemeOptions';
 import SideNavItem from './SideNavItem';
+import ThemeOptions from './ThemeOptions';
 
-const rootReducers = combineReducers({
-    ThemeOptions,
-    SideNavItem
+const rootReducers = combineReducers({    
+    SideNavItem,
+    ThemeOptions
   });
 
 export default rootReducers;
+

@@ -8126,7 +8126,9 @@ button,
   flex: 0 0 280px;
   margin-top: -60px;
   padding-top: 60px;
-  transition: all .2s; }
+  transition: all .2s;
+  height: 100vh;
+}
   .app-sidebar .app-sidebar__inner {
     padding: 2px 1.5rem 1.5rem; }
   .app-sidebar .scrollbar-container {
@@ -8199,7 +8201,8 @@ button,
       position: relative;
       border-radius: 0.25rem;
       color: #343a40;
-      white-space: nowrap; }
+      white-space: nowrap;
+      text-align: left; }
       .vertical-nav-menu .metismenu-container .metismenu-link:hover {
         background: #d1f3ff;
         text-decoration: none; }
