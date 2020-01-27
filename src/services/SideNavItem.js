@@ -1,6 +1,6 @@
 import { fetch_sidenavitem_pending, fetch_sidenavitem_success, fetch_topUseritem_success, fetch_sidenavitem_error } from '../actions/sidenavitem';
-import React from 'react';
 // import axios from 'axios';
+
 
 let dashboards = [
     // { 
@@ -29,7 +29,7 @@ let dashboards = [
     {
         "key": "Dashboards",
         "text": "Dashboards",
-        "icon": "icon-dashboard",
+        "icon": "pe-7s-rocket",
         "url": null,
         "menuItems": [
             {
@@ -55,7 +55,14 @@ let dashboards = [
             {
                 "key": "electricity_parameters_dashboard",
                 "label": "Power Quality Dashboard",
-                "url": "electricity_parameters_dashboard"
+                "url": null,
+                "menuItems": [
+                    {
+                        "key": "test_dashboard_2",
+                        "label": "Power Quality Dashboard",
+                        "url": "electricity_parameters_dashboard"
+                    },
+                ]
             }
         ]
     },
@@ -182,7 +189,7 @@ let dashboards = [
         "key": "Locations",
         "text": "Locations",
         "icon": "icon-buildings",
-        "url": null,
+        "url": "locations",
         "menuItems": [
 
         ]
@@ -300,18 +307,8 @@ let topUserMenu = [
 export function fetchsidenavitemdata() {
     return dispatch => {
         dispatch(fetch_sidenavitem_pending());
-        // fetch(SalesData)
-        // .then(res => res.json())
-        // .then(res => {
-        // if (res.error) {
-        //     throw (res.error);
-        // }
         dispatch(fetch_sidenavitem_success(dashboards));
         return dashboards;
-        // })
-        // .catch(error => {
-        //     dispatch(fetch_sidenavitem_error(error));
-        // })
     }
 }
 
@@ -332,5 +329,14 @@ export function fetchtopUseritemdata() {
         // })
     }
 }
+
+
+
+
+
+
+
+
+
 
 

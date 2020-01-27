@@ -24,7 +24,6 @@ class LeftSidebar extends Component {
         setEnableMobileMenu(!enableMobileMenu);
     }
 
-
     render() {
         let {
             backgroundColor,
@@ -53,12 +52,21 @@ class LeftSidebar extends Component {
                                     {
                                         icon: item.icon,
                                         label: item.text,
+                                        to: item.url,
                                         content:
                                             item.menuItems.map((item1, index1) => {
                                                 return (
                                                     {
                                                         label: item1.label,
                                                         to: item1.url,
+                                                        content: item1.menuItems && item1.menuItems.map((item2, index2)=>{
+                                                            return(
+                                                                {
+                                                                    label: item2.label,
+                                                                    to: item2.url,
+                                                                }
+                                                            )
+                                                        })
                                                     }
                                                 )
                                             })
@@ -66,6 +74,9 @@ class LeftSidebar extends Component {
                                 ];
                                 return (
                                     <Fragment>
+                                        {//item.menuItems.length > 0 &&
+                                            <h5 className="app-sidebar__heading">{item.text}</h5>
+                                        }
                                         <MetisMenu content={sidebarMenu} activeLinkFromLocation className="vertical-nav-menu" iconNamePrefix="" classNameStateIcon="pe-7s-angle-down" />
                                     </Fragment>
                                 )

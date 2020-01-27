@@ -8005,7 +8005,8 @@ button,
     background: #868e96; }
 
 .app-header.header-text-light .app-header__logo {
-  background: rgba(255, 255, 255, 0.1); }
+  /* background: rgba(255, 255, 255, 0.1); */
+ }
 .app-header.header-text-light .app-header-left > .nav > li > .nav-link {
   color: rgba(255, 255, 255, 0.7); }
   .app-header.header-text-light .app-header-left > .nav > li > .nav-link .nav-link-icon {
@@ -8130,7 +8131,8 @@ button,
   height: 100vh;
 }
   .app-sidebar .app-sidebar__inner {
-    padding: 2px 1.5rem 1.5rem; }
+     padding: 2px 1rem 1.5rem; /*2px 1.5rem 1.5rem;  */
+  }
   .app-sidebar .scrollbar-container {
     z-index: 15;
     width: 100%; }
@@ -8197,12 +8199,13 @@ button,
       display: block;
       line-height: 2.5rem;
       height: 2.5rem;
-      padding: 0 1.5rem 0 45px;
+      padding: 0 0rem 0 25px; /*0 1.5rem 0 45px;*/
       position: relative;
       border-radius: 0.25rem;
       color: #343a40;
       white-space: nowrap;
-      text-align: left; }
+      text-align: left;
+      text-overflow: ellipsis; }
       .vertical-nav-menu .metismenu-container .metismenu-link:hover {
         background: #d1f3ff;
         text-decoration: none; }
@@ -8222,7 +8225,7 @@ button,
       height: 34px;
       line-height: 34px;
       position: absolute;
-      left: 5px;
+      left: -5px;
       top: 50%;
       margin-top: -17px;
       font-size: 1.5rem;
@@ -8245,7 +8248,7 @@ button,
           width: 3px;
           background: #d1f3ff;
           position: absolute;
-          left: 20px;
+          left: 10px; /*20px;*/
           top: 0;
           border-radius: 15px; }
         .vertical-nav-menu .metismenu-container .metismenu-container.visible > .metismenu-item > .metismenu-link {
@@ -8263,7 +8266,8 @@ button,
         height: 0;
         overflow: hidden; }
       .vertical-nav-menu .metismenu-container .metismenu-container .metismenu-link {
-        padding-left: 1em; }
+        padding-left: 0em; /*1em; */
+      }
 
 .app-sidebar.sidebar-text-light {
   border-right: 0 !important; }
@@ -8272,7 +8276,8 @@ button,
     .app-sidebar.sidebar-text-light .app-sidebar__heading::before {
       background: rgba(255, 255, 255, 0.2) !important; }
   .app-sidebar.sidebar-text-light .metismenu .metismenu-container .metismenu-link {
-    color: rgba(255, 255, 255, 0.7); }
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer; }
     .app-sidebar.sidebar-text-light .metismenu .metismenu-container .metismenu-link:hover {
       color: white;
       background: rgba(255, 255, 255, 0.1); }
@@ -8485,7 +8490,8 @@ button,
 .app-theme-white .app-header {
   background: #fafbfc; }
 .app-theme-white.fixed-header .app-header__logo {
-  background: rgba(250, 251, 252, 0.1); }
+  /* background: rgba(250, 251, 252, 0.1);  */
+}
 
 .app-footer {
   height: 60px; }
@@ -8985,7 +8991,9 @@ button,
 
 .bg-strong-bliss {
   /* background-image: linear-gradient(to right, #f78ca0 0%, #f9748f 19%, #fd868c 60%, #fe9a8b 100%) !important; */
-  background-image: linear-gradient(to right, #020202 0%, #272525 19%, #151313 60%, #524f4e 100%) !important; }
+  background-image: linear-gradient(to right, #020202 0%, #272525 19%, #151313 60%, #524f4e 100%) !important;
+  background-image: linear-gradient(to right, #020202e0 0%, #000000e0 19%, #000000eb 60%, #000000eb 100%) !important;
+}
 
 .bg-grow-early {
   background-image: linear-gradient(to top, #0ba360 0%, #3cba92 100%) !important; }

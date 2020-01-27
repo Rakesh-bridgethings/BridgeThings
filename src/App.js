@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react';
 import './App.css';
 import './assets/base.css';
+import './assets/style.css';
 import Main from './components/Main';
 import store from './store';
 import { Provider } from 'react-redux';

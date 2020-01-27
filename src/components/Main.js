@@ -1,21 +1,28 @@
-import React, { Suspense, lazy, Fragment } from 'react';
+import React, { Suspense, lazy, Fragment, Component } from 'react';
 import { connect } from 'react-redux';
 import cx from 'classnames';
-// import { withRouter } from 'react-router-dom';
+import { bindActionCreators } from 'redux';
 import ResizeDetector from 'react-resize-detector';
 import Header from './includes/Header';
 import LeftSidebar from './includes/LeftSidebar';
-import { Route, Link, BrowserRouter as Router } from 'react-router-dom'
+import Location from './location/index';
+import PerformanceDashboard from './dashboards/performance';
+import { Route, Link, Switch, BrowserRouter as Router } from 'react-router-dom'
+// import { fetchsidenavitemdata } from '../services/SideNavItem';
+// const PeroformanceDashboard = lazy(() => import('./dashboards/performance'));
 
-const PeroformanceDashboard = lazy(() => import('./dashboards/performance'));
 
-class Main extends React.Component {
+class Main extends Component {
     constructor(props) {
         super(props);
         this.state = {
             closedSmallerSidebar: false
         };
+    }
 
+    componentDidMount = async () => {
+        // const { fetchsidenavitemdata } = this.props;
+        // fetchsidenavitemdata();
     }
 
     render() {
@@ -29,7 +36,7 @@ class Main extends React.Component {
             enableMobileMenu,
             enablePageTabsAlt,
         } = this.props;
-
+        // console.log("pp::", this.props);
         return (
             <ResizeDetector
                 handleWidth
@@ -43,14 +50,14 @@ class Main extends React.Component {
                             { 'closed-sidebar': enableClosedSidebar || width < 1250 },
                             { 'closed-sidebar-mobile': closedSmallerSidebar || width < 1250 },
                             { 'sidebar-mobile-open': enableMobileMenu },
-                        )}>                            
-                                <Router>
-                                    <Header />
-                                    <div className="app-main">
-                                        <LeftSidebar />
-                                        <div className="app-main__outer">
-                                            <div className="app-main__inner">
-                                                <Suspense fallback={
+                        )}>
+                            <Router>
+                                <Header />
+                                <div className="app-main">
+                                    <LeftSidebar />
+                                    <div className="app-main__outer">
+                                        <div className="app-main__inner">
+                                            {/* <Suspense fallback={
                                                     <div className="loader-container">
                                                         <div className="loader-container-inner">
                                                             <h6 className="mt-5">
@@ -59,14 +66,15 @@ class Main extends React.Component {
                                                             </h6>
                                                         </div>
                                                     </div>
-                                                }>
-                                                    <Route path="/" component={PeroformanceDashboard} />
-                                                </Suspense>
-                                            </div>
+                                                }> */}
+                                            {/* <Route path="/" component={PeroformanceDashboard} /> */}
+                                            {/* </Suspense> */}
+                                            <Route path="/test_dashboard" component={PerformanceDashboard} />
+                                            <Route path="/locations" component={Location} />
                                         </div>
                                     </div>
-                                </Router>
-                            
+                                </div>
+                        </Router>
                         </div>
                     </Fragment>
                 )}
@@ -75,7 +83,7 @@ class Main extends React.Component {
     }
 }
 
-const mapStateToProp = state => ({
+const mapStateToProps = state => ({
     colorScheme: state.ThemeOptions.colorScheme,
     enableFixedHeader: state.ThemeOptions.enableFixedHeader,
     enableMobileMenu: state.ThemeOptions.enableMobileMenu,
@@ -83,7 +91,15 @@ const mapStateToProp = state => ({
     enableFixedSidebar: state.ThemeOptions.enableFixedSidebar,
     enableClosedSidebar: state.ThemeOptions.enableClosedSidebar,
     enablePageTabsAlt: state.ThemeOptions.enablePageTabsAlt,
-
+    // match: state.match,
+    data: state,
 });
 
-export default connect(mapStateToProp)(Main);
+const mapDispatchToProps = dispatch => bindActionCreators({
+    // fetchsidenavitemdata: fetchsidenavitemdata,
+}, dispatch)
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(Main);

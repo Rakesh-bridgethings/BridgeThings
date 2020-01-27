@@ -3,7 +3,8 @@ import {
     DropdownToggle, DropdownMenu,
     Nav, Button, NavItem, NavLink,
     UncontrolledTooltip, UncontrolledButtonDropdown,
-    Modal, ModalHeader, ModalBody, ModalFooter
+    Modal, ModalHeader, ModalBody, ModalFooter,
+    Form, Label, Input, FormGroup, DropdownItem
 } from 'reactstrap';
 import {
     toast,
@@ -57,37 +58,52 @@ class UserBox extends React.Component {
                                         <FontAwesomeIcon className="ml-2 opacity-8" icon={faAngleDown} />
                                     </DropdownToggle>
                                     <DropdownMenu right className="rm-pointers dropdown-menu-lg">
-                                        <Nav vertical>
-                                            <NavItem className="nav-item-header">
+                                        {/* <Nav vertical> */}
+                                            <DropdownItem className="nav-item-header">
                                                 My Account
-                                            </NavItem>
-                                            <NavItem>
+                                            </DropdownItem>
+                                            <DropdownItem divider/>
+                                            <DropdownItem>
                                                 <NavLink href="javascript:void(0);" onClick={() => this.setState({ changePass: !this.state.changePass })}>
                                                     Change Password
                                                 </NavLink>
                                                 <Modal isOpen={this.state.changePass} fade={false} toggle={() => this.setState({ changePass: !this.state.changePass })} className={this.props.className}>
-                                                    <ModalHeader toggle={() => this.setState({ changePass: !this.state.changePass })}>Modal title</ModalHeader>
+                                                    <ModalHeader toggle={() => this.setState({ changePass: !this.state.changePass })}>Change Password</ModalHeader>
                                                     <ModalBody>
-                                                        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                                                        <Form>
+                                                            <FormGroup>
+                                                                <Label for="current_password">Current Password*</Label>
+                                                                <Input type='password' id="current_password" />
+                                                            </FormGroup>
+                                                            <FormGroup>
+                                                                <Label for="new_password">New Password*</Label>
+                                                                <Input type='password' id="new_password" />
+                                                            </FormGroup>
+                                                            <FormGroup>
+                                                                <Label for="confirm_new_password">Confirm New Password*</Label>
+                                                                <Input type='password' id="confirm_new_password" />
+                                                            </FormGroup>                                               
+                                                        </Form>
+
                                                     </ModalBody>
                                                     <ModalFooter>
                                                         <Button color="link" onClick={() => this.setState({ changePass: !this.state.changePass })}>Cancel</Button>
-                                                        <Button color="primary" onClick={() => this.setState({ changePass: !this.state.changePass })}>Do Something</Button>{' '}
+                                                        <Button color="dark" onClick={() => this.setState({ changePass: !this.state.changePass })}>Update</Button>{' '}
                                                     </ModalFooter>
                                                 </Modal>
 
-                                            </NavItem>
-                                            <NavItem>
+                                            </DropdownItem>
+                                            <DropdownItem>
                                                 <NavLink href="javascript:void(0);">
                                                     Account Details
                                                 </NavLink>
-                                            </NavItem>
-                                            <NavItem>
+                                            </DropdownItem>
+                                            <DropdownItem>
                                                 <NavLink href="javascript:void(0);">
                                                     Log Out
                                                 </NavLink>
-                                            </NavItem>
-                                        </Nav>
+                                            </DropdownItem>
+                                        {/* </Nav> */}
                                     </DropdownMenu>
                                 </UncontrolledButtonDropdown>
                             </div>
