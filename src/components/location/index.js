@@ -1,19 +1,37 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { fetchlocationitemdata } from '../../services/Location'
+import { fetchlocationitemdata, fetchorganizationdata } from '../../services/Location'
 import PageTitle from '../../components/includes/PageTitle';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
-import { Row, Col, Card, CardBody, CardTitle, Table, CardHeader, Button } from 'reactstrap';
+import {
+    Row, Col, Card, CardBody, CardTitle, Table, CardHeader, Button,
+    DropdownToggle, DropdownMenu,
+    Nav, NavItem, NavLink,
+    UncontrolledTooltip, UncontrolledButtonDropdown,
+    Modal, ModalHeader, ModalBody, ModalFooter,
+    Form, Label, Input, FormGroup, DropdownItem
+} from 'reactstrap';
+import AddLocation from './add_location';
 
 class Location extends Component {
+    constructor (props) {
+        super(props);
+    }
+
     state = {
+        addlocationmodal: false,
     };
 
     componentDidMount = async () => {
-        const { fetchlocationitemdata } = this.props;
+        const { fetchlocationitemdata, fetchorganizationdata } = this.props;
         fetchlocationitemdata();
+        fetchorganizationdata ();
     }
+
+    isaddlocatiionmodal = () => {
+        this.setState({ addlocationmodal: !this.state.addlocationmodal });
+    }   
 
     render() {
         const { Location } = this.props.data;
@@ -38,32 +56,9 @@ class Location extends Component {
                                     <Col md="6" style={{ textAlign: 'left' }}>
 
                                     </Col>
-                                    <Col md="6" style={{ textAlign: 'right' }}>
-                                        <Button color="success">Add Location</Button>
-                                        {/* <Modal isOpen={this.state.changePass} fade={false} toggle={() => this.setState({ changePass: !this.state.changePass })} className={this.props.className}>
-                                            <ModalHeader toggle={() => this.setState({ changePass: !this.state.changePass })}>Change Password</ModalHeader>
-                                            <ModalBody>
-                                                <Form>
-                                                    <FormGroup>
-                                                        <Label for="current_password">Current Password*</Label>
-                                                        <Input type='password' id="current_password" />
-                                                    </FormGroup>
-                                                    <FormGroup>
-                                                        <Label for="new_password">New Password*</Label>
-                                                        <Input type='password' id="new_password" />
-                                                    </FormGroup>
-                                                    <FormGroup>
-                                                        <Label for="confirm_new_password">Confirm New Password*</Label>
-                                                        <Input type='password' id="confirm_new_password" />
-                                                    </FormGroup>
-                                                </Form>
-
-                                            </ModalBody>
-                                            <ModalFooter>
-                                                <Button color="link" onClick={() => this.setState({ changePass: !this.state.changePass })}>Cancel</Button>
-                                                <Button color="dark" onClick={() => this.setState({ changePass: !this.state.changePass })}>Update</Button>{' '}
-                                            </ModalFooter>
-                                        </Modal> */}
+                                    <Col md="6" style={{ textAlign: 'right' }} >
+                                        <Button color="success" onClick={() => this.setState({ addlocationmodal: !this.state.addlocationmodal })}>Add Location</Button>
+                                        <AddLocation addlocationmodal={this.state.addlocationmodal} isaddlocatiionmodal = {this.isaddlocatiionmodal} />
                                     </Col>
                                 </Row>
                             </CardHeader>
@@ -92,7 +87,7 @@ class Location extends Component {
                                                     <td>{item.floor}</td>
                                                     <td>{item.zone}</td>
                                                     <td>{item.aggregateId}</td>
-                                                    <td className='action'><i className="lnr-pencil" />&nbsp;&nbsp;&nbsp;&nbsp;<i className="lnr-trash" /></td>
+                                                    <td className='action'><i className="lnr-pencil" onClick={() => this.edit_location(item, index)} />&nbsp;&nbsp;&nbsp;&nbsp;<i className="lnr-trash" /></td>
                                                 </tr>
                                             )
                                         })}
@@ -115,6 +110,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => bindActionCreators({
     fetchlocationitemdata: fetchlocationitemdata,
+    fetchorganizationdata: fetchorganizationdata,
 }, dispatch)
 
 export default connect(
