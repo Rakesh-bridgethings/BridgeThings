@@ -15,6 +15,8 @@ import {
 import AddOrganization from './add_organization';
 import AddProperty from './add_property';
 import BusinessHours from './business_hours';
+// import SelectSearch from 'react-select-search'
+import Select from 'react-select';
 
 class AddLocation extends Component {
     constructor(props) {
@@ -29,6 +31,15 @@ class AddLocation extends Component {
         nextmodal: false,
         addnextmodal: false,
         business_hours: [],
+        zone: '',
+        aggregationid: '',
+        organization: '',
+        property: '',
+        locationtype: '',
+        label: '',
+        firststepData: [],
+        nextclick: false,
+        errorClass: 'is-invalid',
     };
 
     componentDidMount = async () => {
@@ -63,22 +74,42 @@ class AddLocation extends Component {
     }
 
     next = () => {
-        this.setState({ nextmodal: !this.state.nextmodal });
-        this.setState({ addnextmodal: !this.state.addnextmodal });
-        this.props.isaddlocatiionmodal();
+        if(this.state.organization !== '' && this.state.property !== '' && this.state.locationtype !== '' && this.state.label !== '') {
+            this.setState({ nextmodal: !this.state.nextmodal });
+            this.setState({ addnextmodal: !this.state.addnextmodal });            
+            this.props.isaddlocatiionmodal();
+            let data = [{
+                zone: this.state.zone,
+                aggregationid: this.state.aggregationid,
+                organization: this.state.organization,
+                property: this.state.property,
+                locationtype: this.state.locationtype,
+                label: this.state.label,
+            }];
+            this.setState({ firststepData: data });
+        }
+        this.setState({ nextclick: true });
     }
-
-    // isaddlocatiionmodal = () => {
-    //     this.setState({addlocationmodal: !this.props.addlocationmodal});
-    // }
 
     business_hrsdata = (val) => {
         this.setState({ business_hours: val });
-        business_hours(val);
+        let firststepData = this.state.firststepData;        
+        var alldata = [...firststepData, ...val];
+        business_hours(alldata);
     }
+
 
     render() {
         const { Location } = this.props.data;
+        let orgnizationdata = Location.orgnizationdata.map(function (item) {
+            return { value: item.id, label: item.name };
+        })
+        let propertydata = Location.property.map(function (item) {
+            return { value: item.id, label: item.value };
+        })
+        let locationdata = Location.locationtypes.map(function (item) {
+            return { value: item.id, label: item.value };
+        })        
         return (
             <Fragment>
                 <ReactCSSTransitionGroup
@@ -97,13 +128,13 @@ class AddLocation extends Component {
                                         <Col md='6'>
                                             <FormGroup>
                                                 <Label for="zone">Zone</Label>
-                                                <Input type='text' id="zone" />
+                                                <Input type='text' id="zone" onChange={(e) => this.setState({ zone: e.target.value })} />
                                             </FormGroup>
                                         </Col>
                                         <Col md='6'>
                                             <FormGroup>
                                                 <Label for="aggregation_id">Aggregation ID</Label>
-                                                <Input type='text' id="aggregation_id" />
+                                                <Input type='text' id="aggregation_id" onChange={(e) => this.setState({ aggregationid: e.target.value })} />
                                             </FormGroup>
                                         </Col>
                                     </Row>
@@ -111,13 +142,22 @@ class AddLocation extends Component {
                                         <Col md='6'>
                                             <FormGroup>
                                                 <Label for="organization">Organization *</Label>
-                                                <select name="select" id="organization" className="form-control">
+                                                <Select
+                                                    value={this.state.organization}
+                                                    onChange={(organization) => this.setState({ organization })}
+                                                    options={orgnizationdata}
+                                                />
+                                                {/* <select name="select" id="organization" 
+                                                    className={`form-control ${this.state.nextclick && this.state.organization === '' && this.state.errorClass}`}
+                                                    onChange={(e) => this.setState({ organization: e.target.value })}>
+                                                    <option value='' selected>Select Organization</option>
                                                     {Location.orgnizationdata && Location.orgnizationdata.map((item, index) => {
                                                         return (
                                                             <option key={index} value={item.id}>{item.name}</option>
                                                         )
                                                     })}
-                                                </select>
+                                                </select> */}
+                                                {/* <SelectSearch options={Location.orgnizationdata} value="id" name="name" placeholder="Select Organization" /> */}
                                                 <a style={{ cursor: 'pointer' }} onClick={() => this.setState({ addorgmodal: true })} ><i className="pe-7s-plus"> </i> Add New Organization</a>
                                             </FormGroup>
                                         </Col>
@@ -127,13 +167,22 @@ class AddLocation extends Component {
                                         <Col md='6'>
                                             <FormGroup>
                                                 <Label for="property">Property *</Label>
-                                                <select name="select" id="property" className="form-control">
+                                                <Select
+                                                    value={this.state.property}
+                                                    onChange={(property) => this.setState({ property })}
+                                                    options={propertydata}
+                                                />
+                                                {/* <SelectSearch options={Location.property} value="id" name="name" placeholder="Select Property" /> */}
+                                                {/* <select name="select" id="property" className="form-control" 
+                                                className={`form-control ${this.state.nextclick && this.state.property === '' && this.state.errorClass}`}
+                                                onChange={(e) => this.setState({ property: e.target.value })}>
+                                                    <option value='' selected>Select Property</option>
                                                     {Location.property && Location.property.map((item, index) => {
                                                         return (
                                                             <option key={index} value={item.id}>{item.value}</option>
                                                         )
                                                     })}
-                                                </select>
+                                                </select> */}
                                                 <a style={{ cursor: 'pointer' }} onClick={() => this.setState({ addpropertymodal: !this.state.addpropertymodal })} ><i className="pe-7s-plus"> </i> Add New Property</a>
                                             </FormGroup>
                                         </Col>
@@ -144,20 +193,30 @@ class AddLocation extends Component {
                                     <Row>
                                         <Col md='6'>
                                             <FormGroup>
-                                                <Label for="location_types">Location Type*</Label>
-                                                <select name="select" id="location_types" className="form-control">
+                                                <Label for="location_types">Location Type*</Label>                                                
+                                                <Select
+                                                    value={this.state.locationtype}
+                                                    onChange={(locationtype) => this.setState({ locationtype })}
+                                                    options={locationdata}
+                                                />
+                                                {/* <select name="select" id="location_types" className="form-control" 
+                                                className={`form-control ${this.state.nextclick && this.state.locationtype === '' && this.state.errorClass}`}
+                                                onChange={(e) => this.setState({ locationtype: e.target.value })}>
+                                                    <option value='' selected>Select Location</option>
                                                     {Location.locationtypes && Location.locationtypes.map((item, index) => {
                                                         return (
                                                             <option key={index} value={item.id}>{item.value}</option>
                                                         )
                                                     })}
-                                                </select>
+                                                </select> */}
                                             </FormGroup>
                                         </Col>
                                         <Col md='6'>
                                             <FormGroup>
                                                 <Label for="label">Label *</Label>
-                                                <Input type='text' />
+                                                <Input type='text' id='label' 
+                                                className={`form-control ${this.state.nextclick && this.state.label === '' && this.state.errorClass}`}
+                                                onChange={(e) => this.setState({ label: e.target.value })} />
                                             </FormGroup>
                                         </Col>
                                     </Row>

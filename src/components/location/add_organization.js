@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { fetchlocationitemdata, fetchorganizationdata, fetchlocationtypesdata, fetchentitytypesdata } from '../../services/Location'
+import { fetchlocationitemdata, fetchorganizationdata, fetchlocationtypesdata, fetchentitytypesdata, add_organization } from '../../services/Location'
 import PageTitle from '../../components/includes/PageTitle';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {
@@ -12,8 +12,7 @@ import {
     Modal, ModalHeader, ModalBody, ModalFooter,
     Form, Label, Input, FormGroup, DropdownItem
 } from 'reactstrap';
-import AddOrganization from './add_organization';
-import AddProperty from './add_property';
+import Select from 'react-select';
 
 class AddLocation extends Component {
     constructor(props) {
@@ -25,6 +24,11 @@ class AddLocation extends Component {
         addlocationmodal: false,
         addorganizationmodal: false,
         addpropertymodal: false,
+        name: '',
+        type: '',
+        alldata: [],
+        nextclick: false,
+        errorClass: 'is-invalid',
     };
 
     componentDidMount = async () => {
@@ -32,15 +36,30 @@ class AddLocation extends Component {
         fetchlocationitemdata();
         fetchorganizationdata();
         fetchlocationtypesdata();
-        fetchentitytypesdata ();
+        fetchentitytypesdata();
     }
 
     toggle = () => {
         this.props.isaddorgmodal(!this.props.addorgmodal);
     }
 
+    onSave = () => {
+        if (this.state.name !== '' && this.state.type !== '') {
+            this.props.isaddorgmodal(!this.props.addorgmodal);
+            let alldata = {
+                name: this.state.name,
+                type: this.state.type,
+            }
+            add_organization(alldata);
+        }
+        this.setState({ nextclick: true });
+    }
+
     render() {
         const { Location } = this.props.data;
+        const typedata = Location.entitytype.map(function (item) {
+            return { value: item.id, label: item.reference };
+        })
         return (
             <Fragment>
                 <ReactCSSTransitionGroup
@@ -51,7 +70,6 @@ class AddLocation extends Component {
                     transitionEnter={false}
                     transitionLeave={false}>
                     <div>
-
                         <Modal isOpen={this.props.addorgmodal} toggle={() => this.toggle()} className={this.props.className} id='add_location'>
                             <ModalHeader toggle={() => this.toggle()}>Add Organization</ModalHeader>
                             <ModalBody>
@@ -61,19 +79,27 @@ class AddLocation extends Component {
                                         <Col md='6'>
                                             <FormGroup>
                                                 <Label for="name">Name *</Label>
-                                                <Input type="text" id='name' />
+                                                <Input type="text" id='name' onChange={(e) => this.setState({ name: e.target.value })}
+                                                    className={`${this.state.nextclick && this.state.name === '' && this.state.errorClass}`} />
                                             </FormGroup>
                                         </Col>
                                         <Col md='6'>
                                             <FormGroup>
                                                 <Label for="type">Type*</Label>
-                                                <select name="select" id="type" className="form-control">
+                                                <Select
+                                                    value={this.state.type}
+                                                    onChange={(type) => this.setState({ type })}
+                                                    options={typedata}
+                                                />
+                                                {/* <select name="select" id="type" onChange={(e) => this.setState({ type: e.target.value })}
+                                                    className={`form-control ${this.state.nextclick && this.state.type === '' && this.state.errorClass}`}>
+                                                        <option value='' selected>Select Organization Type</option>
                                                     {Location.entitytype && Location.entitytype.map((item, index) => {
                                                         return (
                                                             <option value={item.id}>{item.reference}</option>
                                                         )
                                                     })}
-                                                </select>
+                                                </select> */}
                                             </FormGroup>
                                         </Col>
                                     </Row>
@@ -81,7 +107,7 @@ class AddLocation extends Component {
                             </ModalBody>
                             <ModalFooter>
                                 <Button color="light" onClick={() => this.toggle()}>Cancel</Button>
-                                <Button color="dark" onClick={() => this.toggle()}>Save</Button>{' '}
+                                <Button color="dark" onClick={() => this.onSave()}>Save</Button>{' '}
                             </ModalFooter>
                         </Modal>
 
@@ -103,6 +129,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     fetchorganizationdata: fetchorganizationdata,
     fetchlocationtypesdata: fetchlocationtypesdata,
     fetchentitytypesdata: fetchentitytypesdata,
+    add_organization: add_organization,
 }, dispatch)
 
 export default connect(

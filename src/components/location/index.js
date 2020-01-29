@@ -1,4 +1,5 @@
 import React, { Component, Fragment } from 'react';
+import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { fetchlocationitemdata, fetchorganizationdata } from '../../services/Location'
@@ -13,29 +14,93 @@ import {
     Form, Label, Input, FormGroup, DropdownItem
 } from 'reactstrap';
 import AddLocation from './add_location';
+import { DataTable } from 'react-data-components';
+
+// var DataTable = require('react-data-components').DataTable;
+
 
 class Location extends Component {
-    constructor (props) {
+    constructor(props) {
         super(props);
     }
 
     state = {
         addlocationmodal: false,
+        alltabledata: [],
     };
 
     componentDidMount = async () => {
         const { fetchlocationitemdata, fetchorganizationdata } = this.props;
-        fetchlocationitemdata();
-        fetchorganizationdata ();
+        await fetchlocationitemdata();
+        await fetchorganizationdata();
+        let data = this.props.data.Location.locationitem;
+        let alltabledata = [];
+        data && data.map((item, index) => {
+            alltabledata.push({
+                "property": item.property,
+                "propertyId": item.propertyId,
+                "entityId": item.entityId,
+                "entityReference": item.entityReference,
+                "region": item.region,
+                "zone": item.zone,
+                "aggregateId": item.aggregateId,
+                "floor": item.floor,
+                "id": item.id,
+            }
+            )
+        })
+        this.setState({ alltabledata });
     }
 
     isaddlocatiionmodal = () => {
         this.setState({ addlocationmodal: !this.state.addlocationmodal });
-    }   
+    }
+
+    edit_location = (item) => {
+        console.log("item::", item);
+    }
+
+    // changePage = (page, totalRows) => {
+    //     console.log("page::", page, "::", totalRows);
+    // }
 
     render() {
         const { Location } = this.props.data;
-        console.log("props::", Location);
+        const columns = [
+            // {
+            //     title: '#',
+            // render: (val, row) => <div>{row.id}</div>,
+            // },
+            {
+                title: 'Organization',
+                prop: 'entityReference',
+            },
+            {
+                title: 'Region',
+                prop: 'region',
+            },
+            {
+                title: 'Property',
+                prop: 'property',
+            },
+            {
+                title: 'Floor',
+                prop: 'floor',
+            },
+            {
+                title: 'Zone',
+                prop: 'zone',
+            },
+            {
+                title: 'Aggregate Id',
+                prop: 'aggregateId',
+            },
+            {
+                title: 'Action',
+                render: (val, row) => <div><i className="lnr-pencil" onClick={() => this.edit_location(row)} />   <i className="lnr-trash" /></div>,
+            }
+        ];
+
         return (
             <Fragment>
                 <ReactCSSTransitionGroup
@@ -58,12 +123,19 @@ class Location extends Component {
                                     </Col>
                                     <Col md="6" style={{ textAlign: 'right' }} >
                                         <Button color="success" onClick={() => this.setState({ addlocationmodal: !this.state.addlocationmodal })}>Add Location</Button>
-                                        <AddLocation addlocationmodal={this.state.addlocationmodal} isaddlocatiionmodal = {this.isaddlocatiionmodal} />
+                                        <AddLocation addlocationmodal={this.state.addlocationmodal} isaddlocatiionmodal={this.isaddlocatiionmodal} />
                                     </Col>
                                 </Row>
                             </CardHeader>
-                            <CardBody>
-                                <Table className="mb-0">
+                            <CardBody className='page_css'>
+                                <DataTable
+                                    columns={columns}
+                                    initialData={this.state.alltabledata}
+                                    initialPageLength={10}
+                                    initialSortBy={{ prop: 'entityReference', order: 'descending' }}
+                                    sortable={true}
+                                />
+                                {/* <Table className="mb-0">
                                     <thead>
                                         <tr>
                                             <th>#</th>
@@ -92,7 +164,7 @@ class Location extends Component {
                                             )
                                         })}
                                     </tbody>
-                                </Table>
+                                </Table> */}
                             </CardBody>
                         </Card>
                     </div>

@@ -12,8 +12,13 @@ import {
     Modal, ModalHeader, ModalBody, ModalFooter,
     Form, Label, Input, FormGroup, DropdownItem
 } from 'reactstrap';
-import AddOrganization from './add_organization';
-import AddProperty from './add_property';
+import Select from 'react-select';
+// import Autocomplete from 'react-google-autocomplete';
+import { withGoogleMap, GoogleMap, withScriptjs, InfoWindow, Marker } from "react-google-maps";
+import Geocode from "react-geocode";
+Geocode.setApiKey("AIzaSyDQAwNqjxL0L2-5X8yqNLEfpsZj6Z1B_Is");
+Geocode.enableDebug();
+
 
 class AddLocation extends Component {
     constructor(props) {
@@ -25,6 +30,13 @@ class AddLocation extends Component {
         addlocationmodal: false,
         addorganizationmodal: false,
         addpropertymodal: false,
+        orgnization: '',
+        propertytype: '',
+        address: '',
+        city: '',
+        area: '',
+        state: '',
+
     };
 
     componentDidMount = async () => {
@@ -33,7 +45,8 @@ class AddLocation extends Component {
         fetchorganizationdata();
         fetchlocationtypesdata();
         fetchpropertytypesdata();
-    }
+    };
+
 
     toggle = () => {
         this.props.isaddpropertymodal(!this.props.addpropertymodal);
@@ -41,7 +54,12 @@ class AddLocation extends Component {
 
     render() {
         const { Location } = this.props.data;
-        console.log("property::", Location);
+        let orgnizationdata = Location.orgnizationdata.map(function (item) {
+            return { value: item.id, label: item.name };
+        })
+        let propertytypedata = Location.propertytype.map(function (item) {
+            return { value: item.id, label: item.value };
+        })
         return (
             <Fragment>
                 <ReactCSSTransitionGroup
@@ -62,13 +80,18 @@ class AddLocation extends Component {
                                         <Col md='6'>
                                             <FormGroup>
                                                 <Label for="organization">Organization *</Label>
-                                                <select name="select" id="organization" className="form-control">
+                                                <Select
+                                                    value={this.state.orgnization}
+                                                    onChange={(orgnization) => this.setState({ orgnization })}
+                                                    options={orgnizationdata}
+                                                />
+                                                {/* <select name="select" id="organization" className="form-control">
                                                     {Location.orgnizationdata && Location.orgnizationdata.map((item, index) => {
                                                         return (
                                                             <option value={item.id}>{item.name}</option>
                                                         )
                                                     })}
-                                                </select>
+                                                </select> */}
                                             </FormGroup>
                                         </Col>
                                         <Col md='6'>
@@ -82,19 +105,24 @@ class AddLocation extends Component {
                                         <Col md='6'>
                                             <FormGroup>
                                                 <Label for="type">Type</Label>
-                                                <select name="select" id="type" className="form-control">
+                                                <Select
+                                                    value={this.state.propertytype}
+                                                    onChange={(propertytype) => this.setState({ propertytype })}
+                                                    options={propertytypedata}
+                                                />
+                                                {/* <select name="select" id="type" className="form-control">
                                                     {Location.propertytype && Location.propertytype.map((item, index) => {
                                                         return (
                                                             <option value={item.id}>{item.value}</option>
                                                         )
                                                     })}
-                                                </select>
+                                                </select> */}
                                             </FormGroup>
                                         </Col>
                                         <Col md='6'>
                                             <FormGroup>
                                                 <Label for="area">Area*</Label>
-                                                <Input type="text" id='area' />
+                                                {/* <Input type="text" id='area' /> */}
                                             </FormGroup>
                                         </Col>
                                     </Row>
@@ -110,13 +138,13 @@ class AddLocation extends Component {
                                         <Col md='6'>
                                             <FormGroup>
                                                 <Label for="city">City</Label>
-                                                <select name="select" id="city" className="form-control">
+                                                {/* <select name="select" id="city" className="form-control">
                                                     {Location.propertytype && Location.propertytype.map((item, index) => {
                                                         return (
                                                             <option value={item.id}>{item.value}</option>
                                                         )
                                                     })}
-                                                </select>
+                                                </select> */}
                                             </FormGroup>
                                         </Col>
                                         <Col md='6'>
@@ -126,7 +154,6 @@ class AddLocation extends Component {
                                             </FormGroup>
                                         </Col>
                                     </Row>
-
                                 </Form>
                             </ModalBody>
                             <ModalFooter>

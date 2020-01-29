@@ -8676,6 +8676,10 @@ export function business_hours(value) {
    console.log("business_hours::", value);
 }
 
+export function add_organization(value) {
+   console.log("add_organization::", value);
+}
+
 export function fetchpropertydata() {
     return dispatch => {
         dispatch(fetch_property_pending());
