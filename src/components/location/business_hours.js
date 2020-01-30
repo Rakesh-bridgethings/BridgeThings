@@ -27,6 +27,8 @@ class Business_Hours extends Component {
         addorganizationmodal: false,
         addpropertymodal: false,
         busi_details: [],
+        saveClicked: false,
+        errorClass: 'is-invalid',
     };
 
     componentDidMount = async () => {
@@ -70,8 +72,18 @@ class Business_Hours extends Component {
     }
 
     save = () => {
-        this.props.business_hrsdata(this.state.busi_details);
-        this.props.isclosemodals();
+        this.setState({ saveClicked: true });
+        let busi_details = this.state.busi_details;
+        const busi_hrs = busi_details.findIndex((e) => e.business_hrs === 'fixed_hrs');        
+        if (busi_hrs === -1) {
+            this.props.business_hrsdata(this.state.busi_details);
+            this.props.isclosemodals();
+        } else {            
+            if((busi_details[busi_hrs]['start'] && busi_details[busi_hrs]['start'] !== '') && (busi_details[busi_hrs]['end'] && busi_details[busi_hrs]['end'] !== '')) {
+                this.props.business_hrsdata(this.state.busi_details);
+                this.props.isclosemodals();
+            } 
+        }             
     }
 
     back = () => {
@@ -137,8 +149,9 @@ class Business_Hours extends Component {
                                                                 <Fragment key={index2}>
                                                                     <Col md='4' >
                                                                         <FormGroup>
-                                                                            <select id={item2} className="form-control" onChange={(e) => this.startend_hours(e, 'start', index1, item1)}>
-                                                                                <option selected value=''  >Start Hours</option>
+                                                                            <select className={`form-control ${(!item2.start || item2.start === '') && this.state.saveClicked && 'is-invalid'}`}
+                                                                            onChange={(e) => this.startend_hours(e, 'start', index1, item1)}>
+                                                                                <option selected value=''>Start Hours</option>
                                                                                 {Location.daysinterval.map((item, index) => {
                                                                                     return (
                                                                                         <option key={index} value={item.minutes}>{item.value}</option>
@@ -149,7 +162,8 @@ class Business_Hours extends Component {
                                                                     </Col>
                                                                     <Col md='4'>
                                                                         <FormGroup>
-                                                                            <select id={item2} className="form-control "onChange={(e) => this.startend_hours(e, 'end', index1, item1)}>
+                                                                            <select className={`form-control ${(!item2.end || item2.end === '') && this.state.saveClicked && 'is-invalid'}`}
+                                                                            onChange={(e) => this.startend_hours(e, 'end', index1, item1)}>
                                                                                 <option selected value='' >End Hours</option>
                                                                                 {Location.daysinterval.map((item, index) => {
                                                                                     return (

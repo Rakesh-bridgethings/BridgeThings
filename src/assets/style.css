@@ -2,7 +2,7 @@
     cursor: pointer;
 }
 @media (min-width: 576px){
-   #add_location {
+   #add_location, #edit_location {
         max-width: 700px;
         margin: 1.75rem auto;
     }
@@ -60,7 +60,9 @@ ul.pagination {
     margin-right: 10em;
     margin-left: 15px;
 }
-
+.pac-container {
+    z-index: 99999;
+}
 
 
 

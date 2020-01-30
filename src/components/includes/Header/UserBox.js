@@ -64,7 +64,7 @@ class UserBox extends React.Component {
                                             </DropdownItem>
                                             <DropdownItem divider/>
                                             <DropdownItem>
-                                                <NavLink href="javascript:void(0);" onClick={() => this.setState({ changePass: !this.state.changePass })}>
+                                                <NavLink href="#" onClick={() => this.setState({ changePass: !this.state.changePass })}>
                                                     Change Password
                                                 </NavLink>
                                                 <Modal isOpen={this.state.changePass} fade={false} toggle={() => this.setState({ changePass: !this.state.changePass })} className={this.props.className}>
@@ -94,12 +94,12 @@ class UserBox extends React.Component {
 
                                             </DropdownItem>
                                             <DropdownItem>
-                                                <NavLink href="javascript:void(0);">
+                                                <NavLink href="#">
                                                     Account Details
                                                 </NavLink>
                                             </DropdownItem>
                                             <DropdownItem>
-                                                <NavLink href="javascript:void(0);">
+                                                <NavLink href="#">
                                                     Log Out
                                                 </NavLink>
                                             </DropdownItem>

@@ -25,6 +25,11 @@ export const FETCH_PROPERTY_ERROR = 'FETCH_PROPERTY_ERROR';
 export const FETCH_DAYSINTERVAL_PENDING = 'FETCH_DAYSINTERVAL_PENDING';
 export const FETCH_DAYSINTERVAL_SUCCESS = 'FETCH_DAYSINTERVAL_SUCCESS';
 export const FETCH_DAYSINTERVAL_ERROR = 'FETCH_DAYSINTERVAL_ERROR';
+// days interval
+export const EDIT_LOCATION_PENDING = 'EDIT_LOCATION_PENDING';
+export const EDIT_LOCATION_SUCCESS = 'EDIT_LOCATION_SUCCESS';
+export const EDIT_LOCATION_ERROR = 'EDIT_LOCATION_ERROR';
+
 
 // locations
 export function fetch_locationitem_pending() {
@@ -139,6 +144,18 @@ export function fetch_day_intervals_success(days_interval) {
     }
 }
 
+// edit location
+export function edit_location_data_pending() {
+    return {
+        type: EDIT_LOCATION_PENDING,
+    }
+}
+export function edit_location_data_success(editdata) {
+    return {
+        type: EDIT_LOCATION_SUCCESS,
+        editdata: editdata
+    }
+}
 
 
 

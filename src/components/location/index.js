@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { fetchlocationitemdata, fetchorganizationdata } from '../../services/Location'
+import { fetchlocationitemdata, fetchorganizationdata, editLocation } from '../../services/Location';
 import PageTitle from '../../components/includes/PageTitle';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {
@@ -14,6 +14,7 @@ import {
     Form, Label, Input, FormGroup, DropdownItem
 } from 'reactstrap';
 import AddLocation from './add_location';
+import EditLocation from './edit_location';
 import { DataTable } from 'react-data-components';
 
 // var DataTable = require('react-data-components').DataTable;
@@ -27,6 +28,8 @@ class Location extends Component {
     state = {
         addlocationmodal: false,
         alltabledata: [],
+        editlocationmodal: false,
+        geteditid: 0,
     };
 
     componentDidMount = async () => {
@@ -56,16 +59,19 @@ class Location extends Component {
         this.setState({ addlocationmodal: !this.state.addlocationmodal });
     }
 
-    edit_location = (item) => {
-        console.log("item::", item);
+    iseditlocatiionmodal = () => {
+        this.setState({ editlocationmodal: !this.state.editlocationmodal });
     }
 
-    // changePage = (page, totalRows) => {
-    //     console.log("page::", page, "::", totalRows);
-    // }
+    edit_location = (item) => {
+        const { editLocation } = this.props;
+        let res = editLocation(item.id);        
+        this.setState({ editlocationmodal: !this.state.editlocationmodal });
+        this.setState({ geteditid: item.id });
+    }
 
     render() {
-        const { Location } = this.props.data;
+        const { Location } = this.props.data;        
         const columns = [
             // {
             //     title: '#',
@@ -100,7 +106,7 @@ class Location extends Component {
                 render: (val, row) => <div><i className="lnr-pencil" onClick={() => this.edit_location(row)} />   <i className="lnr-trash" /></div>,
             }
         ];
-
+        console.log("Location.editdata::", Location.editdata);
         return (
             <Fragment>
                 <ReactCSSTransitionGroup
@@ -135,6 +141,7 @@ class Location extends Component {
                                     initialSortBy={{ prop: 'entityReference', order: 'descending' }}
                                     sortable={true}
                                 />
+                                <EditLocation editlocationmodal={this.state.editlocationmodal} iseditlocatiionmodal={this.iseditlocatiionmodal} geteditid={this.state.geteditid} getEditData={Location.editdata} />
                                 {/* <Table className="mb-0">
                                     <thead>
                                         <tr>
@@ -183,6 +190,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => bindActionCreators({
     fetchlocationitemdata: fetchlocationitemdata,
     fetchorganizationdata: fetchorganizationdata,
+    editLocation: editLocation,
 }, dispatch)
 
 export default connect(

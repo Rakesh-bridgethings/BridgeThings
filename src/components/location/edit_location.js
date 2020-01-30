@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { fetchlocationitemdata, fetchorganizationdata, fetchlocationtypesdata, business_hours, fetchpropertydata } from '../../services/Location'
-import PageTitle from '../../components/includes/PageTitle';
+import PageTitle from '../includes/PageTitle';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {
     Row, Col, Card, CardBody, CardTitle, Table, CardHeader, Button,
@@ -12,24 +12,24 @@ import {
     Modal, ModalHeader, ModalBody, ModalFooter,
     Form, Label, Input, FormGroup, DropdownItem
 } from 'reactstrap';
-import AddOrganization from './add_organization';
-import AddProperty from './add_property';
+import EditOrganization from './edit_organization';
+import EditProperty from './edit_property';
 import BusinessHours from './business_hours';
 // import SelectSearch from 'react-select-search'
 import Select from 'react-select';
 
-class AddLocation extends Component {
+class EditLocation extends Component {
     constructor(props) {
         super(props);
         this.toggle = this.toggle.bind(this);
     }
 
     state = {
-        addlocationmodal: false,
-        addorgmodal: false,
-        addpropertymodal: false,
+        editlocationmodal: false,
+        editorgmodal: false,
+        editpropertymodal: false,
         nextmodal: false,
-        addnextmodal: false,
+        editnextmodal: false,
         business_hours: [],
         zone: '',
         aggregationid: '',
@@ -42,6 +42,18 @@ class AddLocation extends Component {
         errorClass: 'is-invalid',
     };
 
+    componentWillReceiveProps = (props) => {
+        console.log("pp::", this.props.getEditData);
+        // this.setState ({
+        //     zone: this.props.getEditData.zone,
+        //     aggregationid: this.props.getEditData.aggregationid,
+        //     organization: this.props.getEditData.entityId,
+        //     property: this.props.getEditData.propertyId,
+        //     locationtype: this.props.getEditData.locationType && this.props.getEditData.locationType.id,
+        //     label: this.props.getEditData.floor,
+        // })
+    }
+
     componentDidMount = async () => {
         const { fetchlocationitemdata, fetchorganizationdata, fetchlocationtypesdata, fetchpropertydata } = this.props;
         fetchlocationitemdata();
@@ -51,33 +63,33 @@ class AddLocation extends Component {
     }
 
     toggle = () => {
-        this.props.isaddlocatiionmodal();
+        this.props.iseditlocatiionmodal();
     }
 
-    isaddpropertymodal = (val) => {
-        this.setState({ addpropertymodal: val });
+    iseditpropertymodal = (val) => {
+        this.setState({ editpropertymodal: val });
     }
 
-    isaddorgmodal = (val) => {
-        this.setState({ addorgmodal: val });
+    iseditorgmodal = (val) => {
+        this.setState({ editorgmodal: val });
     }
 
-    isaddnextmodal = () => {
-        this.setState({ addnextmodal: !this.state.addnextmodal });
+    iseditnextmodal = () => {
+        this.setState({ editnextmodal: !this.state.editnextmodal });
         this.setState({ nextmodal: !this.state.nextmodal });
-        this.props.isaddlocatiionmodal();
+        this.props.iseditlocatiionmodal();
     }
 
     isclosemodals = () => {
-        this.setState({ addnextmodal: !this.state.addnextmodal });
+        this.setState({ editnextmodal: !this.state.editnextmodal });
         this.setState({ nextmodal: !this.state.nextmodal });
     }
 
     next = () => {
         if(this.state.organization !== '' && this.state.property !== '' && this.state.locationtype !== '' && this.state.label !== '') {
             this.setState({ nextmodal: !this.state.nextmodal });
-            this.setState({ addnextmodal: !this.state.addnextmodal });            
-            this.props.isaddlocatiionmodal();
+            this.setState({ editnextmodal: !this.state.editnextmodal });            
+            this.props.iseditlocatiionmodal();
             let data = [{
                 zone: this.state.zone,
                 aggregationid: this.state.aggregationid,
@@ -148,8 +160,8 @@ class AddLocation extends Component {
                     transitionEnter={false}
                     transitionLeave={false}>
                     <div>
-                        <Modal isOpen={this.props.addlocationmodal} toggle={() => this.toggle()} className={this.props.className} id='add_location'>
-                            <ModalHeader toggle={() => this.toggle()}>Add Location</ModalHeader>
+                        <Modal isOpen={this.props.editlocationmodal} toggle={() => this.toggle()} className={this.props.className} id='edit_location'>
+                            <ModalHeader toggle={() => this.toggle()}>Edit Location</ModalHeader>
                             <ModalBody>
                                 <Form>
                                     <Row>
@@ -175,12 +187,12 @@ class AddLocation extends Component {
                                                     styles = {orgStyles}
                                                     onChange={(organization) => this.setState({ organization })}
                                                     options={orgnizationdata}
-                                                />
-                                                <a style={{ cursor: 'pointer' }} onClick={() => this.setState({ addorgmodal: true })} ><i className="pe-7s-plus"> </i> Add New Organization</a>
+                                                />                                               
+                                                <a style={{ cursor: 'pointer' }} onClick={() => this.setState({ editorgmodal: true })} ><i className="pe-7s-plus"> </i> Edit New Organization</a>
                                             </FormGroup>
                                         </Col>
-                                        {this.state.addorgmodal &&
-                                            <AddOrganization addorgmodal={this.state.addorgmodal} isaddorgmodal={this.isaddorgmodal} />
+                                        {this.state.editorgmodal &&
+                                            <EditOrganization editorgmodal={this.state.editorgmodal} iseditorgmodal={this.iseditorgmodal} />
                                         }
                                         <Col md='6'>
                                             <FormGroup>
@@ -191,11 +203,11 @@ class AddLocation extends Component {
                                                     onChange={(property) => this.setState({ property })}
                                                     options={propertydata}
                                                 />
-                                                <a style={{ cursor: 'pointer' }} onClick={() => this.setState({ addpropertymodal: !this.state.addpropertymodal })} ><i className="pe-7s-plus"> </i> Add New Property</a>
+                                                <a style={{ cursor: 'pointer' }} onClick={() => this.setState({ editpropertymodal: !this.state.editpropertymodal })} ><i className="pe-7s-plus"> </i> Edit New Property</a>
                                             </FormGroup>
                                         </Col>
-                                        {this.state.addpropertymodal &&
-                                            <AddProperty addpropertymodal={this.state.addpropertymodal} isaddpropertymodal={this.isaddpropertymodal} />
+                                        {this.state.editpropertymodal &&
+                                            <EditProperty editpropertymodal={this.state.editpropertymodal} iseditpropertymodal={this.iseditpropertymodal} />
                                         }
                                     </Row>
                                     <Row>
@@ -226,7 +238,7 @@ class AddLocation extends Component {
                                 <Button color="success" onClick={() => this.next()}>Next</Button>{' '}
                             </ModalFooter>
                         </Modal>
-                        {this.state.nextmodal && <BusinessHours addnextmodal={this.state.addnextmodal} isaddnextmodal={this.isaddnextmodal} isclosemodals={this.isclosemodals} business_hrsdata={this.business_hrsdata} />}
+                        {this.state.nextmodal && <BusinessHours editnextmodal={this.state.editnextmodal} iseditnextmodal={this.iseditnextmodal} isclosemodals={this.isclosemodals} business_hrsdata={this.business_hrsdata} />}
                     </div>
                 </ReactCSSTransitionGroup>
             </Fragment>
@@ -252,6 +264,6 @@ const mapDispatchToProps = dispatch => bindActionCreators({
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(AddLocation);
+)(EditLocation);
 
 

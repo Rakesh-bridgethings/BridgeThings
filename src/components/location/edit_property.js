@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { fetchlocationitemdata, fetchorganizationdata, fetchlocationtypesdata, fetchpropertytypesdata } from '../../services/Location'
-import PageTitle from '../../components/includes/PageTitle';
+import PageTitle from '../includes/PageTitle';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {
     Row, Col, Card, CardBody, CardTitle, Table, CardHeader, Button,
@@ -17,16 +17,16 @@ import Select from 'react-select';
 import Map from './map';
 import LocationSearchInput from './placeautocomplete';
 
-class AddProperty extends Component {
+class EditProperty extends Component {
     constructor(props) {
         super(props);
         this.toggle = this.toggle.bind(this);
     }
 
     state = {
-        addlocationmodal: false,
-        addorganizationmodal: false,
-        addpropertymodal: false,
+        editlocationmodal: false,
+        editorganizationmodal: false,
+        editpropertymodal: false,
         orgnization: '',
         propertytype: '',
     };
@@ -43,7 +43,7 @@ class AddProperty extends Component {
 
 
     toggle = () => {
-        this.props.isaddpropertymodal(!this.props.addpropertymodal);
+        this.props.iseditpropertymodal(!this.props.editpropertymodal);
     }
 
     render() {
@@ -65,10 +65,10 @@ class AddProperty extends Component {
                     transitionLeave={false}>
                     <div>
 
-                        <Modal isOpen={this.props.addpropertymodal} toggle={() => this.toggle()} className={this.props.className} id='add_location'>
-                            <ModalHeader toggle={() => this.toggle()}>Add Property</ModalHeader>
+                        <Modal isOpen={this.props.editpropertymodal} toggle={() => this.toggle()} className={this.props.className} id='edit_location'>
+                            <ModalHeader toggle={() => this.toggle()}>Edit Property</ModalHeader>
                             <ModalBody style={{overflow: 'auto'}}>
-                                <p><a href='#' >Add Property </a> / New Property</p>
+                                <p><a href='#' >Edit Property </a> / New Property</p>
                                <Form>
                                     <Row>
                                         <Col md='6'>
@@ -118,8 +118,8 @@ class AddProperty extends Component {
                                     <Row>
                                         <Col md='12'>
                                             <FormGroup>
-                                                <Label for="address">Address</Label>
-                                                <Input type="text" id='address' />
+                                                <Label for="editress">Editress</Label>
+                                                <Input type="text" id='editress' />
                                             </FormGroup>
                                         </Col>
                                     </Row>
@@ -167,6 +167,6 @@ const mapDispatchToProps = dispatch => bindActionCreators({
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(AddProperty);
+)(EditProperty);
 
 

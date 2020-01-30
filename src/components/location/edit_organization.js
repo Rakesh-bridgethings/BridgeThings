@@ -1,8 +1,8 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { fetchlocationitemdata, fetchorganizationdata, fetchlocationtypesdata, fetchentitytypesdata, add_organization } from '../../services/Location'
-import PageTitle from '../../components/includes/PageTitle';
+import { fetchlocationitemdata, fetchorganizationdata, fetchlocationtypesdata, fetchentitytypesdata } from '../../services/Location'
+import PageTitle from '../includes/PageTitle';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {
     Row, Col, Card, CardBody, CardTitle, Table, CardHeader, Button,
@@ -14,16 +14,16 @@ import {
 } from 'reactstrap';
 import Select from 'react-select';
 
-class AddOrganization extends Component {
+class EditOrganization extends Component {
     constructor(props) {
         super(props);
         this.toggle = this.toggle.bind(this);
     }
 
     state = {
-        addlocationmodal: false,
-        addorganizationmodal: false,
-        addpropertymodal: false,
+        editlocationmodal: false,
+        editorganizationmodal: false,
+        editpropertymodal: false,
         name: '',
         type: '',
         alldata: [],
@@ -40,17 +40,17 @@ class AddOrganization extends Component {
     }
 
     toggle = () => {
-        this.props.isaddorgmodal(!this.props.addorgmodal);
+        this.props.iseditorgmodal(!this.props.editorgmodal);
     }
 
     onSave = () => {
         if (this.state.name !== '' && this.state.type !== '') {
-            this.props.isaddorgmodal(!this.props.addorgmodal);
+            this.props.iseditorgmodal(!this.props.editorgmodal);
             let alldata = {
                 name: this.state.name,
                 type: this.state.type,
             }
-            add_organization(alldata);
+            // edit_organization(alldata);
         }
         this.setState({ nextclick: true });
     }
@@ -79,10 +79,10 @@ class AddOrganization extends Component {
                     transitionEnter={false}
                     transitionLeave={false}>
                     <div>
-                        <Modal isOpen={this.props.addorgmodal} toggle={() => this.toggle()} className={this.props.className} id='add_location'>
-                            <ModalHeader toggle={() => this.toggle()}>Add Organization</ModalHeader>
+                        <Modal isOpen={this.props.editorgmodal} toggle={() => this.toggle()} className={this.props.className} id='edit_location'>
+                            <ModalHeader toggle={() => this.toggle()}>Edit Organization</ModalHeader>
                             <ModalBody>
-                                <p><a href='#' >Add Organization </a> / New Organization</p>
+                                <p><a href='#' >Edit Organization </a> / New Organization</p>
                                 <Form>
                                     <Row>
                                         <Col md='6'>
@@ -139,12 +139,12 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     fetchorganizationdata: fetchorganizationdata,
     fetchlocationtypesdata: fetchlocationtypesdata,
     fetchentitytypesdata: fetchentitytypesdata,
-    add_organization: add_organization,
+    // edit_organization: edit_organization,
 }, dispatch)
 
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(AddOrganization);
+)(EditOrganization);
 
 
