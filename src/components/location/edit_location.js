@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { fetchlocationitemdata, fetchorganizationdata, fetchlocationtypesdata, business_hours, fetchpropertydata } from '../../services/Location'
+import { fetchlocationitemdata, fetchorganizationdata, fetchlocationtypesdata, fetchpropertydata, updatedLocationData } from '../../services/Location'
 import PageTitle from '../includes/PageTitle';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {
@@ -14,14 +14,17 @@ import {
 } from 'reactstrap';
 import EditOrganization from './edit_organization';
 import EditProperty from './edit_property';
-import BusinessHours from './business_hours';
-// import SelectSearch from 'react-select-search'
+import EditBusinessHours from './edit_business_hours';
 import Select from 'react-select';
+import SimpleReactValidator from 'simple-react-validator';
 
 class EditLocation extends Component {
     constructor(props) {
         super(props);
         this.toggle = this.toggle.bind(this);
+        this.validator = new SimpleReactValidator({
+            element: (message, className) => <div className='required_message'>{message}</div>
+          })
     }
 
     state = {
@@ -30,7 +33,6 @@ class EditLocation extends Component {
         editpropertymodal: false,
         nextmodal: false,
         editnextmodal: false,
-        business_hours: [],
         zone: '',
         aggregationid: '',
         organization: '',
@@ -40,18 +42,26 @@ class EditLocation extends Component {
         firststepData: [],
         nextclick: false,
         errorClass: 'is-invalid',
+        getEditBusiness: [],
+        business_hours: [],
+        editid: 0,
+        entityReference: '',
+        propertyName: '',
     };
 
     componentWillReceiveProps = (props) => {
-        console.log("pp::", this.props.getEditData);
-        // this.setState ({
-        //     zone: this.props.getEditData.zone,
-        //     aggregationid: this.props.getEditData.aggregationid,
-        //     organization: this.props.getEditData.entityId,
-        //     property: this.props.getEditData.propertyId,
-        //     locationtype: this.props.getEditData.locationType && this.props.getEditData.locationType.id,
-        //     label: this.props.getEditData.floor,
-        // })
+        this.setState({
+            getEditBusiness: props.getEditData,
+            zone: props.getEditData.zone,
+            aggregationid: props.getEditData.aggregateId,
+            organization: props.getEditData.entityId && { value: props.getEditData.entityId, label: props.getEditData.entityReference },
+            property: props.getEditData.property && { value: props.getEditData.propertyId, label: props.getEditData.property },
+            locationtype: props.getEditData.locationType && { value: props.getEditData.locationType.id, label: props.getEditData.locationType.value },
+            label: props.getEditData.floor,
+            editid: props.geteditid,
+            entityReference: props.getEditData.entityReference,
+            propertyName: props.getEditData.property,
+        })
     }
 
     componentDidMount = async () => {
@@ -86,30 +96,43 @@ class EditLocation extends Component {
     }
 
     next = () => {
-        if(this.state.organization !== '' && this.state.property !== '' && this.state.locationtype !== '' && this.state.label !== '') {
+        if (this.state.organization !== '' && this.state.property !== '' && this.state.locationtype !== '' && this.state.label !== '' && this.validator.allValid()) {
             this.setState({ nextmodal: !this.state.nextmodal });
-            this.setState({ editnextmodal: !this.state.editnextmodal });            
+            this.setState({ editnextmodal: !this.state.editnextmodal });
             this.props.iseditlocatiionmodal();
             let data = [{
                 zone: this.state.zone,
                 aggregationid: this.state.aggregationid,
-                organization: this.state.organization,
-                property: this.state.property,
-                locationtype: this.state.locationtype,
+                organization: this.state.organization.value,
+                property: this.state.property.value,
+                locationtype: { id: this.state.locationtype.value, value: this.state.locationtype.label },
                 label: this.state.label,
+                entityReference: this.state.organization.label,
+                propertyName: this.state.property.label,
             }];
             this.setState({ firststepData: data });
         }
+        this.validator.showMessageFor('Zone');
+        this.validator.showMessageFor('AggregationId');
         this.setState({ nextclick: true });
     }
 
     business_hrsdata = (val) => {
         this.setState({ business_hours: val });
-        let firststepData = this.state.firststepData;        
-        var alldata = [...firststepData, ...val];
-        business_hours(alldata);
+        let firststepData = [...this.state.firststepData];
+        firststepData[0]['locationBusinessHoursList'] = val;
+        updatedLocationData(firststepData, this.state.editid);
     }
 
+    onZone = (e) => {
+        this.setState({ zone: e.target.value })
+        this.validator.showMessageFor('Zone');        
+    }
+
+    onAggregateId = (e) => {
+        this.setState({ aggregationid: e.target.value });
+        this.validator.showMessageFor('AggregationId'); 
+    }
 
     render() {
         const { Location } = this.props.data;
@@ -124,32 +147,31 @@ class EditLocation extends Component {
         })
         const orgStyles = {
             control: (base, state) => ({
-              ...base,
-              borderColor: this.state.nextclick && this.state.organization === '' ? '#C71C22' : '#ddd',
-              '&:hover': {
-                borderColor: this.state.nextclick && this.state.organization === '' ? '#C71C22' : '#ddd'
-              }
+                ...base,
+                borderColor: this.state.nextclick && this.state.organization === '' ? '#C71C22' : '#ddd',
+                '&:hover': {
+                    borderColor: this.state.nextclick && this.state.organization === '' ? '#C71C22' : '#ddd'
+                }
             })
-        } 
+        }
         const propertyStyles = {
             control: (base, state) => ({
-              ...base,
-              borderColor: this.state.nextclick && this.state.property === '' ? '#C71C22' : '#ddd',
-              '&:hover': {
-                borderColor: this.state.nextclick && this.state.property === '' ? '#C71C22' : '#ddd'
-              }
+                ...base,
+                borderColor: this.state.nextclick && this.state.property === '' ? '#C71C22' : '#ddd',
+                '&:hover': {
+                    borderColor: this.state.nextclick && this.state.property === '' ? '#C71C22' : '#ddd'
+                }
             })
-        } 
+        }
         const loctypeStyles = {
             control: (base, state) => ({
-              ...base,
-              borderColor: this.state.nextclick && this.state.locationtype === '' ? '#C71C22' : '#ddd',
-              '&:hover': {
-                borderColor: this.state.nextclick && this.state.locationtype === '' ? '#C71C22' : '#ddd'
-              }
+                ...base,
+                borderColor: this.state.nextclick && this.state.locationtype === '' ? '#C71C22' : '#ddd',
+                '&:hover': {
+                    borderColor: this.state.nextclick && this.state.locationtype === '' ? '#C71C22' : '#ddd'
+                }
             })
-        }         
-        
+        }
         return (
             <Fragment>
                 <ReactCSSTransitionGroup
@@ -168,13 +190,15 @@ class EditLocation extends Component {
                                         <Col md='6'>
                                             <FormGroup>
                                                 <Label for="zone">Zone</Label>
-                                                <Input type='text' id="zone" onChange={(e) => this.setState({ zone: e.target.value })} value={this.state.zone} />
+                                                <Input type='text' id="zone" onChange={(e) => this.onZone(e)} value={this.state.zone} />
+                                                {this.validator.message('Zone', this.state.zone, 'alpha_num')}
                                             </FormGroup>
                                         </Col>
                                         <Col md='6'>
                                             <FormGroup>
                                                 <Label for="aggregation_id">Aggregation ID</Label>
-                                                <Input type='text' id="aggregation_id" onChange={(e) => this.setState({ aggregationid: e.target.value })} value={this.state.aggregationid} />
+                                                <Input type='text' id="aggregation_id" onChange={(e) => this.onAggregateId(e) } value={this.state.aggregationid} />
+                                                {this.validator.message('AggregationId', this.state.aggregationid, 'alpha_num')}
                                             </FormGroup>
                                         </Col>
                                     </Row>
@@ -184,50 +208,58 @@ class EditLocation extends Component {
                                                 <Label for="organization">Organization *</Label>
                                                 <Select
                                                     value={this.state.organization}
-                                                    styles = {orgStyles}
+                                                    styles={orgStyles}
                                                     onChange={(organization) => this.setState({ organization })}
                                                     options={orgnizationdata}
-                                                />                                               
+                                                />
                                                 <a style={{ cursor: 'pointer' }} onClick={() => this.setState({ editorgmodal: true })} ><i className="pe-7s-plus"> </i> Edit New Organization</a>
+                                                {this.state.nextclick && this.state.organization === '' && <div className='required_message'>{this.props.requiredMessage}</div>
+                                                }
                                             </FormGroup>
                                         </Col>
                                         {this.state.editorgmodal &&
-                                            <EditOrganization editorgmodal={this.state.editorgmodal} iseditorgmodal={this.iseditorgmodal} />
+                                            <EditOrganization requiredMessage={this.props.requiredMessage} editorgmodal={this.state.editorgmodal} iseditorgmodal={this.iseditorgmodal} />
                                         }
                                         <Col md='6'>
                                             <FormGroup>
                                                 <Label for="property">Property *</Label>
                                                 <Select
                                                     value={this.state.property}
-                                                    styles = {propertyStyles}
+                                                    styles={propertyStyles}
                                                     onChange={(property) => this.setState({ property })}
                                                     options={propertydata}
                                                 />
                                                 <a style={{ cursor: 'pointer' }} onClick={() => this.setState({ editpropertymodal: !this.state.editpropertymodal })} ><i className="pe-7s-plus"> </i> Edit New Property</a>
+                                                {this.state.nextclick && this.state.property === '' && <div className='required_message'>{this.props.requiredMessage}</div>
+                                                }
                                             </FormGroup>
                                         </Col>
                                         {this.state.editpropertymodal &&
-                                            <EditProperty editpropertymodal={this.state.editpropertymodal} iseditpropertymodal={this.iseditpropertymodal} />
+                                            <EditProperty requiredMessage={this.props.requiredMessage} editpropertymodal={this.state.editpropertymodal} iseditpropertymodal={this.iseditpropertymodal} />
                                         }
                                     </Row>
                                     <Row>
                                         <Col md='6'>
                                             <FormGroup>
-                                                <Label for="location_types">Location Type*</Label>                                                
+                                                <Label for="location_types">Location Type*</Label>
                                                 <Select
                                                     value={this.state.locationtype}
-                                                    styles = {loctypeStyles}                                                    
+                                                    styles={loctypeStyles}
                                                     onChange={(locationtype) => this.setState({ locationtype })}
                                                     options={locationdata}
                                                 />
+                                                {this.state.nextclick && this.state.locationtype === '' && <div className='required_message'>{this.props.requiredMessage}</div>
+                                                }
                                             </FormGroup>
                                         </Col>
                                         <Col md='6'>
                                             <FormGroup>
                                                 <Label for="label">Label *</Label>
                                                 <Input type='text' id='label' value={this.state.label}
-                                                className={`form-control ${this.state.nextclick && this.state.label === '' && this.state.errorClass}`}
-                                                onChange={(e) => this.setState({ label: e.target.value })} />
+                                                    className={`form-control ${this.state.nextclick && this.state.label === '' && this.state.errorClass}`}
+                                                    onChange={(e) => this.setState({ label: e.target.value })} />
+                                                {this.state.nextclick && this.state.label === '' && <div className='required_message'>{this.props.requiredMessage}</div>
+                                                }
                                             </FormGroup>
                                         </Col>
                                     </Row>
@@ -238,7 +270,7 @@ class EditLocation extends Component {
                                 <Button color="success" onClick={() => this.next()}>Next</Button>{' '}
                             </ModalFooter>
                         </Modal>
-                        {this.state.nextmodal && <BusinessHours editnextmodal={this.state.editnextmodal} iseditnextmodal={this.iseditnextmodal} isclosemodals={this.isclosemodals} business_hrsdata={this.business_hrsdata} />}
+                        {this.state.nextmodal && <EditBusinessHours requiredMessage={this.props.requiredMessage} getEditBusiness={this.state.getEditBusiness} editnextmodal={this.state.editnextmodal} iseditnextmodal={this.iseditnextmodal} isclosemodals={this.isclosemodals} business_hrsdata={this.business_hrsdata} />}
                     </div>
                 </ReactCSSTransitionGroup>
             </Fragment>
@@ -257,8 +289,8 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     fetchlocationitemdata: fetchlocationitemdata,
     fetchorganizationdata: fetchorganizationdata,
     fetchlocationtypesdata: fetchlocationtypesdata,
-    business_hours: business_hours,
     fetchpropertydata: fetchpropertydata,
+    updatedLocationData: updatedLocationData,
 }, dispatch)
 
 export default connect(

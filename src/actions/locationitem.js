@@ -29,7 +29,9 @@ export const FETCH_DAYSINTERVAL_ERROR = 'FETCH_DAYSINTERVAL_ERROR';
 export const EDIT_LOCATION_PENDING = 'EDIT_LOCATION_PENDING';
 export const EDIT_LOCATION_SUCCESS = 'EDIT_LOCATION_SUCCESS';
 export const EDIT_LOCATION_ERROR = 'EDIT_LOCATION_ERROR';
-
+// update data
+export const UPDATE_LOCATION__DATA_SUCCESS = 'UPDATE_LOCATION__DATA_SUCCESS';
+export const DELETE_LOCATION__DATA_SUCCESS = 'DELETE_LOCATION__DATA_SUCCESS';
 
 // locations
 export function fetch_locationitem_pending() {
@@ -157,8 +159,17 @@ export function edit_location_data_success(editdata) {
     }
 }
 
-
-
+export function update_locationitem_success(updateddata) {
+    return {
+        type: UPDATE_LOCATION__DATA_SUCCESS,
+        updateddata: updateddata
+    }
+}
+export function delete_location_data_success() {
+    return {
+        type: DELETE_LOCATION__DATA_SUCCESS,
+    }
+}
 
 
 

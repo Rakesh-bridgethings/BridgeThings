@@ -15,6 +15,7 @@ import {
 } from 'reactstrap';
 import AddLocation from './add_location';
 import EditLocation from './edit_location';
+import DeleteLocation from './delete_location';
 import { DataTable } from 'react-data-components';
 
 // var DataTable = require('react-data-components').DataTable;
@@ -30,13 +31,13 @@ class Location extends Component {
         alltabledata: [],
         editlocationmodal: false,
         geteditid: 0,
-    };
+        getdeleteid: 0,
+        deletelocationmodal: false,
+        requiredMessage: 'This field is required',
+    };    
 
-    componentDidMount = async () => {
-        const { fetchlocationitemdata, fetchorganizationdata } = this.props;
-        await fetchlocationitemdata();
-        await fetchorganizationdata();
-        let data = this.props.data.Location.locationitem;
+    componentWillReceiveProps = (props) => {
+        let data = props.data.Location.locationitem;
         let alltabledata = [];
         data && data.map((item, index) => {
             alltabledata.push({
@@ -55,6 +56,29 @@ class Location extends Component {
         this.setState({ alltabledata });
     }
 
+    componentDidMount = async () => {
+        const { fetchlocationitemdata, fetchorganizationdata } = this.props;
+        await fetchlocationitemdata();
+        await fetchorganizationdata();
+        // let data = this.props.data.Location.locationitem;
+        // let alltabledata = [];
+        // data && data.map((item, index) => {
+        //     alltabledata.push({
+        //         "property": item.property,
+        //         "propertyId": item.propertyId,
+        //         "entityId": item.entityId,
+        //         "entityReference": item.entityReference,
+        //         "region": item.region,
+        //         "zone": item.zone,
+        //         "aggregateId": item.aggregateId,
+        //         "floor": item.floor,
+        //         "id": item.id,
+        //     }
+        //     )
+        // })
+        // this.setState({ alltabledata });
+    }
+
     isaddlocatiionmodal = () => {
         this.setState({ addlocationmodal: !this.state.addlocationmodal });
     }
@@ -63,15 +87,24 @@ class Location extends Component {
         this.setState({ editlocationmodal: !this.state.editlocationmodal });
     }
 
+    isdeletelocationmodal = () => {
+        this.setState({ deletelocationmodal: !this.state.deletelocationmodal });
+    }    
+
     edit_location = (item) => {
         const { editLocation } = this.props;
-        let res = editLocation(item.id);        
+        editLocation(item.id);
         this.setState({ editlocationmodal: !this.state.editlocationmodal });
         this.setState({ geteditid: item.id });
     }
 
+    delete_location = (item) => {
+        this.setState({ deletelocationmodal: !this.state.deletelocationmodal });
+        this.setState({ getdeleteid: item.id });
+    }
+
     render() {
-        const { Location } = this.props.data;        
+        const { Location } = this.props.data;      
         const columns = [
             // {
             //     title: '#',
@@ -103,10 +136,9 @@ class Location extends Component {
             },
             {
                 title: 'Action',
-                render: (val, row) => <div><i className="lnr-pencil" onClick={() => this.edit_location(row)} />   <i className="lnr-trash" /></div>,
+                render: (val, row) => <div><i className="lnr-pencil" style={{cursor: 'pointer'}} onClick={() => this.edit_location(row)} />&nbsp;&nbsp;&nbsp;&nbsp;<i className="lnr-trash" style={{cursor: 'pointer'}} onClick={() => this.delete_location(row)} /></div>,
             }
         ];
-        console.log("Location.editdata::", Location.editdata);
         return (
             <Fragment>
                 <ReactCSSTransitionGroup
@@ -129,7 +161,7 @@ class Location extends Component {
                                     </Col>
                                     <Col md="6" style={{ textAlign: 'right' }} >
                                         <Button color="success" onClick={() => this.setState({ addlocationmodal: !this.state.addlocationmodal })}>Add Location</Button>
-                                        <AddLocation addlocationmodal={this.state.addlocationmodal} isaddlocatiionmodal={this.isaddlocatiionmodal} />
+                                        <AddLocation requiredMessage={this.state.requiredMessage} addlocationmodal={this.state.addlocationmodal} isaddlocatiionmodal={this.isaddlocatiionmodal} />
                                     </Col>
                                 </Row>
                             </CardHeader>
@@ -141,7 +173,8 @@ class Location extends Component {
                                     initialSortBy={{ prop: 'entityReference', order: 'descending' }}
                                     sortable={true}
                                 />
-                                <EditLocation editlocationmodal={this.state.editlocationmodal} iseditlocatiionmodal={this.iseditlocatiionmodal} geteditid={this.state.geteditid} getEditData={Location.editdata} />
+                                <EditLocation requiredMessage={this.state.requiredMessage} editlocationmodal={this.state.editlocationmodal} iseditlocatiionmodal={this.iseditlocatiionmodal} geteditid={this.state.geteditid} getEditData={Location.editdata} />
+                                <DeleteLocation requiredMessage={this.state.requiredMessage} getdeleteid={this.state.getdeleteid} deletelocationmodal={this.state.deletelocationmodal} isdeletelocationmodal={this.isdeletelocationmodal} />
                                 {/* <Table className="mb-0">
                                     <thead>
                                         <tr>

@@ -13,10 +13,15 @@ import {
     Form, Label, Input, FormGroup, DropdownItem
 } from 'reactstrap';
 import Select from 'react-select';
+import SimpleReactValidator from 'simple-react-validator';
+
 
 class AddOrganization extends Component {
     constructor(props) {
         super(props);
+        this.validator = new SimpleReactValidator({
+            element: (message, className) => <div className='required_message'>{message}</div>
+          })
         this.toggle = this.toggle.bind(this);
     }
 
@@ -52,6 +57,7 @@ class AddOrganization extends Component {
             }
             add_organization(alldata);
         }
+        this.validator.showMessageFor('name');
         this.setState({ nextclick: true });
     }
 
@@ -89,7 +95,9 @@ class AddOrganization extends Component {
                                             <FormGroup>
                                                 <Label for="name">Name *</Label>
                                                 <Input type="text" id='name' onChange={(e) => this.setState({ name: e.target.value })}
+                                                onBlur={() => this.validator.showMessageFor('name')}
                                                     className={`${this.state.nextclick && this.state.name === '' && this.state.errorClass}`} />
+                                                {this.validator.message('name', this.state.name, 'required|alpha_num')}
                                             </FormGroup>
                                         </Col>
                                         <Col md='6'>
@@ -101,6 +109,8 @@ class AddOrganization extends Component {
                                                     onChange={(type) => this.setState({ type })}
                                                     options={typedata}
                                                 />
+                                                {this.state.nextclick && this.state.type === '' && <div className='required_message'>{this.props.requiredMessage}</div>
+                                                }
                                                 {/* <select name="select" id="type" onChange={(e) => this.setState({ type: e.target.value })}
                                                     className={`form-control ${this.state.nextclick && this.state.type === '' && this.state.errorClass}`}>
                                                         <option value='' selected>Select Organization Type</option>

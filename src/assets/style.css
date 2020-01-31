@@ -63,7 +63,12 @@ ul.pagination {
 .pac-container {
     z-index: 99999;
 }
-
+.required_message {
+    width: 100%;
+    margin-top: .25rem;
+    font-size: 80%;
+    color: #dc3545;
+}
 
 
 

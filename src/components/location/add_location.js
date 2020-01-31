@@ -15,13 +15,16 @@ import {
 import AddOrganization from './add_organization';
 import AddProperty from './add_property';
 import BusinessHours from './business_hours';
-// import SelectSearch from 'react-select-search'
 import Select from 'react-select';
+import SimpleReactValidator from 'simple-react-validator';
 
 class AddLocation extends Component {
     constructor(props) {
         super(props);
         this.toggle = this.toggle.bind(this);
+        this.validator = new SimpleReactValidator({
+            element: (message, className) => <div className='required_message'>{message}</div>
+          })
     }
 
     state = {
@@ -39,7 +42,7 @@ class AddLocation extends Component {
         label: '',
         firststepData: [],
         nextclick: false,
-        errorClass: 'is-invalid',
+        errorClass: 'is-invalid',        
     };
 
     componentDidMount = async () => {
@@ -74,30 +77,41 @@ class AddLocation extends Component {
     }
 
     next = () => {
-        if(this.state.organization !== '' && this.state.property !== '' && this.state.locationtype !== '' && this.state.label !== '') {
+        if (this.state.organization !== '' && this.state.property !== '' && this.state.locationtype !== '' && this.state.label !== '' && this.validator.allValid()) {
             this.setState({ nextmodal: !this.state.nextmodal });
-            this.setState({ addnextmodal: !this.state.addnextmodal });            
+            this.setState({ addnextmodal: !this.state.addnextmodal });
             this.props.isaddlocatiionmodal();
             let data = [{
                 zone: this.state.zone,
                 aggregationid: this.state.aggregationid,
-                organization: this.state.organization,
-                property: this.state.property,
-                locationtype: this.state.locationtype,
+                organization: this.state.organization.value,
+                property: this.state.property.value,
+                locationtype: { id: this.state.locationtype.value, value: this.state.locationtype.label },
                 label: this.state.label,
             }];
             this.setState({ firststepData: data });
         }
+        this.validator.showMessageFor('Zone');
+        this.validator.showMessageFor('AggregationId');
         this.setState({ nextclick: true });
     }
 
     business_hrsdata = (val) => {
         this.setState({ business_hours: val });
-        let firststepData = this.state.firststepData;        
-        var alldata = [...firststepData, ...val];
-        business_hours(alldata);
+        let firststepData = [...this.state.firststepData];
+        firststepData[0]['locationBusinessHoursList'] = val;
+        business_hours(firststepData);
     }
 
+    onZone = (e) => {
+        this.setState({ zone: e.target.value })
+        this.validator.showMessageFor('Zone');        
+    }
+
+    onAggregateId = (e) => {
+        this.setState({ aggregationid: e.target.value });
+        this.validator.showMessageFor('AggregationId'); 
+    }
 
     render() {
         const { Location } = this.props.data;
@@ -112,32 +126,32 @@ class AddLocation extends Component {
         })
         const orgStyles = {
             control: (base, state) => ({
-              ...base,
-              borderColor: this.state.nextclick && this.state.organization === '' ? '#C71C22' : '#ddd',
-              '&:hover': {
-                borderColor: this.state.nextclick && this.state.organization === '' ? '#C71C22' : '#ddd'
-              }
+                ...base,
+                borderColor: this.state.nextclick && this.state.organization === '' ? '#C71C22' : '#ddd',
+                '&:hover': {
+                    borderColor: this.state.nextclick && this.state.organization === '' ? '#C71C22' : '#ddd'
+                }
             })
-        } 
+        }
         const propertyStyles = {
             control: (base, state) => ({
-              ...base,
-              borderColor: this.state.nextclick && this.state.property === '' ? '#C71C22' : '#ddd',
-              '&:hover': {
-                borderColor: this.state.nextclick && this.state.property === '' ? '#C71C22' : '#ddd'
-              }
+                ...base,
+                borderColor: this.state.nextclick && this.state.property === '' ? '#C71C22' : '#ddd',
+                '&:hover': {
+                    borderColor: this.state.nextclick && this.state.property === '' ? '#C71C22' : '#ddd'
+                }
             })
-        } 
+        }
         const loctypeStyles = {
             control: (base, state) => ({
-              ...base,
-              borderColor: this.state.nextclick && this.state.locationtype === '' ? '#C71C22' : '#ddd',
-              '&:hover': {
-                borderColor: this.state.nextclick && this.state.locationtype === '' ? '#C71C22' : '#ddd'
-              }
+                ...base,
+                borderColor: this.state.nextclick && this.state.locationtype === '' ? '#C71C22' : '#ddd',
+                '&:hover': {
+                    borderColor: this.state.nextclick && this.state.locationtype === '' ? '#C71C22' : '#ddd'
+                }
             })
-        }         
-        
+        }
+
         return (
             <Fragment>
                 <ReactCSSTransitionGroup
@@ -156,13 +170,15 @@ class AddLocation extends Component {
                                         <Col md='6'>
                                             <FormGroup>
                                                 <Label for="zone">Zone</Label>
-                                                <Input type='text' id="zone" onChange={(e) => this.setState({ zone: e.target.value })} value={this.state.zone} />
+                                                <Input type='text' id="zone" onChange={(e) => this.onZone(e) } value={this.state.zone} />
+                                                {this.validator.message('Zone', this.state.zone, 'alpha_num')}
                                             </FormGroup>
                                         </Col>
                                         <Col md='6'>
                                             <FormGroup>
                                                 <Label for="aggregation_id">Aggregation ID</Label>
-                                                <Input type='text' id="aggregation_id" onChange={(e) => this.setState({ aggregationid: e.target.value })} value={this.state.aggregationid} />
+                                                <Input type='text' id="aggregation_id" onChange={(e) => this.onAggregateId(e)} value={this.state.aggregationid} />
+                                                {this.validator.message('AggregationId', this.state.aggregationid, 'alpha_num')}
                                             </FormGroup>
                                         </Col>
                                     </Row>
@@ -172,50 +188,58 @@ class AddLocation extends Component {
                                                 <Label for="organization">Organization *</Label>
                                                 <Select
                                                     value={this.state.organization}
-                                                    styles = {orgStyles}
+                                                    styles={orgStyles}
                                                     onChange={(organization) => this.setState({ organization })}
                                                     options={orgnizationdata}
                                                 />
                                                 <a style={{ cursor: 'pointer' }} onClick={() => this.setState({ addorgmodal: true })} ><i className="pe-7s-plus"> </i> Add New Organization</a>
+                                                {this.state.nextclick && this.state.organization === '' && <div className='required_message'>{this.props.requiredMessage}</div>
+                                                }
                                             </FormGroup>
                                         </Col>
                                         {this.state.addorgmodal &&
-                                            <AddOrganization addorgmodal={this.state.addorgmodal} isaddorgmodal={this.isaddorgmodal} />
+                                            <AddOrganization requiredMessage={this.props.requiredMessage} addorgmodal={this.state.addorgmodal} isaddorgmodal={this.isaddorgmodal} />
                                         }
                                         <Col md='6'>
                                             <FormGroup>
                                                 <Label for="property">Property *</Label>
                                                 <Select
                                                     value={this.state.property}
-                                                    styles = {propertyStyles}
+                                                    styles={propertyStyles}
                                                     onChange={(property) => this.setState({ property })}
                                                     options={propertydata}
                                                 />
                                                 <a style={{ cursor: 'pointer' }} onClick={() => this.setState({ addpropertymodal: !this.state.addpropertymodal })} ><i className="pe-7s-plus"> </i> Add New Property</a>
+                                                {this.state.nextclick && this.state.property === '' && <div className='required_message'>{this.props.requiredMessage}</div>
+                                                }
                                             </FormGroup>
                                         </Col>
                                         {this.state.addpropertymodal &&
-                                            <AddProperty addpropertymodal={this.state.addpropertymodal} isaddpropertymodal={this.isaddpropertymodal} />
+                                            <AddProperty requiredMessage={this.props.requiredMessage} addpropertymodal={this.state.addpropertymodal} isaddpropertymodal={this.isaddpropertymodal} />
                                         }
                                     </Row>
                                     <Row>
                                         <Col md='6'>
                                             <FormGroup>
-                                                <Label for="location_types">Location Type*</Label>                                                
+                                                <Label for="location_types">Location Type*</Label>
                                                 <Select
                                                     value={this.state.locationtype}
-                                                    styles = {loctypeStyles}                                                    
+                                                    styles={loctypeStyles}
                                                     onChange={(locationtype) => this.setState({ locationtype })}
                                                     options={locationdata}
                                                 />
+                                                {this.state.nextclick && this.state.locationtype === '' && <div className='required_message'>{this.props.requiredMessage}</div>
+                                                }
                                             </FormGroup>
                                         </Col>
                                         <Col md='6'>
                                             <FormGroup>
                                                 <Label for="label">Label *</Label>
                                                 <Input type='text' id='label' value={this.state.label}
-                                                className={`form-control ${this.state.nextclick && this.state.label === '' && this.state.errorClass}`}
-                                                onChange={(e) => this.setState({ label: e.target.value })} />
+                                                    className={`form-control ${this.state.nextclick && this.state.label === '' && this.state.errorClass}`}
+                                                    onChange={(e) => this.setState({ label: e.target.value })} />
+                                                {this.state.nextclick && this.state.label === '' && <div className='required_message'>{this.props.requiredMessage}</div>
+                                                }
                                             </FormGroup>
                                         </Col>
                                     </Row>
@@ -226,7 +250,7 @@ class AddLocation extends Component {
                                 <Button color="success" onClick={() => this.next()}>Next</Button>{' '}
                             </ModalFooter>
                         </Modal>
-                        {this.state.nextmodal && <BusinessHours addnextmodal={this.state.addnextmodal} isaddnextmodal={this.isaddnextmodal} isclosemodals={this.isclosemodals} business_hrsdata={this.business_hrsdata} />}
+                        {this.state.nextmodal && <BusinessHours requiredMessage={this.props.requiredMessage} addnextmodal={this.state.addnextmodal} isaddnextmodal={this.isaddnextmodal} isclosemodals={this.isclosemodals} business_hrsdata={this.business_hrsdata} />}
                     </div>
                 </ReactCSSTransitionGroup>
             </Fragment>

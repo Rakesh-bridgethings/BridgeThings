@@ -1,4 +1,4 @@
-import { fetch_locationitem_pending, fetch_locationitem_success, fetch_locationitem_error, fetch_organizationdata_pending, fetch_organizationdata_success, fetch_organizationdata_error, fetch_location_types_pending, fetch_location_types_success, fetch_entity_types_pending, fetch_entity_types_success, fetch_property_types_pending, fetch_property_types_success, fetch_day_intervals_pending, fetch_day_intervals_success, fetch_property_pending, fetch_property_success, edit_location_data_success,edit_location_data_pending } from '../actions/locationitem';
+import { fetch_locationitem_pending, fetch_locationitem_success, fetch_locationitem_error, fetch_organizationdata_pending, fetch_organizationdata_success, fetch_organizationdata_error, fetch_location_types_pending, fetch_location_types_success, fetch_entity_types_pending, fetch_entity_types_success, fetch_property_types_pending, fetch_property_types_success, fetch_day_intervals_pending, fetch_day_intervals_success, fetch_property_pending, fetch_property_success, edit_location_data_success, edit_location_data_pending, update_locationitem_success, delete_location_data_success } from '../actions/locationitem';
 // import axios from 'axios';
 
 let locations = [
@@ -8624,6 +8624,41 @@ let day_intervals = [
    }
 ];
 
+export function deleteLocationData(id) {
+   locations.forEach(function(item, index, object) {
+      if (item.id === id) {
+        object.splice(index, 1);
+      }
+    });
+   return dispatch => {
+      dispatch(delete_location_data_success());
+      return true;
+   }
+}
+
+export function updatedLocationData(editted_data, editid) {
+   // let data = [...locations];
+   // data.map((item, index) => {
+   //    if (item.id === editid) {
+   //       item['property'] = editted_data[0].propertyName;
+   //       item['locationBusinessHoursList'] = editted_data[0].locationBusinessHoursList;
+   //       item['locationType'] = editted_data[0].locationType;
+   //       item['propertyId'] = editted_data[0].property;
+   //       item['aggregateId'] = editted_data[0].aggregationid;
+   //       item['entityId'] = editted_data[0].organization;
+   //       item['floor'] = editted_data[0].label;
+   //       item['zone'] = editted_data[0].zone;
+   //       item['entityReference'] = editted_data[0].entityReference;        
+   //    }
+   // })
+   // locations = data;
+   // console.log("loc::", data);
+   return dispatch => {
+      dispatch(update_locationitem_success(locations));
+      return locations;
+   }
+}
+
 export function fetchlocationitemdata() {
    return dispatch => {
       dispatch(fetch_locationitem_pending());
@@ -8700,6 +8735,9 @@ export function fetchpropertydata() {
       return property.list;
    }
 }
+
+
+
 
 
 

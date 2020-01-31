@@ -23,13 +23,19 @@ class Business_Hours extends Component {
     }
 
     state = {
-        addlocationmodal: false,
-        addorganizationmodal: false,
-        addpropertymodal: false,
+        editlocationmodal: false,
+        editorganizationmodal: false,
+        editpropertymodal: false,
         busi_details: [],
         saveClicked: false,
         errorClass: 'is-invalid',
     };
+
+    componentWillReceiveProps = (props) => {
+        this.setState({
+            busi_details: props.getEditBusiness.locationBusinessHoursList,
+        })
+    }
 
     componentDidMount = async () => {
         const { fetchlocationitemdata, fetchorganizationdata, fetchlocationtypesdata, fetchentitytypesdata, fetchdayintervalsdata } = this.props;
@@ -47,7 +53,7 @@ class Business_Hours extends Component {
         if (index1 === -1) {
             busi_details.push({ 'businessType': e.target.value, 'weekDay': item.id, 'opensAt': null, 'closesAt': null });
         } else {
-            busi_details[index1]['businessType'] = e.target.value;
+            busi_details[index1]['businessType'] = parseInt(e.target.value, 10);
             busi_details[index1]['weekDay'] = item.id;
             busi_details[index1]['opensAt'] = null;
             busi_details[index1]['closesAt'] = null;
@@ -58,10 +64,10 @@ class Business_Hours extends Component {
     startend_hours = (e, time, index, item) => {
         let busi_details = [...this.state.busi_details];
         busi_details.map((item1, index1) => {
-            if(time === 'opensAt' && item.id === item1.weekDay){
+            if (time === 'opensAt' && item.id === item1.weekDay) {
                 busi_details[index1]['opensAt'] = e.target.value;
-             }
-            if(time === 'closesAt' && item.id === item1.weekDay){ 
+            }
+            if (time === 'closesAt' && item.id === item1.weekDay) {
                 busi_details[index1]['closesAt'] = e.target.value;
             }
         })
@@ -69,26 +75,26 @@ class Business_Hours extends Component {
     }
 
     toggle = () => {
-        this.props.isaddnextmodal();
+        this.props.iseditnextmodal();
     }
 
     save = () => {
         this.setState({ saveClicked: true });
         let busi_details = this.state.busi_details;
-        const busi_hrs = busi_details.findIndex((e) => parseInt(e.businessType, 10) === 3);        
+        const busi_hrs = busi_details.findIndex((e) => parseInt(e.businessType, 10) === 3);
         if (busi_hrs === -1) {
             this.props.business_hrsdata(this.state.busi_details);
             this.props.isclosemodals();
         } else {            
-            if(busi_details[busi_hrs]['opensAt'] !== null && busi_details[busi_hrs]['closesAt'] !== null) {
+            if (busi_details[busi_hrs]['opensAt'] !== null && busi_details[busi_hrs]['closesAt'] !== null) {
                 this.props.business_hrsdata(this.state.busi_details);
                 this.props.isclosemodals();
             }
-        }             
+        }
     }
 
     back = () => {
-        this.props.isaddnextmodal();
+        this.props.iseditnextmodal();
     }
 
     render() {
@@ -107,7 +113,7 @@ class Business_Hours extends Component {
                 'value': 3
             },
         ]
-        let weekdays = [{id: 1, val:'Monday'}, {id: 2, val:'Tuesday'}, {id: 3, val:'Wednesday'}, {id: 4, val:'Thursday'}, {id: 5, val:'Friday'}, {id: 6, val:'Saturday'}, {id: 7, val:'Sunday'}];
+        let weekdays = [{ id: 1, val: 'Monday' }, { id: 2, val: 'Tuesday' }, { id: 3, val: 'Wednesday' }, { id: 4, val: 'Thursday' }, { id: 5, val: 'Friday' }, { id: 6, val: 'Saturday' }, { id: 7, val: 'Sunday' }];
         return (
             <Fragment>
                 <ReactCSSTransitionGroup
@@ -118,40 +124,42 @@ class Business_Hours extends Component {
                     transitionEnter={false}
                     transitionLeave={false}>
                     <div>
-
-                        <Modal isOpen={this.props.addnextmodal} toggle={() => this.toggle()} className={this.props.className} id='add_location'>
+                        <Modal isOpen={this.props.editnextmodal} toggle={() => this.toggle()} className={this.props.className} id='edit_location'>
                             <ModalHeader toggle={() => this.toggle()}>Business Hours</ModalHeader>
                             <ModalBody>
                                 <Form>
                                     {weekdays.map((item1, index1) => {
+                                        let select_indx = this.state.busi_details.findIndex((e) => e.weekDay === item1.id);
                                         return (
                                             <Fragment key={index1}>
                                                 <Row>
                                                     <Col md='12'>
-                                                            <Label>{item1.val}</Label>
+                                                        <Label>{item1.val}</Label>
                                                     </Col>
                                                 </Row>
                                                 <Row>
                                                     <Col md='4'>
                                                         <FormGroup>
-                                                            <select id={index1} className="form-control" onChange={(e) => this.business_hrs(e, index1, item1)}>
+                                                            <select id={index1} className="form-control" onChange={(e) => this.business_hrs(e, index1, item1)}
+                                                                value={select_indx !== -1 ? this.state.busi_details[select_indx].businessType : ''} >
                                                                 <option selected value=''>Select Business Hours</option>
                                                                 {hrsOption.map((item, index) => {
                                                                     return (
-                                                                        <option key={index} value={item.value}>{item.label}</option>
+                                                                        <option key={index} value={item.value} >{item.label}</option>
                                                                     )
                                                                 })}
                                                             </select>
                                                         </FormGroup>
-                                                    </Col>                                                    
+                                                    </Col>
                                                     {this.state.busi_details.length > 0 && this.state.busi_details.map((item2, index2) => {
-                                                        if (item2.businessType === '3' && item2.weekDay === item1.id) {
+                                                        if (parseInt(item2.businessType, 10) === 3 && item2.weekDay === item1.id) {
                                                             return (
                                                                 <Fragment key={index2}>
                                                                     <Col md='4' >
                                                                         <FormGroup>
                                                                             <select className={`form-control ${(item2.opensAt === null || item2.opensAt === '') && this.state.saveClicked && 'is-invalid'}`}
-                                                                            onChange={(e) => this.startend_hours(e, 'opensAt', index1, item1)}>
+                                                                                value={item2.opensAt}
+                                                                                onChange={(e) => this.startend_hours(e, 'opensAt', index1, item1)}>
                                                                                 <option selected value=''>Start Hours</option>
                                                                                 {Location.daysinterval.map((item, index) => {
                                                                                     return (
@@ -160,13 +168,14 @@ class Business_Hours extends Component {
                                                                                 })}
                                                                             </select>
                                                                             {(item2.opensAt === null || item2.opensAt === '') && this.state.saveClicked && <div className='required_message'>{this.props.requiredMessage}</div>
-                                                }
+                                                                            }
                                                                         </FormGroup>
                                                                     </Col>
                                                                     <Col md='4'>
                                                                         <FormGroup>
                                                                             <select className={`form-control ${(item2.closesAt === null || item2.closesAt === '') && this.state.saveClicked && 'is-invalid'}`}
-                                                                            onChange={(e) => this.startend_hours(e, 'closesAt', index1, item1)}>
+                                                                                value={item2.closesAt}
+                                                                                onChange={(e) => this.startend_hours(e, 'closesAt', index1, item1)}>
                                                                                 <option selected value='' >End Hours</option>
                                                                                 {Location.daysinterval.map((item, index) => {
                                                                                     return (
