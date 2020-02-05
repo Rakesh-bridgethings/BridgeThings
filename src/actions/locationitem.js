@@ -33,10 +33,19 @@ export const EDIT_LOCATION_ERROR = 'EDIT_LOCATION_ERROR';
 export const UPDATE_LOCATION__DATA_SUCCESS = 'UPDATE_LOCATION__DATA_SUCCESS';
 export const DELETE_LOCATION__DATA_SUCCESS = 'DELETE_LOCATION__DATA_SUCCESS';
 
+export const DATA_POST_SUCCESS = 'DATA_POST_SUCCESS';
+
 // locations
 export function fetch_locationitem_pending() {
     return {
         type: FETCH_LOCATIONITEM_PENDING
+    }
+}
+
+export function data_post_success(msg) {
+    return {
+        type: DATA_POST_SUCCESS,
+        addedlocationmessage: msg
     }
 }
 

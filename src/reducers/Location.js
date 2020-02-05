@@ -1,4 +1,4 @@
-import { FETCH_LOCATIONITEM_PENDING, FETCH_LOCATIONITEM_SUCCESS, FETCH_LOCATIONITEM_ERROR, FETCH_ORGANIZATIONDATA_PENDING, FETCH_ORGANIZATIONDATA_SUCCESS, FETCH_ORGANIZATIONDATA_ERROR, FETCH_LOCATIONTYPE_PENDING, FETCH_LOCATIONTYPE_SUCCESS, FETCH_ENTITYTYPE_SUCCESS, FETCH_PROPERTYTYPE_SUCCESS, FETCH_PROPERTY_SUCCESS,  FETCH_DAYSINTERVAL_SUCCESS, EDIT_LOCATION_SUCCESS, UPDATE_LOCATION__DATA_SUCCESS, DELETE_LOCATION__DATA_SUCCESS } from '../actions/locationitem';
+import { FETCH_LOCATIONITEM_PENDING, FETCH_LOCATIONITEM_SUCCESS, FETCH_LOCATIONITEM_ERROR, FETCH_ORGANIZATIONDATA_PENDING, FETCH_ORGANIZATIONDATA_SUCCESS, FETCH_ORGANIZATIONDATA_ERROR, FETCH_LOCATIONTYPE_PENDING, FETCH_LOCATIONTYPE_SUCCESS, FETCH_ENTITYTYPE_SUCCESS, FETCH_PROPERTYTYPE_SUCCESS, FETCH_PROPERTY_SUCCESS,  FETCH_DAYSINTERVAL_SUCCESS, EDIT_LOCATION_SUCCESS, UPDATE_LOCATION__DATA_SUCCESS, DELETE_LOCATION__DATA_SUCCESS, DATA_POST_SUCCESS } from '../actions/locationitem';
 
 const initialState = {
     pending: false,
@@ -11,6 +11,7 @@ const initialState = {
     property: [],
     error: null,
     editdata: [],
+    addedlocationmessage: '',
 }
 
 const locationitem = (state = initialState, action) => {
@@ -96,7 +97,13 @@ const locationitem = (state = initialState, action) => {
                 pending: false,
                 error: action.error
             }
-
+        case DATA_POST_SUCCESS:
+            return {
+                ...state,
+                pending: false,
+                addedlocationmessage: action.addedlocationmessage,
+                error: action.error
+            }
         default:
             return state
     }

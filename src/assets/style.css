@@ -70,7 +70,9 @@ ul.pagination {
     color: #dc3545;
 }
 
-
+.Toastify__toast-container--top-right {
+    top: 5em !important;
+}
 
 
 

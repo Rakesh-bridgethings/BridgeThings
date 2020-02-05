@@ -20,12 +20,12 @@ class LocationSearchInput extends React.Component {
       .then(latLng => console.log('Success', latLng))
       .catch(error => console.error('Error', error));
   };
- 
+
   render() {
     const searchOptions = {
-        types: ['(cities)'],
-        componentRestrictions: {country: "us"}
-       }
+      types: ['(cities)'],
+      // componentRestrictions: {country: "us"}
+    }
     return (
       <PlacesAutocomplete
         value={this.state.address}

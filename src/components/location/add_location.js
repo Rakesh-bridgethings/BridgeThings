@@ -17,6 +17,11 @@ import AddProperty from './add_property';
 import BusinessHours from './business_hours';
 import Select from 'react-select';
 import SimpleReactValidator from 'simple-react-validator';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+toast.configure({
+
+})
 
 class AddLocation extends Component {
     constructor(props) {
@@ -24,7 +29,7 @@ class AddLocation extends Component {
         this.toggle = this.toggle.bind(this);
         this.validator = new SimpleReactValidator({
             element: (message, className) => <div className='required_message'>{message}</div>
-          })
+        })
     }
 
     state = {
@@ -42,15 +47,16 @@ class AddLocation extends Component {
         label: '',
         firststepData: [],
         nextclick: false,
-        errorClass: 'is-invalid',        
+        errorClass: 'is-invalid',
     };
 
+
     componentDidMount = async () => {
-        const { fetchlocationitemdata, fetchorganizationdata, fetchlocationtypesdata, fetchpropertydata } = this.props;
+        const { fetchlocationitemdata, fetchorganizationdata, fetchlocationtypesdata } = this.props;
         fetchlocationitemdata();
         fetchorganizationdata();
         fetchlocationtypesdata();
-        fetchpropertydata();
+
     }
 
     toggle = () => {
@@ -81,14 +87,17 @@ class AddLocation extends Component {
             this.setState({ nextmodal: !this.state.nextmodal });
             this.setState({ addnextmodal: !this.state.addnextmodal });
             this.props.isaddlocatiionmodal();
-            let data = [{
+            let data = {
                 zone: this.state.zone,
-                aggregationid: this.state.aggregationid,
-                organization: this.state.organization.value,
-                property: this.state.property.value,
-                locationtype: { id: this.state.locationtype.value, value: this.state.locationtype.label },
+                aggregateId: this.state.aggregationid,
+                entities: {
+                    "id": this.state.organization.value
+                },
+                propertyId: this.state.property.value,
                 label: this.state.label,
-            }];
+                locationType: this.state.locationtype.value, //{ id: this.state.locationtype.value, value: this.state.locationtype.label },    
+                locationBusinessHoursList: [],
+            };
             this.setState({ firststepData: data });
         }
         this.validator.showMessageFor('Zone');
@@ -98,19 +107,39 @@ class AddLocation extends Component {
 
     business_hrsdata = (val) => {
         this.setState({ business_hours: val });
-        let firststepData = [...this.state.firststepData];
-        firststepData[0]['locationBusinessHoursList'] = val;
-        business_hours(firststepData);
+        let firststepData = this.state.firststepData;
+        firststepData.locationBusinessHoursList = val;
+        const { business_hours } = this.props;
+        let res = business_hours(firststepData);
+        console.log("pp::", this.props, res);
+        toast.success(this.props.data.Location.addedlocationmessage, {
+            position: "top-right",
+            autoClose: 12000,
+            hideProgressBar: false,
+            newestOnTop: false,
+            // closeOnClick
+            ltr: true,
+            // pauseOnVisibilityChange
+            // draggable
+            pauseOnHover: true,
+        });
     }
 
     onZone = (e) => {
         this.setState({ zone: e.target.value })
-        this.validator.showMessageFor('Zone');        
+        this.validator.showMessageFor('Zone');
     }
 
     onAggregateId = (e) => {
         this.setState({ aggregationid: e.target.value });
-        this.validator.showMessageFor('AggregationId'); 
+        this.validator.showMessageFor('AggregationId');
+    }
+
+    onChngOrg = (organization) => {
+        const { fetchpropertydata } = this.props;
+        this.setState({ organization });
+        fetchpropertydata(organization.value);
+        // this.props.changeOrg(organization.value);
     }
 
     render() {
@@ -162,6 +191,7 @@ class AddLocation extends Component {
                     transitionEnter={false}
                     transitionLeave={false}>
                     <div>
+                        <ToastContainer />
                         <Modal isOpen={this.props.addlocationmodal} toggle={() => this.toggle()} className={this.props.className} id='add_location'>
                             <ModalHeader toggle={() => this.toggle()}>Add Location</ModalHeader>
                             <ModalBody>
@@ -170,7 +200,7 @@ class AddLocation extends Component {
                                         <Col md='6'>
                                             <FormGroup>
                                                 <Label for="zone">Zone</Label>
-                                                <Input type='text' id="zone" onChange={(e) => this.onZone(e) } value={this.state.zone} />
+                                                <Input type='text' id="zone" onChange={(e) => this.onZone(e)} value={this.state.zone} />
                                                 {this.validator.message('Zone', this.state.zone, 'alpha_num')}
                                             </FormGroup>
                                         </Col>
@@ -189,7 +219,7 @@ class AddLocation extends Component {
                                                 <Select
                                                     value={this.state.organization}
                                                     styles={orgStyles}
-                                                    onChange={(organization) => this.setState({ organization })}
+                                                    onChange={(organization) => this.onChngOrg(organization)}
                                                     options={orgnizationdata}
                                                 />
                                                 <a style={{ cursor: 'pointer' }} onClick={() => this.setState({ addorgmodal: true })} ><i className="pe-7s-plus"> </i> Add New Organization</a>
@@ -254,7 +284,6 @@ class AddLocation extends Component {
                     </div>
                 </ReactCSSTransitionGroup>
             </Fragment>
-
         );
     }
 }

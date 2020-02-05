@@ -18,8 +18,6 @@ import EditLocation from './edit_location';
 import DeleteLocation from './delete_location';
 import { DataTable } from 'react-data-components';
 
-// var DataTable = require('react-data-components').DataTable;
-
 
 class Location extends Component {
     constructor(props) {
@@ -34,7 +32,7 @@ class Location extends Component {
         getdeleteid: 0,
         deletelocationmodal: false,
         requiredMessage: 'This field is required',
-    };    
+    };
 
     componentWillReceiveProps = (props) => {
         let data = props.data.Location.locationitem;
@@ -60,23 +58,6 @@ class Location extends Component {
         const { fetchlocationitemdata, fetchorganizationdata } = this.props;
         await fetchlocationitemdata();
         await fetchorganizationdata();
-        // let data = this.props.data.Location.locationitem;
-        // let alltabledata = [];
-        // data && data.map((item, index) => {
-        //     alltabledata.push({
-        //         "property": item.property,
-        //         "propertyId": item.propertyId,
-        //         "entityId": item.entityId,
-        //         "entityReference": item.entityReference,
-        //         "region": item.region,
-        //         "zone": item.zone,
-        //         "aggregateId": item.aggregateId,
-        //         "floor": item.floor,
-        //         "id": item.id,
-        //     }
-        //     )
-        // })
-        // this.setState({ alltabledata });
     }
 
     isaddlocatiionmodal = () => {
@@ -89,7 +70,7 @@ class Location extends Component {
 
     isdeletelocationmodal = () => {
         this.setState({ deletelocationmodal: !this.state.deletelocationmodal });
-    }    
+    }
 
     edit_location = (item) => {
         const { editLocation } = this.props;
@@ -104,7 +85,9 @@ class Location extends Component {
     }
 
     render() {
-        const { Location } = this.props.data;      
+        const { Location } = this.props.data;        
+        const { Status } = this.props.data;
+        console.log("loaca:", Status.loading );
         const columns = [
             // {
             //     title: '#',
@@ -136,46 +119,49 @@ class Location extends Component {
             },
             {
                 title: 'Action',
-                render: (val, row) => <div><i className="lnr-pencil" style={{cursor: 'pointer'}} onClick={() => this.edit_location(row)} />&nbsp;&nbsp;&nbsp;&nbsp;<i className="lnr-trash" style={{cursor: 'pointer'}} onClick={() => this.delete_location(row)} /></div>,
+                render: (val, row) => <div><i className="lnr-pencil" style={{ cursor: 'pointer' }} onClick={() => this.edit_location(row)} />&nbsp;&nbsp;&nbsp;&nbsp;<i className="lnr-trash" style={{ cursor: 'pointer' }} onClick={() => this.delete_location(row)} /></div>,
             }
         ];
         return (
             <Fragment>
-                <ReactCSSTransitionGroup
-                    component="div"
-                    transitionName="TabsAnimation"
-                    transitionAppear={true}
-                    transitionAppearTimeout={0}
-                    transitionEnter={false}
-                    transitionLeave={false}>
-                    <div>
-                        <PageTitle
-                            heading="Locations"
-                            icon="pe-7s-map-marker icon-gradient bg-mean-fruit"
-                        />
-                        <Card className="main-card mb-3">
-                            <CardHeader>
-                                <Row style={{ width: '100%' }}>
-                                    <Col md="6" style={{ textAlign: 'left' }}>
+                {/* Status.loading && //loader file  */}
+                {/* <div></div> */}
+                {//!Status.loading &&
+                    <ReactCSSTransitionGroup
+                        component="div"
+                        transitionName="TabsAnimation"
+                        transitionAppear={true}
+                        transitionAppearTimeout={0}
+                        transitionEnter={false}
+                        transitionLeave={false}>
+                        <div>
+                            <PageTitle
+                                heading="Locations"
+                                icon="pe-7s-map-marker icon-gradient bg-mean-fruit"
+                            />
+                            <Card className="main-card mb-3">
+                                <CardHeader>
+                                    <Row style={{ width: '100%' }}>
+                                        <Col md="6" style={{ textAlign: 'left' }}>
 
-                                    </Col>
-                                    <Col md="6" style={{ textAlign: 'right' }} >
-                                        <Button color="success" onClick={() => this.setState({ addlocationmodal: !this.state.addlocationmodal })}>Add Location</Button>
-                                        <AddLocation requiredMessage={this.state.requiredMessage} addlocationmodal={this.state.addlocationmodal} isaddlocatiionmodal={this.isaddlocatiionmodal} />
-                                    </Col>
-                                </Row>
-                            </CardHeader>
-                            <CardBody className='page_css'>
-                                <DataTable
-                                    columns={columns}
-                                    initialData={this.state.alltabledata}
-                                    initialPageLength={10}
-                                    initialSortBy={{ prop: 'entityReference', order: 'descending' }}
-                                    sortable={true}
-                                />
-                                <EditLocation requiredMessage={this.state.requiredMessage} editlocationmodal={this.state.editlocationmodal} iseditlocatiionmodal={this.iseditlocatiionmodal} geteditid={this.state.geteditid} getEditData={Location.editdata} />
-                                <DeleteLocation requiredMessage={this.state.requiredMessage} getdeleteid={this.state.getdeleteid} deletelocationmodal={this.state.deletelocationmodal} isdeletelocationmodal={this.isdeletelocationmodal} />
-                                {/* <Table className="mb-0">
+                                        </Col>
+                                        <Col md="6" style={{ textAlign: 'right' }} >
+                                            <Button color="success" onClick={() => this.setState({ addlocationmodal: !this.state.addlocationmodal })}>Add Location</Button>
+                                            <AddLocation requiredMessage={this.state.requiredMessage} addlocationmodal={this.state.addlocationmodal} isaddlocatiionmodal={this.isaddlocatiionmodal} />
+                                        </Col>
+                                    </Row>
+                                </CardHeader>
+                                <CardBody className='page_css'>
+                                    <DataTable
+                                        columns={columns}
+                                        initialData={this.state.alltabledata}
+                                        initialPageLength={10}
+                                        initialSortBy={{ prop: 'entityReference', order: 'descending' }}
+                                        sortable={true}
+                                    />
+                                    <EditLocation requiredMessage={this.state.requiredMessage} editlocationmodal={this.state.editlocationmodal} iseditlocatiionmodal={this.iseditlocatiionmodal} geteditid={this.state.geteditid} getEditData={Location.editdata} />
+                                    <DeleteLocation requiredMessage={this.state.requiredMessage} getdeleteid={this.state.getdeleteid} deletelocationmodal={this.state.deletelocationmodal} isdeletelocationmodal={this.isdeletelocationmodal} />
+                                    {/* <Table className="mb-0">
                                     <thead>
                                         <tr>
                                             <th>#</th>
@@ -205,16 +191,16 @@ class Location extends Component {
                                         })}
                                     </tbody>
                                 </Table> */}
-                            </CardBody>
-                        </Card>
-                    </div>
-                </ReactCSSTransitionGroup>
+                                </CardBody>
+                            </Card>
+                        </div>
+                    </ReactCSSTransitionGroup>
+                }
             </Fragment>
 
         );
     }
 }
-
 
 const mapStateToProps = state => ({
     data: state,

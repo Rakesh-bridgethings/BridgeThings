@@ -89,7 +89,7 @@ class AddProperty extends Component {
                                         </Col>
                                     </Row>
                                     <Row>
-                                        <Col md='12'>
+                                        <Col md='6'>
                                             <FormGroup>
                                                 <Label for="type">Type</Label>
                                                 <Select
@@ -99,8 +99,14 @@ class AddProperty extends Component {
                                                 />
                                             </FormGroup>
                                         </Col>
+                                        <Col md='6'>
+                                            <FormGroup>
+                                                <Label for="area">Area</Label>
+                                                <LocationSearchInput />
+                                            </FormGroup>
+                                        </Col>                                        
                                     </Row>
-                                    <LocationSearchInput />
+                                    
                                     {/* <Map
                                     google={this.props.google}
                                     center={{lat: 18.5204, lng: 73.8567}}

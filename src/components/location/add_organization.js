@@ -53,7 +53,7 @@ class AddOrganization extends Component {
             this.props.isaddorgmodal(!this.props.addorgmodal);
             let alldata = {
                 name: this.state.name,
-                type: this.state.type,
+                entityType: {id: this.state.type.value}
             }
             add_organization(alldata);
         }
@@ -74,7 +74,7 @@ class AddOrganization extends Component {
                 borderColor: this.state.nextclick && this.state.type === '' ? '#C71C22' : '#ddd'
               }
             })
-        } 
+        }
         return (
             <Fragment>
                 <ReactCSSTransitionGroup
