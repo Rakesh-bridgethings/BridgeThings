@@ -121,7 +121,7 @@ class EditLocation extends Component {
         this.setState({ business_hours: val });
         let firststepData = [...this.state.firststepData];
         firststepData[0]['locationBusinessHoursList'] = val;
-        updatedLocationData(firststepData, this.state.editid);
+        // updatedLocationData(firststepData, this.state.editid);
     }
 
     onZone = (e) => {
@@ -290,7 +290,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     fetchorganizationdata: fetchorganizationdata,
     fetchlocationtypesdata: fetchlocationtypesdata,
     fetchpropertydata: fetchpropertydata,
-    updatedLocationData: updatedLocationData,
+    // updatedLocationData: updatedLocationData,
 }, dispatch)
 
 export default connect(

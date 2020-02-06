@@ -74,6 +74,12 @@ ul.pagination {
     top: 5em !important;
 }
 
+.Toastify__toast-body {
+    text-align: left !important;
+}
+
+
+
 
 
 

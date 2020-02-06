@@ -42,10 +42,12 @@ export function fetch_locationitem_pending() {
     }
 }
 
-export function data_post_success(msg) {
+export function data_post_status(status, msg, page) {
     return {
         type: DATA_POST_SUCCESS,
-        addedlocationmessage: msg
+        notificationMsg: msg,
+        status: status,
+        page: page,
     }
 }
 

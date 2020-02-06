@@ -1,6 +1,6 @@
-/**
-  * Show Error
-  */
+import {status_replace} from '../actions/status';
+
+
  export default function (dispatch, type, val) {
     return new Promise((resolve, reject) => {
       // Validate types
@@ -16,11 +16,8 @@
         if (type === 'info') message = 'Something is happening...';
         if (type === 'loading' && val !== false) message = true;
       }
-  
-      return resolve(dispatch({
-        type: 'STATUS_REPLACE',
-        [type]: message,
-      }));
+      
+      return resolve(dispatch(status_replace(message)));
     });
   }
   

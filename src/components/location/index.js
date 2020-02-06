@@ -17,7 +17,7 @@ import AddLocation from './add_location';
 import EditLocation from './edit_location';
 import DeleteLocation from './delete_location';
 import { DataTable } from 'react-data-components';
-
+import Loading from '../loader';
 
 class Location extends Component {
     constructor(props) {
@@ -85,9 +85,8 @@ class Location extends Component {
     }
 
     render() {
-        const { Location } = this.props.data;        
-        const { Status } = this.props.data;
-        console.log("loaca:", Status.loading );
+        const { Location } = this.props.data;
+        const { Status } = this.props.data;        
         const columns = [
             // {
             //     title: '#',
@@ -124,9 +123,8 @@ class Location extends Component {
         ];
         return (
             <Fragment>
-                {/* Status.loading && //loader file  */}
-                {/* <div></div> */}
-                {//!Status.loading &&
+                {Status.loading && <Loading />}
+                {!Status.loading &&
                     <ReactCSSTransitionGroup
                         component="div"
                         transitionName="TabsAnimation"
@@ -197,7 +195,6 @@ class Location extends Component {
                     </ReactCSSTransitionGroup>
                 }
             </Fragment>
-
         );
     }
 }

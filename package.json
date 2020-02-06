@@ -19,6 +19,7 @@
     "react-google-autocomplete": "^1.1.2",
     "react-google-maps": "^9.4.5",
     "react-hamburgers": "^1.0.0",
+    "react-loaders": "^3.0.1",
     "react-metismenu": "^1.4.0",
     "react-perfect-scrollbar": "^1.5.3",
     "react-places-autocomplete": "^7.2.1",

@@ -11,7 +11,6 @@ const initialState = {
     property: [],
     error: null,
     editdata: [],
-    addedlocationmessage: '',
 }
 
 const locationitem = (state = initialState, action) => {
@@ -95,13 +94,6 @@ const locationitem = (state = initialState, action) => {
             return {
                 ...state,
                 pending: false,
-                error: action.error
-            }
-        case DATA_POST_SUCCESS:
-            return {
-                ...state,
-                pending: false,
-                addedlocationmessage: action.addedlocationmessage,
                 error: action.error
             }
         default:

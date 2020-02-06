@@ -17,11 +17,8 @@ import AddProperty from './add_property';
 import BusinessHours from './business_hours';
 import Select from 'react-select';
 import SimpleReactValidator from 'simple-react-validator';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-toast.configure({
+import Notification from '../notification';
 
-})
 
 class AddLocation extends Component {
     constructor(props) {
@@ -110,19 +107,7 @@ class AddLocation extends Component {
         let firststepData = this.state.firststepData;
         firststepData.locationBusinessHoursList = val;
         const { business_hours } = this.props;
-        let res = business_hours(firststepData);
-        console.log("pp::", this.props, res);
-        toast.success(this.props.data.Location.addedlocationmessage, {
-            position: "top-right",
-            autoClose: 12000,
-            hideProgressBar: false,
-            newestOnTop: false,
-            // closeOnClick
-            ltr: true,
-            // pauseOnVisibilityChange
-            // draggable
-            pauseOnHover: true,
-        });
+        business_hours(firststepData);
     }
 
     onZone = (e) => {
@@ -137,7 +122,7 @@ class AddLocation extends Component {
 
     onChngOrg = (organization) => {
         const { fetchpropertydata } = this.props;
-        this.setState({ organization });
+        this.setState({ organization, property: '' });        
         fetchpropertydata(organization.value);
         // this.props.changeOrg(organization.value);
     }
@@ -180,7 +165,7 @@ class AddLocation extends Component {
                 }
             })
         }
-
+        const { Status } = this.props.data;
         return (
             <Fragment>
                 <ReactCSSTransitionGroup
@@ -191,7 +176,9 @@ class AddLocation extends Component {
                     transitionEnter={false}
                     transitionLeave={false}>
                     <div>
-                        <ToastContainer />
+                        {Status.status !== '' && Status.page === 'add' &&                                                    
+                            <Notification msg={Status.notificationMsg} status={Status.status} />
+                        }
                         <Modal isOpen={this.props.addlocationmodal} toggle={() => this.toggle()} className={this.props.className} id='add_location'>
                             <ModalHeader toggle={() => this.toggle()}>Add Location</ModalHeader>
                             <ModalBody>

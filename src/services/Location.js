@@ -1,4 +1,4 @@
-import { fetch_locationitem_pending, fetch_locationitem_success, fetch_locationitem_error, fetch_organizationdata_pending, fetch_organizationdata_success, fetch_organizationdata_error, fetch_location_types_pending, fetch_location_types_success, fetch_entity_types_pending, fetch_entity_types_success, fetch_property_types_pending, fetch_property_types_success, fetch_day_intervals_pending, fetch_day_intervals_success, fetch_property_pending, fetch_property_success, edit_location_data_success, edit_location_data_pending, update_locationitem_success, delete_location_data_success, data_post_success } from '../actions/locationitem';
+import { fetch_locationitem_pending, fetch_locationitem_success, fetch_locationitem_error, fetch_organizationdata_pending, fetch_organizationdata_success, fetch_organizationdata_error, fetch_location_types_pending, fetch_location_types_success, fetch_entity_types_pending, fetch_entity_types_success, fetch_property_types_pending, fetch_property_types_success, fetch_day_intervals_pending, fetch_day_intervals_success, fetch_property_pending, fetch_property_success, edit_location_data_success, edit_location_data_pending, update_locationitem_success, delete_location_data_success, data_post_status } from '../actions/locationitem';
 import axios from 'axios';
 import { SERVER_URL, HEADER } from '../config';
 import statusMessage from './status';
@@ -12,7 +12,7 @@ export function fetchlocationitemdata() {
       await statusMessage(dispatch, 'loading', true);
       var instance = axios.create({ baseURL: SERVER_URL, timeout: 2000, });
       try {
-         instance.post(`locations`, locations, { headers: HEADER })
+         axios.post(`${SERVER_URL}locations`, locations, { headers: HEADER })
             .then(async (res) => {
                statusMessage(dispatch, "loading", false);
                resolve(
@@ -61,7 +61,7 @@ export function fetchentitytypesdata() {
    return dispatch => new Promise(async (resolve, reject) => {
       await statusMessage(dispatch, 'loading', true);
       try {
-         axios.get(`${SERVER_URL}entity_types`).then(async (res) => {
+         axios.get(`${SERVER_URL}entity_types`, { headers: HEADER }).then(async (res) => {
             statusMessage(dispatch, "loading", false);
             resolve(
                dispatch(fetch_entity_types_success(res.data))
@@ -77,7 +77,7 @@ export function fetchpropertytypesdata() {
    return dispatch => new Promise(async (resolve, reject) => {
       await statusMessage(dispatch, 'loading', true);
       try {
-         axios.get(`${SERVER_URL}property_types`).then(async (res) => {
+         axios.get(`${SERVER_URL}property_types`, { headers: HEADER }).then(async (res) => {
             statusMessage(dispatch, "loading", false);
             resolve(
                dispatch(fetch_property_types_success(res.data))
@@ -93,7 +93,7 @@ export function fetchpropertydata(id) {
    return dispatch => new Promise(async (resolve, reject) => {
       await statusMessage(dispatch, 'loading', true);
       try {
-         axios.get(`${SERVER_URL}property/list?entity=${id}`).then(async (res) => {
+         axios.get(`${SERVER_URL}property/list?entity=${id}`, { headers: HEADER }).then(async (res) => {
             statusMessage(dispatch, "loading", false);
             resolve(
                dispatch(fetch_property_success(res.data.list))
@@ -109,7 +109,7 @@ export function fetchdayintervalsdata() {
    return dispatch => new Promise(async (resolve, reject) => {
       await statusMessage(dispatch, 'loading', true);
       try {
-         axios.get(`${SERVER_URL}day_intervals`).then(async (res) => {
+         axios.get(`${SERVER_URL}day_intervals`, { headers: HEADER }).then(async (res) => {
             statusMessage(dispatch, "loading", false);
             resolve(
                dispatch(fetch_day_intervals_success(res.data))
@@ -127,8 +127,21 @@ export function business_hours(value) {
       try {
          axios.post(`${SERVER_URL}location`, value, { headers: HEADER }).then(async (res) => {
             statusMessage(dispatch, "loading", false);
+            var status = '';
+            if (res.status === 200 && res.data !== '') {
+               status = 'success';
+            }
+            if (res.status === 200 && res.data === '') {
+               status = 'error';
+            }
             resolve(
-               dispatch(data_post_success(res.data))
+               dispatch(data_post_status(status, res.data, 'add'))
+            );
+         }).catch(error => {
+            statusMessage(dispatch, 'error', error);
+            reject(error);
+            resolve(
+               dispatch(data_post_status('error', error, 'add'))
             );
          });
       } catch (error) {
@@ -144,18 +157,24 @@ export function add_organization(value) {
 
 export function editLocation(editid) {
    let editdata = [];
-   // axios.post(`${SERVER_URL}locations`, locations, { headers: HEADER }).then(function (res) {
-   //    res.data.rows.map((item, index) => {
-   //       if (item.id === editid) {
-   //          editdata.push(item);
-   //       }
-   //    })  
-   //    return dispatch => {
-   //       dispatch(edit_location_data_success(editdata[0]));
-   //       return editdata[0];
-   //    }  
-   // });
-
+   return dispatch => new Promise(async (resolve, reject) => {
+      await statusMessage(dispatch, 'loading', true);
+      try {
+         axios.post(`${SERVER_URL}locations`, locations, { headers: HEADER }).then(async (res) => {
+            statusMessage(dispatch, "loading", false);
+            res.data.rows.map((item, index) => {
+               if (item.id === editid) {
+                  editdata.push(item);
+               }
+            })
+            resolve(
+               dispatch(edit_location_data_success(editdata[0]))
+            );
+         });
+      } catch (error) {
+         reject(error);
+      }
+   }).catch(async (err) => { await statusMessage(dispatch, 'error', err); throw err; });
 }
 
 export function deleteLocationData(id) {
@@ -169,20 +188,6 @@ export function deleteLocationData(id) {
    //    return true;
    // }
 }
-
-export function updatedLocationData(editted_data, editid) {
-   // return dispatch => {
-   //    axios.post(`${SERVER_URL}locations`, locations, { headers: HEADER }).then(function (res) {
-   //       dispatch(update_locationitem_success(res.data.rows));
-   //       return res.data.rows;
-   //    }).catch(function (error) {
-   //       console.log(error);
-   //    });
-   // }
-
-}
-
-
 
 
 
