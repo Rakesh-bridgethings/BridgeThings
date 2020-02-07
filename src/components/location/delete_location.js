@@ -11,7 +11,7 @@ import {
     Modal, ModalHeader, ModalBody, ModalFooter,
     Form, Label, Input, FormGroup, DropdownItem
 } from 'reactstrap';
-
+import Notification from '../notification';
 
 class EditLocation extends Component {
     constructor(props) {
@@ -35,16 +35,20 @@ class EditLocation extends Component {
 
     toggle = () => {
         this.props.isdeletelocationmodal();
+        this.props.shownoti('');
     }
 
     delete = () => {
         let { deleteLocationData } = this.props;
-        deleteLocationData (this.state.getdeleteid);
+        deleteLocationData(this.state.getdeleteid);
         this.props.isdeletelocationmodal();
+        this.props.shownoti('delete');
     }
 
     render() {
         const { Location } = this.props.data;
+        const { Status } = this.props.data;
+        console.log("notitype::", this.props.notitype)
         return (
             <Fragment>
                 <ReactCSSTransitionGroup
@@ -55,6 +59,9 @@ class EditLocation extends Component {
                     transitionEnter={false}
                     transitionLeave={false}>
                     <div>
+                        {Status.status !== '' && Status.page === 'delete' &&  this.props.notitype === 'delete' &&             
+                            <Notification msg={Status.notificationMsg} status={Status.status} />
+                        }
                         <Modal isOpen={this.props.deletelocationmodal} toggle={() => this.toggle()} className={this.props.className} id='delete_location'>
                             <ModalHeader toggle={() => this.toggle()}>Delete Confirmation</ModalHeader>
                             <ModalBody>

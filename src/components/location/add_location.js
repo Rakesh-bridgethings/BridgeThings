@@ -30,7 +30,6 @@ class AddLocation extends Component {
     }
 
     state = {
-        addlocationmodal: false,
         addorgmodal: false,
         addpropertymodal: false,
         nextmodal: false,
@@ -45,6 +44,7 @@ class AddLocation extends Component {
         firststepData: [],
         nextclick: false,
         errorClass: 'is-invalid',
+        page: '',
     };
 
 
@@ -53,8 +53,9 @@ class AddLocation extends Component {
         fetchlocationitemdata();
         fetchorganizationdata();
         fetchlocationtypesdata();
-
+        
     }
+
 
     toggle = () => {
         this.props.isaddlocatiionmodal();
@@ -100,6 +101,7 @@ class AddLocation extends Component {
         this.validator.showMessageFor('Zone');
         this.validator.showMessageFor('AggregationId');
         this.setState({ nextclick: true });
+        this.props.shownoti('');
     }
 
     business_hrsdata = (val) => {
@@ -108,6 +110,8 @@ class AddLocation extends Component {
         firststepData.locationBusinessHoursList = val;
         const { business_hours } = this.props;
         business_hours(firststepData);
+        this.setState({ zone: '', aggregationid: '', organization: '', property: '', locationtype: '', label: '', nextclick: false });
+        this.props.shownoti('add');
     }
 
     onZone = (e) => {
@@ -122,7 +126,7 @@ class AddLocation extends Component {
 
     onChngOrg = (organization) => {
         const { fetchpropertydata } = this.props;
-        this.setState({ organization, property: '' });        
+        this.setState({ organization, property: '' });
         fetchpropertydata(organization.value);
         // this.props.changeOrg(organization.value);
     }
@@ -176,8 +180,10 @@ class AddLocation extends Component {
                     transitionEnter={false}
                     transitionLeave={false}>
                     <div>
-                        {Status.status !== '' && Status.page === 'add' &&                                                    
-                            <Notification msg={Status.notificationMsg} status={Status.status} />
+                        {Status.status !== '' && Status.page === 'add' && this.props.notitype === 'add' &&
+                            <Fragment>
+                                <Notification msg={Status.notificationMsg} status={Status.status} show={this.props.addlocationmodal} />
+                            </Fragment>
                         }
                         <Modal isOpen={this.props.addlocationmodal} toggle={() => this.toggle()} className={this.props.className} id='add_location'>
                             <ModalHeader toggle={() => this.toggle()}>Add Location</ModalHeader>

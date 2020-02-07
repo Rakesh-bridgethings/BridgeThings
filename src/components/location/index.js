@@ -32,6 +32,7 @@ class Location extends Component {
         getdeleteid: 0,
         deletelocationmodal: false,
         requiredMessage: 'This field is required',
+        showaddnoti: '',
     };
 
     componentWillReceiveProps = (props) => {
@@ -82,6 +83,16 @@ class Location extends Component {
     delete_location = (item) => {
         this.setState({ deletelocationmodal: !this.state.deletelocationmodal });
         this.setState({ getdeleteid: item.id });
+        this.setState ({ notitype: '' });
+    }
+
+    add_loc = () => {
+        this.setState({ addlocationmodal: !this.state.addlocationmodal });
+        this.setState ({ notitype: 'add' });
+    }
+
+    shownoti = (val) => {
+        this.setState ({ notitype: val });
     }
 
     render() {
@@ -144,8 +155,8 @@ class Location extends Component {
 
                                         </Col>
                                         <Col md="6" style={{ textAlign: 'right' }} >
-                                            <Button color="success" onClick={() => this.setState({ addlocationmodal: !this.state.addlocationmodal })}>Add Location</Button>
-                                            <AddLocation requiredMessage={this.state.requiredMessage} addlocationmodal={this.state.addlocationmodal} isaddlocatiionmodal={this.isaddlocatiionmodal} />
+                                            <Button color="success" onClick={() => this.add_loc()}>Add Location</Button>
+                                            <AddLocation shownoti={this.shownoti} notitype={this.state.notitype} requiredMessage={this.state.requiredMessage} addlocationmodal={this.state.addlocationmodal} isaddlocatiionmodal={this.isaddlocatiionmodal} />
                                         </Col>
                                     </Row>
                                 </CardHeader>
@@ -158,7 +169,7 @@ class Location extends Component {
                                         sortable={true}
                                     />
                                     <EditLocation requiredMessage={this.state.requiredMessage} editlocationmodal={this.state.editlocationmodal} iseditlocatiionmodal={this.iseditlocatiionmodal} geteditid={this.state.geteditid} getEditData={Location.editdata} />
-                                    <DeleteLocation requiredMessage={this.state.requiredMessage} getdeleteid={this.state.getdeleteid} deletelocationmodal={this.state.deletelocationmodal} isdeletelocationmodal={this.isdeletelocationmodal} />
+                                    <DeleteLocation shownoti={this.shownoti} notitype={this.state.notitype} requiredMessage={this.state.requiredMessage} getdeleteid={this.state.getdeleteid} deletelocationmodal={this.state.deletelocationmodal} isdeletelocationmodal={this.isdeletelocationmodal} />
                                     {/* <Table className="mb-0">
                                     <thead>
                                         <tr>

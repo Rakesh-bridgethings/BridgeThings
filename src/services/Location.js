@@ -144,10 +144,19 @@ export function business_hours(value) {
                dispatch(data_post_status('error', error, 'add'))
             );
          });
+
+         axios.post(`${SERVER_URL}locations`, locations, { headers: HEADER })
+         .then(async (res) => {
+            statusMessage(dispatch, "loading", false);
+            resolve(
+               dispatch(fetch_locationitem_success(res.data.rows))
+            );
+         });
       } catch (error) {
          reject(error);
       }
    }).catch(async (err) => { await statusMessage(dispatch, 'error', err); throw err; });
+   
 }
 
 export function add_organization(value) {
@@ -178,15 +187,39 @@ export function editLocation(editid) {
 }
 
 export function deleteLocationData(id) {
-   // locations.forEach(function (item, index, object) {
-   //    if (item.id === id) {
-   //       object.splice(index, 1);
-   //    }
-   // });
-   // return dispatch => {
-   //    dispatch(delete_location_data_success());
-   //    return true;
-   // }
+   return dispatch => new Promise(async (resolve, reject) => {
+      await statusMessage(dispatch, 'loading', true);
+      try {
+         axios.delete(`${SERVER_URL}location?id=${id}`, { headers: HEADER }).then(async (res) => {
+            statusMessage(dispatch, "loading", false);
+            var status = '';
+            if (res.status === 200 && res.data !== '') {
+               status = 'success';
+            }
+            if (res.status === 200 && res.data === '') {
+               status = 'error';
+            }
+            resolve(
+               dispatch(data_post_status(status, res.data, 'delete'))
+               );
+            }).catch(error => {
+               statusMessage(dispatch, 'error', error);
+               reject(error);
+               resolve(
+                  dispatch(data_post_status('error', error, 'delete'))
+               );
+            });
+            axios.post(`${SERVER_URL}locations`, locations, { headers: HEADER })
+            .then(async (res) => {
+               statusMessage(dispatch, "loading", false);
+               resolve(
+                  dispatch(fetch_locationitem_success(res.data.rows))
+               );
+            });
+         } catch (error) {
+            reject(error);
+         }
+      }).catch(async (err) => { await statusMessage(dispatch, 'error', err); throw err; });
 }
 
 

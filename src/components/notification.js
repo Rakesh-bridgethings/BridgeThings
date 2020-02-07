@@ -12,11 +12,7 @@ class Notification extends Component {
     state = {
     }
 
-    componentWillReceiveProps = (props) => {        
-    }
-
     componentDidMount = () => {
-        console.log("this::", this.props);
         this.props.status === 'success' && toast.success(this.props.msg);
         this.props.status === 'error' && toast.error('There is Something Wrong! Please try again...');
     }
@@ -26,14 +22,14 @@ class Notification extends Component {
             <Fragment>
                 <ToastContainer
                     position="top-right"
-                    autoClose={12000}
+                    autoClose={7000}
                     hideProgressBar={false}
                     newestOnTop={false}
                     closeOnClick
-                    rtl={false}
-                    pauseOnVisibilityChange
+                    // rtl={false}
+                    // pauseOnVisibilityChange
                     draggable
-                    pauseOnHover
+                    // pauseOnHover
                 />
             </Fragment>
         )
