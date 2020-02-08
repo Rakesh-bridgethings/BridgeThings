@@ -11,7 +11,7 @@ import {
     Modal, ModalHeader, ModalBody, ModalFooter,
     Form, Label, Input, FormGroup, DropdownItem
 } from 'reactstrap';
-import Notification from '../notification';
+import Notification from '../library/notification';
 
 class EditLocation extends Component {
     constructor(props) {
@@ -48,7 +48,6 @@ class EditLocation extends Component {
     render() {
         const { Location } = this.props.data;
         const { Status } = this.props.data;
-        console.log("notitype::", this.props.notitype)
         return (
             <Fragment>
                 <ReactCSSTransitionGroup

@@ -3,10 +3,10 @@ import { connect } from 'react-redux';
 import cx from 'classnames';
 import { bindActionCreators } from 'redux';
 import ResizeDetector from 'react-resize-detector';
-import Header from './includes/Header';
-import LeftSidebar from './includes/LeftSidebar';
-import Location from './location/index';
-import PerformanceDashboard from './dashboards/performance';
+import Header from '../includes/Header';
+import LeftSidebar from '../includes/LeftSidebar';
+import Location from '../location/index';
+import PerformanceDashboard from '../dashboards/performance';
 import { Route, Link, Switch, BrowserRouter as Router } from 'react-router-dom'
 // import { fetchsidenavitemdata } from '../services/SideNavItem';
 // const PeroformanceDashboard = lazy(() => import('./dashboards/performance'));

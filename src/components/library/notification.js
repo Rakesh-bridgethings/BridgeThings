@@ -27,7 +27,7 @@ class Notification extends Component {
                     newestOnTop={false}
                     closeOnClick
                     // rtl={false}
-                    // pauseOnVisibilityChange
+                    pauseOnVisibilityChange={false}
                     draggable
                     // pauseOnHover
                 />

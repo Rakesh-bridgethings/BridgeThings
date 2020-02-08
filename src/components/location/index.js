@@ -17,7 +17,7 @@ import AddLocation from './add_location';
 import EditLocation from './edit_location';
 import DeleteLocation from './delete_location';
 import { DataTable } from 'react-data-components';
-import Loading from '../loader';
+import Loading from '../library/loader';
 
 class Location extends Component {
     constructor(props) {
@@ -168,7 +168,7 @@ class Location extends Component {
                                         initialSortBy={{ prop: 'entityReference', order: 'descending' }}
                                         sortable={true}
                                     />
-                                    <EditLocation requiredMessage={this.state.requiredMessage} editlocationmodal={this.state.editlocationmodal} iseditlocatiionmodal={this.iseditlocatiionmodal} geteditid={this.state.geteditid} getEditData={Location.editdata} />
+                                    <EditLocation shownoti={this.shownoti} notitype={this.state.notitype} requiredMessage={this.state.requiredMessage} editlocationmodal={this.state.editlocationmodal} iseditlocatiionmodal={this.iseditlocatiionmodal} geteditid={this.state.geteditid} getEditData={Location.editdata} />
                                     <DeleteLocation shownoti={this.shownoti} notitype={this.state.notitype} requiredMessage={this.state.requiredMessage} getdeleteid={this.state.getdeleteid} deletelocationmodal={this.state.deletelocationmodal} isdeletelocationmodal={this.isdeletelocationmodal} />
                                     {/* <Table className="mb-0">
                                     <thead>

@@ -17,6 +17,11 @@ import EditProperty from './edit_property';
 import EditBusinessHours from './edit_business_hours';
 import Select from 'react-select';
 import SimpleReactValidator from 'simple-react-validator';
+import Notification from '../library/notification';
+// import Getdiff from '../library/deepDiffMapper';
+var diff = require('deep-diff').diff;
+var observableDiff = require('deep-diff').observableDiff;
+var applyChange = require('deep-diff').applyChange;
 
 class EditLocation extends Component {
     constructor(props) {
@@ -24,7 +29,7 @@ class EditLocation extends Component {
         this.toggle = this.toggle.bind(this);
         this.validator = new SimpleReactValidator({
             element: (message, className) => <div className='required_message'>{message}</div>
-          })
+        })
     }
 
     state = {
@@ -47,10 +52,14 @@ class EditLocation extends Component {
         editid: 0,
         entityReference: '',
         propertyName: '',
-    };
+        updatedFields: {},
+        getEditData: {},
+        getEdittedData: {},
+        propertydatalist: [],
+    }
 
-    componentWillReceiveProps = (props) => {
-        this.setState({
+    componentWillReceiveProps = async(props) => {
+        await this.setState({
             getEditBusiness: props.getEditData,
             zone: props.getEditData.zone,
             aggregationid: props.getEditData.aggregateId,
@@ -61,7 +70,25 @@ class EditLocation extends Component {
             editid: props.geteditid,
             entityReference: props.getEditData.entityReference,
             propertyName: props.getEditData.property,
-        })
+            propertydatalist: props.getEditData.propertydatalist && props.getEditData.propertydatalist,
+        });
+        let updatedFields = this.state.updatedFields;
+        updatedFields.id = props.geteditid;
+        this.setState({ updatedFields });
+
+        const getEditData = {
+            id: this.props.geteditid,
+            zone: this.props.getEditData.zone,
+            aggregateId: this.props.getEditData.aggregateId,
+            entities: this.props.getEditData.entityId && {
+                "id": this.props.getEditData.entityId
+            },
+            propertyId: this.props.getEditData.property && this.props.getEditData.propertyId,
+            floor:this.props.getEditData.floor,
+            locationType: this.props.getEditData.locationType && this.props.getEditData.locationType.id,
+            locationBusinessHoursList: this.props.getEditData.locationBusinessHoursList,
+        };
+        this.setState({ getEditData });
     }
 
     componentDidMount = async () => {
@@ -69,7 +96,9 @@ class EditLocation extends Component {
         fetchlocationitemdata();
         fetchorganizationdata();
         fetchlocationtypesdata();
-        fetchpropertydata();
+        // fetchpropertydata();
+        // const { fetchpropertydata } = this.props;
+        
     }
 
     toggle = () => {
@@ -100,17 +129,20 @@ class EditLocation extends Component {
             this.setState({ nextmodal: !this.state.nextmodal });
             this.setState({ editnextmodal: !this.state.editnextmodal });
             this.props.iseditlocatiionmodal();
-            let data = [{
+            let getEdittedData = {
+                id: this.state.editid,
                 zone: this.state.zone,
-                aggregationid: this.state.aggregationid,
-                organization: this.state.organization.value,
-                property: this.state.property.value,
-                locationtype: { id: this.state.locationtype.value, value: this.state.locationtype.label },
-                label: this.state.label,
-                entityReference: this.state.organization.label,
-                propertyName: this.state.property.label,
-            }];
-            this.setState({ firststepData: data });
+                aggregateId: this.state.aggregationid,
+                entities: {
+                    "id": this.state.organization.value
+                },
+                propertyId:  this.state.property.value,
+                floor: this.state.label,
+                locationType: this.state.locationtype.value,
+                locationBusinessHoursList: [],
+            };
+            this.setState({getEdittedData});
+            this.props.shownoti('');
         }
         this.validator.showMessageFor('Zone');
         this.validator.showMessageFor('AggregationId');
@@ -119,19 +151,71 @@ class EditLocation extends Component {
 
     business_hrsdata = (val) => {
         this.setState({ business_hours: val });
-        let firststepData = [...this.state.firststepData];
-        firststepData[0]['locationBusinessHoursList'] = val;
-        // updatedLocationData(firststepData, this.state.editid);
+        let updatedFields = this.state.updatedFields;
+        updatedFields.locationBusinessHoursList = val;
+        let getEdittedData = this.state.getEdittedData;
+        getEdittedData.locationBusinessHoursList = val;
+        var differences = diff(this.state.getEditData, getEdittedData);
+        var dif = {...dif};
+        if(differences){
+            differences.map((item, index)=>{
+                var value = item.rhs;
+                dif[item.path[0]] = value;
+            })
+        }
+        dif.id = this.state.editid;
+        dif.locationBusinessHoursList = val;
+        const { updatedLocationData } = this.props;
+        updatedLocationData(this.state.editid, dif);
+        this.props.shownoti('update');
     }
 
     onZone = (e) => {
         this.setState({ zone: e.target.value })
-        this.validator.showMessageFor('Zone');        
+        this.validator.showMessageFor('Zone');
+        let updatedFields = this.state.updatedFields;
+        updatedFields.zone = e.target.value;
+        this.setState({ updatedFields });
     }
 
     onAggregateId = (e) => {
         this.setState({ aggregationid: e.target.value });
-        this.validator.showMessageFor('AggregationId'); 
+        this.validator.showMessageFor('AggregationId');
+        let updatedFields = this.state.updatedFields;
+        updatedFields.aggregateId = e.target.value;
+        this.setState({ updatedFields });
+    }
+
+    // onChngOrg = async (organization) => {
+    //     const { fetchpropertydata } = this.props;
+    //     await fetchpropertydata(organization.value);
+    //     let updatedFields = this.state.updatedFields;
+    //     updatedFields.entityId = organization.value;
+    //     updatedFields.entityReference = organization.label;
+    //     this.setState({ updatedFields });
+    //     this.setState({ property: '' });
+    //     this.setState({ organization: organization });
+    // }
+
+    onChngproperty = (property) => {
+        this.setState({ property });
+        let updatedFields = this.state.updatedFields;
+        updatedFields.propertyId = property.value;
+        this.setState({ updatedFields });
+    }
+
+    onChngloctype = (locationtype) => {
+        this.setState({ locationtype });
+        let updatedFields = this.state.updatedFields;
+        updatedFields.locationtype = locationtype.value; //{id: locationtype.value, value: locationtype.label};
+        this.setState({ updatedFields });
+    }
+
+    onchnglabel = (e) => {
+        this.setState({ label: e.target.value });
+        let updatedFields = this.state.updatedFields;
+        updatedFields.floor = e.target.value;
+        this.setState({ updatedFields });
     }
 
     render() {
@@ -139,7 +223,7 @@ class EditLocation extends Component {
         let orgnizationdata = Location.orgnizationdata.map(function (item) {
             return { value: item.id, label: item.name };
         })
-        let propertydata = Location.property.map(function (item) {
+        let propertydata = this.props.getEditData.propertydatalist && this.props.getEditData.propertydatalist.map(function (item) {
             return { value: item.id, label: item.value };
         })
         let locationdata = Location.locationtypes.map(function (item) {
@@ -172,6 +256,7 @@ class EditLocation extends Component {
                 }
             })
         }
+        const { Status } = this.props.data;
         return (
             <Fragment>
                 <ReactCSSTransitionGroup
@@ -182,6 +267,11 @@ class EditLocation extends Component {
                     transitionEnter={false}
                     transitionLeave={false}>
                     <div>
+                        {Status.status !== '' && Status.page === 'update' && this.props.notitype === 'update' &&
+                            <Fragment>
+                                <Notification msg={Status.notificationMsg} status={Status.status} show={this.props.addlocationmodal} />
+                            </Fragment>
+                        }
                         <Modal isOpen={this.props.editlocationmodal} toggle={() => this.toggle()} className={this.props.className} id='edit_location'>
                             <ModalHeader toggle={() => this.toggle()}>Edit Location</ModalHeader>
                             <ModalBody>
@@ -197,7 +287,7 @@ class EditLocation extends Component {
                                         <Col md='6'>
                                             <FormGroup>
                                                 <Label for="aggregation_id">Aggregation ID</Label>
-                                                <Input type='text' id="aggregation_id" onChange={(e) => this.onAggregateId(e) } value={this.state.aggregationid} />
+                                                <Input type='text' id="aggregation_id" onChange={(e) => this.onAggregateId(e)} value={this.state.aggregationid} />
                                                 {this.validator.message('AggregationId', this.state.aggregationid, 'alpha_num')}
                                             </FormGroup>
                                         </Col>
@@ -209,8 +299,9 @@ class EditLocation extends Component {
                                                 <Select
                                                     value={this.state.organization}
                                                     styles={orgStyles}
-                                                    onChange={(organization) => this.setState({ organization })}
+                                                    onChange={(organization) => this.onChngOrg(organization)}
                                                     options={orgnizationdata}
+                                                    isDisabled
                                                 />
                                                 <a style={{ cursor: 'pointer' }} onClick={() => this.setState({ editorgmodal: true })} ><i className="pe-7s-plus"> </i> Edit New Organization</a>
                                                 {this.state.nextclick && this.state.organization === '' && <div className='required_message'>{this.props.requiredMessage}</div>
@@ -226,7 +317,7 @@ class EditLocation extends Component {
                                                 <Select
                                                     value={this.state.property}
                                                     styles={propertyStyles}
-                                                    onChange={(property) => this.setState({ property })}
+                                                    onChange={(property) => this.onChngproperty(property)}
                                                     options={propertydata}
                                                 />
                                                 <a style={{ cursor: 'pointer' }} onClick={() => this.setState({ editpropertymodal: !this.state.editpropertymodal })} ><i className="pe-7s-plus"> </i> Edit New Property</a>
@@ -245,7 +336,7 @@ class EditLocation extends Component {
                                                 <Select
                                                     value={this.state.locationtype}
                                                     styles={loctypeStyles}
-                                                    onChange={(locationtype) => this.setState({ locationtype })}
+                                                    onChange={(locationtype) => this.onChngloctype(locationtype)}
                                                     options={locationdata}
                                                 />
                                                 {this.state.nextclick && this.state.locationtype === '' && <div className='required_message'>{this.props.requiredMessage}</div>
@@ -257,7 +348,7 @@ class EditLocation extends Component {
                                                 <Label for="label">Label *</Label>
                                                 <Input type='text' id='label' value={this.state.label}
                                                     className={`form-control ${this.state.nextclick && this.state.label === '' && this.state.errorClass}`}
-                                                    onChange={(e) => this.setState({ label: e.target.value })} />
+                                                    onChange={(e) => this.onchnglabel(e)} />
                                                 {this.state.nextclick && this.state.label === '' && <div className='required_message'>{this.props.requiredMessage}</div>
                                                 }
                                             </FormGroup>
@@ -290,7 +381,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     fetchorganizationdata: fetchorganizationdata,
     fetchlocationtypesdata: fetchlocationtypesdata,
     fetchpropertydata: fetchpropertydata,
-    // updatedLocationData: updatedLocationData,
+    updatedLocationData: updatedLocationData,
 }, dispatch)
 
 export default connect(

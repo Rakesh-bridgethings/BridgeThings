@@ -46,7 +46,6 @@ class Business_Hours extends Component {
         fetchdayintervalsdata();
     }
 
-
     business_hrs = (e, index, item) => {
         let busi_details = [...this.state.busi_details];
         const index1 = busi_details.findIndex((e) => e.weekDay === item.id);
