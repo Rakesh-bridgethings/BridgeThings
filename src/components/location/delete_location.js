@@ -11,7 +11,7 @@ import {
     Modal, ModalHeader, ModalBody, ModalFooter,
     Form, Label, Input, FormGroup, DropdownItem
 } from 'reactstrap';
-import Notification from '../library/notification';
+import Notification from '../../library/notification';
 
 class EditLocation extends Component {
     constructor(props) {

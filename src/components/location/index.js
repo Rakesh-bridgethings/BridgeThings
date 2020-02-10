@@ -17,7 +17,7 @@ import AddLocation from './add_location';
 import EditLocation from './edit_location';
 import DeleteLocation from './delete_location';
 import { DataTable } from 'react-data-components';
-import Loading from '../library/loader';
+import Loading from '../../library/loader';
 
 class Location extends Component {
     constructor(props) {

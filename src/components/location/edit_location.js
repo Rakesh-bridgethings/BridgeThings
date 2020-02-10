@@ -12,12 +12,12 @@ import {
     Modal, ModalHeader, ModalBody, ModalFooter,
     Form, Label, Input, FormGroup, DropdownItem
 } from 'reactstrap';
-import EditOrganization from './edit_organization';
-import EditProperty from './edit_property';
+// import EditOrganization from './edit_organization';
+import AddProperty from './add_property';
 import EditBusinessHours from './edit_business_hours';
 import Select from 'react-select';
 import SimpleReactValidator from 'simple-react-validator';
-import Notification from '../library/notification';
+import Notification from '../../library/notification';
 // import Getdiff from '../library/deepDiffMapper';
 var diff = require('deep-diff').diff;
 var observableDiff = require('deep-diff').observableDiff;
@@ -303,14 +303,14 @@ class EditLocation extends Component {
                                                     options={orgnizationdata}
                                                     isDisabled
                                                 />
-                                                <a style={{ cursor: 'pointer' }} onClick={() => this.setState({ editorgmodal: true })} ><i className="pe-7s-plus"> </i> Edit New Organization</a>
+                                                <a style={{ cursor: 'pointer' }} ><i className="pe-7s-plus"> </i> Add New Organization</a>
                                                 {this.state.nextclick && this.state.organization === '' && <div className='required_message'>{this.props.requiredMessage}</div>
                                                 }
                                             </FormGroup>
                                         </Col>
-                                        {this.state.editorgmodal &&
+                                        {/* {this.state.editorgmodal &&
                                             <EditOrganization requiredMessage={this.props.requiredMessage} editorgmodal={this.state.editorgmodal} iseditorgmodal={this.iseditorgmodal} />
-                                        }
+                                        } */}
                                         <Col md='6'>
                                             <FormGroup>
                                                 <Label for="property">Property *</Label>
@@ -320,13 +320,14 @@ class EditLocation extends Component {
                                                     onChange={(property) => this.onChngproperty(property)}
                                                     options={propertydata}
                                                 />
-                                                <a style={{ cursor: 'pointer' }} onClick={() => this.setState({ editpropertymodal: !this.state.editpropertymodal })} ><i className="pe-7s-plus"> </i> Edit New Property</a>
+                                                <a style={{ cursor: 'pointer' }} onClick={() => this.setState({ editpropertymodal: !this.state.editpropertymodal })} ><i className="pe-7s-plus"> </i> Add New Property</a>
                                                 {this.state.nextclick && this.state.property === '' && <div className='required_message'>{this.props.requiredMessage}</div>
                                                 }
                                             </FormGroup>
                                         </Col>
                                         {this.state.editpropertymodal &&
-                                            <EditProperty requiredMessage={this.props.requiredMessage} editpropertymodal={this.state.editpropertymodal} iseditpropertymodal={this.iseditpropertymodal} />
+                                            // <EditProperty requiredMessage={this.props.requiredMessage} editpropertymodal={this.state.editpropertymodal} iseditpropertymodal={this.iseditpropertymodal} />
+                                            <AddProperty requiredMessage={this.props.requiredMessage} addpropertymodal={this.state.editpropertymodal} isaddpropertymodal={this.iseditpropertymodal} />
                                         }
                                     </Row>
                                     <Row>

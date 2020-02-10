@@ -17,7 +17,7 @@ import AddProperty from './add_property';
 import BusinessHours from './business_hours';
 import Select from 'react-select';
 import SimpleReactValidator from 'simple-react-validator';
-import Notification from '../library/notification';
+import Notification from '../../library/notification';
 
 
 class AddLocation extends Component {

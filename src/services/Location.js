@@ -1,6 +1,6 @@
 import { fetch_locationitem_pending, fetch_locationitem_success, fetch_locationitem_error, fetch_organizationdata_pending, fetch_organizationdata_success, fetch_organizationdata_error, fetch_location_types_pending, fetch_location_types_success, fetch_entity_types_pending, fetch_entity_types_success, fetch_property_types_pending, fetch_property_types_success, fetch_day_intervals_pending, fetch_day_intervals_success, fetch_property_pending, fetch_property_success, edit_location_data_success, edit_location_data_pending, update_locationitem_success, delete_location_data_success, data_post_status } from '../actions/locationitem';
 import axios from 'axios';
-import { SERVER_URL, HEADER } from '../components/config/config';
+import { SERVER_URL, HEADER } from '../config/config';
 import statusMessage from './status';
 
 let locations = { "locations": [{ 'location': "BIPL-PDI-MBG" }, { 'location': "CMASH" }, { 'location': "CMNLD" }, { 'location': "CMVBG" }] };
@@ -176,8 +176,7 @@ export function editLocation(editid) {
                if (item.id === editid) {
                   editdata.push(item);
                   entityId = item.entityId;
-               }
-               
+               }               
             })
             axios.get(`${SERVER_URL}property/list?entity=${entityId}`, { headers: HEADER }).then(async (res1) => {
                statusMessage(dispatch, "loading", false);
@@ -267,10 +266,7 @@ export function updatedLocationData(id, editdata) {
    }).catch(async (err) => { await statusMessage(dispatch, 'error', err); throw err; });
 }
 
-
-
-
-
-
-
+export function add_property(value) {
+   console.log("add_property::", value);
+}
 

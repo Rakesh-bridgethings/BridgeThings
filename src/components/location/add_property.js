@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { fetchlocationitemdata, fetchorganizationdata, fetchlocationtypesdata, fetchpropertytypesdata } from '../../services/Location'
+import { fetchlocationitemdata, fetchorganizationdata, fetchlocationtypesdata, fetchpropertytypesdata, add_property } from '../../services/Location'
 import PageTitle from '../../components/includes/PageTitle';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {
@@ -14,8 +14,8 @@ import {
 } from 'reactstrap';
 import Select from 'react-select';
 // import Autocomplete from 'react-google-autocomplete';
-import Map from './map';
-import LocationSearchInput from './placeautocomplete';
+import Map from '../../library/map';
+// import LocationSearchInput from './placeautocomplete';
 
 class AddProperty extends Component {
     constructor(props) {
@@ -29,6 +29,8 @@ class AddProperty extends Component {
         addpropertymodal: false,
         orgnization: '',
         propertytype: '',
+        selectedPlace: {},
+        postal_code : 0,
     };
 
     componentDidMount = async () => {
@@ -39,7 +41,22 @@ class AddProperty extends Component {
         fetchpropertytypesdata();
     };
 
+    getSelectedPlace = (val) => {
+        this.setState({ selectedPlace: val });
+        this.setState({postal_code: val.postal_code})
+    }
 
+    onSave = () => {
+        let selectedPlace = this.state.selectedPlace;
+        selectedPlace.orgnization = this.state.orgnization.value;
+        selectedPlace.propertytype = this.state.propertytype.value;
+        selectedPlace.label = this.state.label;
+        const {add_property} = this.props;
+        this.props.isaddpropertymodal(!this.props.addpropertymodal);
+        console.log("property::", selectedPlace);
+        // add_property(selectedPlace);
+        
+    }
 
 
     toggle = () => {
@@ -67,9 +84,9 @@ class AddProperty extends Component {
 
                         <Modal isOpen={this.props.addpropertymodal} toggle={() => this.toggle()} className={this.props.className} id='add_location'>
                             <ModalHeader toggle={() => this.toggle()}>Add Property</ModalHeader>
-                            <ModalBody style={{overflow: 'auto'}}>
+                            <ModalBody style={{ overflow: 'auto' }}>
                                 <p><a href='#' >Add Property </a> / New Property</p>
-                               <Form>
+                                <Form>
                                     <Row>
                                         <Col md='6'>
                                             <FormGroup>
@@ -84,7 +101,7 @@ class AddProperty extends Component {
                                         <Col md='6'>
                                             <FormGroup>
                                                 <Label for="label">Label*</Label>
-                                                <Input type="text" id='label' />
+                                                <Input type="text" id='label' onChange={(e) => this.setState({label: e.target.value})} />
                                             </FormGroup>
                                         </Col>
                                     </Row>
@@ -101,52 +118,27 @@ class AddProperty extends Component {
                                         </Col>
                                         <Col md='6'>
                                             <FormGroup>
-                                                <Label for="area">Area</Label>
-                                                <LocationSearchInput />
-                                            </FormGroup>
-                                        </Col>                                        
-                                    </Row>
-                                    
-                                    {/* <Map
-                                    google={this.props.google}
-                                    center={{lat: 18.5204, lng: 73.8567}}
-                                    height='300px'
-                                    zoom={15}
-                                />       */}
-                                                 
-
-                                        {/* <Col md='6'>
-                                            <FormGroup>
-                                                <Label for="area">Area*</Label>                              
+                                                <Label for="postal_code">Postal Code</Label>
+                                                <Input type='text' value={this.state.postal_code !== 0 ? this.state.postal_code : ''} readOnly="readOnly" name="postal_code" className="form-control" />
                                             </FormGroup>
                                         </Col>
                                     </Row>
-                                    <Row>
-                                        <Col md='12'>
-                                            <FormGroup>
-                                                <Label for="address">Address</Label>
-                                                <Input type="text" id='address' />
-                                            </FormGroup>
-                                        </Col>
+                                    {/* <LocationSearchInput />   */}
+                                    <Row style={{ marginBottom: '5em' }}>
+                                        <Col md='12'> <Label for="search">Search Location For Property</Label></Col>
                                     </Row>
-                                    <Row>
-                                        <Col md='6'>
-                                            <FormGroup>
-                                                <Label for="city">City</Label>
-                                            </FormGroup>
-                                        </Col>
-                                        <Col md='6'>
-                                            <FormGroup>
-                                                <Label for="postal_code">PostalCode*</Label>
-                                                <Input type="text" id='postal_code' />
-                                            </FormGroup>
-                                        </Col>
-                                    </Row> */}
+                                    <Map
+                                        google={this.props.google}
+                                        center={{ lat: 18.5204, lng: 73.8567 }}
+                                        height='300px'
+                                        zoom={15}
+                                        getSelectedPlace = {this.getSelectedPlace}
+                                    />
                                 </Form>
                             </ModalBody>
                             <ModalFooter>
                                 <Button color="light" onClick={() => this.toggle()}>Cancel</Button>
-                                <Button color="dark" onClick={() => this.toggle()}>Save</Button>{' '}
+                                <Button color="dark" onClick={() => this.onSave()}>Save</Button>{' '}
                             </ModalFooter>
                         </Modal>
 
@@ -168,6 +160,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     fetchorganizationdata: fetchorganizationdata,
     fetchlocationtypesdata: fetchlocationtypesdata,
     fetchpropertytypesdata: fetchpropertytypesdata,
+    add_property:add_property,
 }, dispatch)
 
 export default connect(

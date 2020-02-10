@@ -14,7 +14,7 @@ import {
 } from 'reactstrap';
 import Select from 'react-select';
 // import Autocomplete from 'react-google-autocomplete';
-import Map from './map';
+import Map from '~/library/map';
 import LocationSearchInput from './placeautocomplete';
 
 class EditProperty extends Component {
