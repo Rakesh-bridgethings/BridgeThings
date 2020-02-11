@@ -53,7 +53,7 @@ class AddLocation extends Component {
         fetchlocationitemdata();
         fetchorganizationdata();
         fetchlocationtypesdata();
-        
+
     }
 
 
@@ -81,7 +81,13 @@ class AddLocation extends Component {
     }
 
     next = () => {
-        if (this.state.organization !== '' && this.state.property !== '' && this.state.locationtype !== '' && this.state.label !== '' && this.validator.allValid()) {
+        this.validator.showMessageFor('organization');
+        this.validator.showMessageFor('property')
+        this.validator.showMessageFor('locationtype')
+        this.validator.showMessageFor('label')
+        this.validator.showMessageFor('Zone');
+        this.validator.showMessageFor('AggregationId');
+        if (this.validator.allValid()) {
             this.setState({ nextmodal: !this.state.nextmodal });
             this.setState({ addnextmodal: !this.state.addnextmodal });
             this.props.isaddlocatiionmodal();
@@ -98,8 +104,6 @@ class AddLocation extends Component {
             };
             this.setState({ firststepData: data });
         }
-        this.validator.showMessageFor('Zone');
-        this.validator.showMessageFor('AggregationId');
         this.setState({ nextclick: true });
         this.props.shownoti('');
     }
@@ -216,8 +220,7 @@ class AddLocation extends Component {
                                                     options={orgnizationdata}
                                                 />
                                                 <a style={{ cursor: 'pointer' }} onClick={() => this.setState({ addorgmodal: true })} ><i className="pe-7s-plus"> </i> Add New Organization</a>
-                                                {this.state.nextclick && this.state.organization === '' && <div className='required_message'>{this.props.requiredMessage}</div>
-                                                }
+                                                {this.validator.message('organization', this.state.organization, 'required')}
                                             </FormGroup>
                                         </Col>
                                         {this.state.addorgmodal &&
@@ -233,8 +236,7 @@ class AddLocation extends Component {
                                                     options={propertydata}
                                                 />
                                                 <a style={{ cursor: 'pointer' }} onClick={() => this.setState({ addpropertymodal: !this.state.addpropertymodal })} ><i className="pe-7s-plus"> </i> Add New Property</a>
-                                                {this.state.nextclick && this.state.property === '' && <div className='required_message'>{this.props.requiredMessage}</div>
-                                                }
+                                                {this.validator.message('property', this.state.property, 'required')}
                                             </FormGroup>
                                         </Col>
                                         {this.state.addpropertymodal &&
@@ -251,8 +253,7 @@ class AddLocation extends Component {
                                                     onChange={(locationtype) => this.setState({ locationtype })}
                                                     options={locationdata}
                                                 />
-                                                {this.state.nextclick && this.state.locationtype === '' && <div className='required_message'>{this.props.requiredMessage}</div>
-                                                }
+                                                {this.validator.message('locationtype', this.state.locationtype, 'required')}
                                             </FormGroup>
                                         </Col>
                                         <Col md='6'>
@@ -261,8 +262,7 @@ class AddLocation extends Component {
                                                 <Input type='text' id='label' value={this.state.label}
                                                     className={`form-control ${this.state.nextclick && this.state.label === '' && this.state.errorClass}`}
                                                     onChange={(e) => this.setState({ label: e.target.value })} />
-                                                {this.state.nextclick && this.state.label === '' && <div className='required_message'>{this.props.requiredMessage}</div>
-                                                }
+                                                {this.validator.message('label', this.state.label, 'required')}
                                             </FormGroup>
                                         </Col>
                                     </Row>

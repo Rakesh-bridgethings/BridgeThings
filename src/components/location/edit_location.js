@@ -20,8 +20,7 @@ import SimpleReactValidator from 'simple-react-validator';
 import Notification from '../../library/notification';
 // import Getdiff from '../library/deepDiffMapper';
 var diff = require('deep-diff').diff;
-var observableDiff = require('deep-diff').observableDiff;
-var applyChange = require('deep-diff').applyChange;
+
 
 class EditLocation extends Component {
     constructor(props) {
@@ -58,7 +57,7 @@ class EditLocation extends Component {
         propertydatalist: [],
     }
 
-    componentWillReceiveProps = async(props) => {
+    componentWillReceiveProps = async (props) => {
         await this.setState({
             getEditBusiness: props.getEditData,
             zone: props.getEditData.zone,
@@ -84,7 +83,7 @@ class EditLocation extends Component {
                 "id": this.props.getEditData.entityId
             },
             propertyId: this.props.getEditData.property && this.props.getEditData.propertyId,
-            floor:this.props.getEditData.floor,
+            floor: this.props.getEditData.floor,
             locationType: this.props.getEditData.locationType && this.props.getEditData.locationType.id,
             locationBusinessHoursList: this.props.getEditData.locationBusinessHoursList,
         };
@@ -98,7 +97,7 @@ class EditLocation extends Component {
         fetchlocationtypesdata();
         // fetchpropertydata();
         // const { fetchpropertydata } = this.props;
-        
+
     }
 
     toggle = () => {
@@ -125,7 +124,11 @@ class EditLocation extends Component {
     }
 
     next = () => {
-        if (this.state.organization !== '' && this.state.property !== '' && this.state.locationtype !== '' && this.state.label !== '' && this.validator.allValid()) {
+        this.validator.showMessageFor('organization');
+        this.validator.showMessageFor('property')
+        this.validator.showMessageFor('locationtype')
+        this.validator.showMessageFor('label')
+        if (this.validator.allValid()) {
             this.setState({ nextmodal: !this.state.nextmodal });
             this.setState({ editnextmodal: !this.state.editnextmodal });
             this.props.iseditlocatiionmodal();
@@ -136,12 +139,12 @@ class EditLocation extends Component {
                 entities: {
                     "id": this.state.organization.value
                 },
-                propertyId:  this.state.property.value,
+                propertyId: this.state.property.value,
                 floor: this.state.label,
                 locationType: this.state.locationtype.value,
                 locationBusinessHoursList: [],
             };
-            this.setState({getEdittedData});
+            this.setState({ getEdittedData });
             this.props.shownoti('');
         }
         this.validator.showMessageFor('Zone');
@@ -156,9 +159,9 @@ class EditLocation extends Component {
         let getEdittedData = this.state.getEdittedData;
         getEdittedData.locationBusinessHoursList = val;
         var differences = diff(this.state.getEditData, getEdittedData);
-        var dif = {...dif};
-        if(differences){
-            differences.map((item, index)=>{
+        var dif = { ...dif };
+        if (differences) {
+            differences.map((item, index) => {
                 var value = item.rhs;
                 dif[item.path[0]] = value;
             })
@@ -304,8 +307,7 @@ class EditLocation extends Component {
                                                     isDisabled
                                                 />
                                                 <a style={{ cursor: 'pointer' }} ><i className="pe-7s-plus"> </i> Add New Organization</a>
-                                                {this.state.nextclick && this.state.organization === '' && <div className='required_message'>{this.props.requiredMessage}</div>
-                                                }
+                                                {this.validator.message('organization', this.state.organization, 'required')}
                                             </FormGroup>
                                         </Col>
                                         {/* {this.state.editorgmodal &&
@@ -321,8 +323,7 @@ class EditLocation extends Component {
                                                     options={propertydata}
                                                 />
                                                 <a style={{ cursor: 'pointer' }} onClick={() => this.setState({ editpropertymodal: !this.state.editpropertymodal })} ><i className="pe-7s-plus"> </i> Add New Property</a>
-                                                {this.state.nextclick && this.state.property === '' && <div className='required_message'>{this.props.requiredMessage}</div>
-                                                }
+                                                {this.validator.message('property', this.state.property, 'required')}
                                             </FormGroup>
                                         </Col>
                                         {this.state.editpropertymodal &&
@@ -340,8 +341,7 @@ class EditLocation extends Component {
                                                     onChange={(locationtype) => this.onChngloctype(locationtype)}
                                                     options={locationdata}
                                                 />
-                                                {this.state.nextclick && this.state.locationtype === '' && <div className='required_message'>{this.props.requiredMessage}</div>
-                                                }
+                                                {this.validator.message('locationtype', this.state.locationtype, 'required')}
                                             </FormGroup>
                                         </Col>
                                         <Col md='6'>
@@ -350,8 +350,7 @@ class EditLocation extends Component {
                                                 <Input type='text' id='label' value={this.state.label}
                                                     className={`form-control ${this.state.nextclick && this.state.label === '' && this.state.errorClass}`}
                                                     onChange={(e) => this.onchnglabel(e)} />
-                                                {this.state.nextclick && this.state.label === '' && <div className='required_message'>{this.props.requiredMessage}</div>
-                                                }
+                                                {this.validator.message('label', this.state.label, 'required')}
                                             </FormGroup>
                                         </Col>
                                     </Row>

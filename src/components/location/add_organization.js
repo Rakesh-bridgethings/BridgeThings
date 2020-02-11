@@ -21,7 +21,7 @@ class AddOrganization extends Component {
         super(props);
         this.validator = new SimpleReactValidator({
             element: (message, className) => <div className='required_message'>{message}</div>
-          })
+        })
         this.toggle = this.toggle.bind(this);
     }
 
@@ -49,15 +49,16 @@ class AddOrganization extends Component {
     }
 
     onSave = () => {
-        if (this.state.name !== '' && this.state.type !== '') {
+        this.validator.showMessageFor('type');
+        this.validator.showMessageFor('name');
+        if (this.validator.allValid()) {
             this.props.isaddorgmodal(!this.props.addorgmodal);
             let alldata = {
                 name: this.state.name,
-                entityType: {id: this.state.type.value}
+                entityType: { id: this.state.type.value }
             }
             add_organization(alldata);
-        }
-        this.validator.showMessageFor('name');
+        }        
         this.setState({ nextclick: true });
     }
 
@@ -68,11 +69,11 @@ class AddOrganization extends Component {
         })
         const orgStyles = {
             control: (base, state) => ({
-              ...base,
-              borderColor: this.state.nextclick && this.state.type === '' ? '#C71C22' : '#ddd',
-              '&:hover': {
-                borderColor: this.state.nextclick && this.state.type === '' ? '#C71C22' : '#ddd'
-              }
+                ...base,
+                borderColor: this.state.nextclick && this.state.type === '' ? '#C71C22' : '#ddd',
+                '&:hover': {
+                    borderColor: this.state.nextclick && this.state.type === '' ? '#C71C22' : '#ddd'
+                }
             })
         }
         return (
@@ -95,7 +96,7 @@ class AddOrganization extends Component {
                                             <FormGroup>
                                                 <Label for="name">Name *</Label>
                                                 <Input type="text" id='name' onChange={(e) => this.setState({ name: e.target.value })}
-                                                onBlur={() => this.validator.showMessageFor('name')}
+                                                    onBlur={() => this.validator.showMessageFor('name')}
                                                     className={`${this.state.nextclick && this.state.name === '' && this.state.errorClass}`} />
                                                 {this.validator.message('name', this.state.name, 'required|alpha_num')}
                                             </FormGroup>
@@ -105,21 +106,11 @@ class AddOrganization extends Component {
                                                 <Label for="type">Type*</Label>
                                                 <Select
                                                     value={this.state.type}
-                                                    styles = {orgStyles}
+                                                    styles={orgStyles}
                                                     onChange={(type) => this.setState({ type })}
                                                     options={typedata}
                                                 />
-                                                {this.state.nextclick && this.state.type === '' && <div className='required_message'>{this.props.requiredMessage}</div>
-                                                }
-                                                {/* <select name="select" id="type" onChange={(e) => this.setState({ type: e.target.value })}
-                                                    className={`form-control ${this.state.nextclick && this.state.type === '' && this.state.errorClass}`}>
-                                                        <option value='' selected>Select Organization Type</option>
-                                                    {Location.entitytype && Location.entitytype.map((item, index) => {
-                                                        return (
-                                                            <option value={item.id}>{item.reference}</option>
-                                                        )
-                                                    })}
-                                                </select> */}
+                                                {this.validator.message('type', this.state.type, 'required')}
                                             </FormGroup>
                                         </Col>
                                     </Row>

@@ -115,7 +115,7 @@ class AddProperty extends Component {
                                         </Col>
                                     </Row>
                                     <Row>
-                                        <Col md='12'>
+                                        <Col md='6'>
                                             <FormGroup>
                                                 <Label for="type">Type</Label>
                                                 <Select
@@ -125,21 +125,21 @@ class AddProperty extends Component {
                                                 />
                                             </FormGroup>
                                         </Col>
-                                        {/* <Col md='6'>
+                                        <Col md='6'>
                                             <FormGroup>
                                                 <Label for="postal_code">Postal Code</Label>
                                                 <Input type='text' value={this.state.postal_code !== 0 ? this.state.postal_code : ''} readOnly="readOnly" name="postal_code" className="form-control" />
                                             </FormGroup>
-                                        </Col> */}
+                                        </Col>
                                     </Row>
                                     {/* <LocationSearchInput />   */}
-                                    {/* <Row style={{ marginBottom: '5em' }}>
+                                    <Row style={{ marginBottom: '5em' }}>
                                         <Col md='12'> <Label for="search">Search Location For Property</Label></Col>
-                                    </Row> */}
+                                    </Row>
                                     <Map
                                         google={this.props.google}
                                         center={{ lat: 18.5204, lng: 73.8567 }}
-                                        height='100%'
+                                        height='300px'
                                         zoom={15}
                                         getSelectedPlace={this.getSelectedPlace}
                                     />

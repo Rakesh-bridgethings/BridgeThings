@@ -23,7 +23,7 @@ class Map extends Component {
 			city: '',
 			area: '',
 			state: '',
-			postal_code : 0,
+			postal_code: 0,
 			mapPosition: {
 				lat: this.props.center.lat,
 				lng: this.props.center.lng
@@ -57,13 +57,13 @@ class Map extends Component {
 				})
 
 				let selectedPlace = {
-					city : this.getCity(addressArray),
-					area : this.getArea(addressArray),
-					state : this.getState(addressArray),
-					postal_code : this.getPostalCode(addressArray),
-					lat : this.state.mapPosition.lat,
-					lng : this.state.mapPosition.lat,
-					address : response.results[0].formatted_address,
+					city: this.getCity(addressArray),
+					area: this.getArea(addressArray),
+					state: this.getState(addressArray),
+					postal_code: this.getPostalCode(addressArray),
+					lat: this.state.mapPosition.lat,
+					lng: this.state.mapPosition.lat,
+					address: response.results[0].formatted_address,
 				}
 				this.props.getSelectedPlace(selectedPlace);
 			},
@@ -209,13 +209,13 @@ class Map extends Component {
 					},
 				})
 				let selectedPlace = {
-					city : this.getCity(addressArray),
-					area : this.getArea(addressArray),
-					state : this.getState(addressArray),
-					postal_code : this.getPostalCode(addressArray),
-					lat : event.latLng.lat(),
-					lng : event.latLng.lng(),
-					address : response.results[0].formatted_address,
+					city: this.getCity(addressArray),
+					area: this.getArea(addressArray),
+					state: this.getState(addressArray),
+					postal_code: this.getPostalCode(addressArray),
+					lat: event.latLng.lat(),
+					lng: event.latLng.lng(),
+					address: response.results[0].formatted_address,
 				}
 				this.props.getSelectedPlace(selectedPlace);
 			},
@@ -256,13 +256,13 @@ class Map extends Component {
 		})
 
 		let selectedPlace = {
-			city : this.getCity(addressArray),
-			area : this.getArea(addressArray),
-			state : this.getState(addressArray),
-			postal_code : this.getPostalCode(addressArray),
-			lat : place.geometry.location.lat(),
-			lng : place.geometry.location.lng(),
-			address : place.formatted_address,
+			city: this.getCity(addressArray),
+			area: this.getArea(addressArray),
+			state: this.getState(addressArray),
+			postal_code: this.getPostalCode(addressArray),
+			lat: place.geometry.location.lat(),
+			lng: place.geometry.location.lng(),
+			address: place.formatted_address,
 		}
 		this.props.getSelectedPlace(selectedPlace);
 	};
@@ -277,18 +277,7 @@ class Map extends Component {
 							defaultZoom={this.props.zoom}
 							defaultCenter={{ lat: this.state.mapPosition.lat, lng: this.state.mapPosition.lng }}
 						>
-							<div className="autocmplt">
-								<Autocomplete
-									style={{
-										width: '100%',
-										height: '40px',
-										paddingLeft: '16px',
-										marginTop: '2px',
-									}}
-									onPlaceSelected={this.onPlaceSelected}
-									types={['(regions)']}
-								/>
-							</div>
+
 							{/* InfoWindow on top of marker */}
 							<InfoWindow
 								onClose={this.onInfoWindowClose}
@@ -316,45 +305,70 @@ class Map extends Component {
 		let map;
 		if (this.props.center.lat !== undefined) {
 			map = <Fragment>
+				{/* <div className="autocmplt"> */}
+				<Row>
+					<Col md='12'>
+						<FormGroup>
+							<Label for="search">Search Location For Property</Label>
+							<Autocomplete
+								style={{
+									width: '100%',
+									height: '40px',
+									paddingLeft: '16px',
+									marginTop: '2px',
+								}}
+								className="form-control"
+								onPlaceSelected={this.onPlaceSelected}
+								types={['(regions)']}
+							/>
+						</FormGroup>
+					</Col>
+				</Row>
+				{/* </div> */}
 				<Row>
 					<Col md='6'>
 						<FormGroup>
 							<Label for="type">Area</Label>
 							<Input type="text" name="area" className="form-control" onChange={this.onChange} readOnly="readOnly" value={this.state.area} />
 						</FormGroup>
-					</Col>
-					<Col md='6'>
+
 						<FormGroup>
 							<Label for="type">City</Label>
 							<Input type="text" name="city" className="form-control" onChange={this.onChange} readOnly="readOnly" value={this.state.city} />
 						</FormGroup>
-					</Col>
-				</Row>
-				{/* <div className="form-group">
+
+						{/* <div className="form-group">
 					<label htmlFor="">State</label>
 					<input type="text" name="state" className="form-control" onChange={this.onChange} readOnly="readOnly" value={this.state.state} />
 				</div> */}
-				<Row>
-					<Col md='12'>
+
 						<FormGroup>
 							<Label for="type">Address</Label>
 							<Input type="text" name="address" className="form-control" onChange={this.onChange} readOnly="readOnly" value={this.state.address} />
 						</FormGroup>
+
+						<FormGroup>
+							<Label for="type">Postal Code</Label>
+							<Input type="text" name="postal_code" className="form-control" onChange={this.onChange} readOnly="readOnly" value={this.state.postal_code} />
+						</FormGroup>
+
+					</Col>
+					<Col md="6">
+
+						<AsyncMap
+							googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyDQAwNqjxL0L2-5X8yqNLEfpsZj6Z1B_Is&libraries=places"
+							loadingElement={
+								<div style={{ height: `100%` }} />
+							}
+							containerElement={
+								<div style={{ height: this.props.height }} />
+							}
+							mapElement={
+								<div style={{ height: `100%` }} />
+							}
+						/>
 					</Col>
 				</Row>
-
-				<AsyncMap
-					googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyDQAwNqjxL0L2-5X8yqNLEfpsZj6Z1B_Is&libraries=places"
-					loadingElement={
-						<div style={{ height: `100%` }} />
-					}
-					containerElement={
-						<div style={{ height: this.props.height }} />
-					}
-					mapElement={
-						<div style={{ height: `100%` }} />
-					}
-				/>
 			</Fragment>
 		} else {
 			map = <div style={{ height: this.props.height }} />
