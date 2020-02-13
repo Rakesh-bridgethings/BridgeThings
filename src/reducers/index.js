@@ -4,7 +4,7 @@ import ThemeOptions from './ThemeOptions';
 import Location from './Location';
 import Status from './status';
 
-const rootReducers = combineReducers({    
+const rootReducers = combineReducers({ 
     SideNavItem,
     ThemeOptions,
     Location,

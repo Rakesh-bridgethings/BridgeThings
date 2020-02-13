@@ -37,10 +37,8 @@ class AddOrganization extends Component {
     };
 
     componentDidMount = async () => {
-        const { fetchlocationitemdata, fetchorganizationdata, fetchlocationtypesdata, fetchentitytypesdata } = this.props;
-        fetchlocationitemdata();
-        fetchorganizationdata();
-        fetchlocationtypesdata();
+        const { fetchentitytypesdata } = this.props;
+    
         fetchentitytypesdata();
     }
 
@@ -57,8 +55,9 @@ class AddOrganization extends Component {
                 name: this.state.name,
                 entityType: { id: this.state.type.value }
             }
+            const { add_organization } = this.props;
             add_organization(alldata);
-        }        
+        }
         this.setState({ nextclick: true });
     }
 
@@ -136,9 +135,6 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    fetchlocationitemdata: fetchlocationitemdata,
-    fetchorganizationdata: fetchorganizationdata,
-    fetchlocationtypesdata: fetchlocationtypesdata,
     fetchentitytypesdata: fetchentitytypesdata,
     add_organization: add_organization,
 }, dispatch)

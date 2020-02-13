@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { fetchlocationitemdata, fetchorganizationdata, editLocation } from '../../services/Location';
+import { fetchlocationitemdata, editLocation } from '../../services/Location';
 import PageTitle from '../../components/includes/PageTitle';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {
@@ -56,9 +56,9 @@ class Location extends Component {
     }
 
     componentDidMount = async () => {
-        const { fetchlocationitemdata, fetchorganizationdata } = this.props;
+        const { fetchlocationitemdata } = this.props;
         await fetchlocationitemdata();
-        await fetchorganizationdata();
+        // await fetchorganizationdata();
     }
 
     isaddlocatiionmodal = () => {
@@ -216,7 +216,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => bindActionCreators({
     fetchlocationitemdata: fetchlocationitemdata,
-    fetchorganizationdata: fetchorganizationdata,
+    // fetchorganizationdata: fetchorganizationdata,
     editLocation: editLocation,
 }, dispatch)
 

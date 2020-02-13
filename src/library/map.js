@@ -23,7 +23,7 @@ class Map extends Component {
 			city: '',
 			area: '',
 			state: '',
-			postal_code: 0,
+			postalCode: 0,
 			mapPosition: {
 				lat: this.props.center.lat,
 				lng: this.props.center.lng
@@ -45,7 +45,7 @@ class Map extends Component {
 					city = this.getCity(addressArray),
 					area = this.getArea(addressArray),
 					state = this.getState(addressArray),
-					postal_code = this.getPostalCode(addressArray);
+					postalCode = this.getPostalCode(addressArray);
 				// console.log('city', city, area, state);
 
 				this.setState({
@@ -53,14 +53,14 @@ class Map extends Component {
 					area: (area) ? area : '',
 					city: (city) ? city : '',
 					state: (state) ? state : '',
-					postal_code: (postal_code) ? postal_code : 0,
+					postalCode: (postalCode) ? postalCode : 0,
 				})
 
 				let selectedPlace = {
 					city: this.getCity(addressArray),
 					area: this.getArea(addressArray),
 					state: this.getState(addressArray),
-					postal_code: this.getPostalCode(addressArray),
+					postalCode: this.getPostalCode(addressArray),
 					lat: this.state.mapPosition.lat,
 					lng: this.state.mapPosition.lat,
 					address: response.results[0].formatted_address,
@@ -92,6 +92,11 @@ class Map extends Component {
 			return false
 		}
 	}
+
+	componentWillReceiveProps = (props) => {
+		this.setState({city: props.city})
+	}
+
 	/**
 	 * Get the city and set the city input value to the one selected
 	 *
@@ -192,13 +197,13 @@ class Map extends Component {
 					city = this.getCity(addressArray),
 					area = this.getArea(addressArray),
 					state = this.getState(addressArray),
-					postal_code = this.getPostalCode(addressArray);
+					postalCode = this.getPostalCode(addressArray);
 				this.setState({
 					address: (address) ? address : '',
 					area: (area) ? area : '',
 					city: (city) ? city : '',
 					state: (state) ? state : '',
-					postal_code: (postal_code) ? postal_code : 0,
+					postalCode: (postalCode) ? postalCode : 0,
 					markerPosition: {
 						lat: newLat,
 						lng: newLng
@@ -209,12 +214,12 @@ class Map extends Component {
 					},
 				})
 				let selectedPlace = {
-					city: this.getCity(addressArray),
-					area: this.getArea(addressArray),
-					state: this.getState(addressArray),
-					postal_code: this.getPostalCode(addressArray),
-					lat: event.latLng.lat(),
-					lng: event.latLng.lng(),
+					city: this.state.city.value, //this.getCity(addressArray),
+					area: this.state.area, //this.getArea(addressArray),
+					// state: this.getState(addressArray),
+					postalCode: this.getPostalCode(addressArray),
+					latitude: event.latLng.lat(),
+					longitude: event.latLng.lng(),
 					address: response.results[0].formatted_address,
 				}
 				this.props.getSelectedPlace(selectedPlace);
@@ -231,11 +236,12 @@ class Map extends Component {
 	 */
 	onPlaceSelected = (place) => {
 		const address = place.formatted_address,
+			place_id = place.place_id,
 			addressArray = place.address_components,
 			city = this.getCity(addressArray),
 			area = this.getArea(addressArray),
 			state = this.getState(addressArray),
-			postal_code = this.getPostalCode(addressArray),
+			postalCode = this.getPostalCode(addressArray),
 			latValue = place.geometry.location.lat(),
 			lngValue = place.geometry.location.lng();
 		// Set these values in the state.
@@ -244,7 +250,8 @@ class Map extends Component {
 			area: (area) ? area : '',
 			city: (city) ? city : '',
 			state: (state) ? state : '',
-			postal_code: (postal_code) ? postal_code : 0,
+			place_id: (place_id) ? place_id : '',
+			postalCode: (postalCode) ? postalCode : 0,
 			markerPosition: {
 				lat: latValue,
 				lng: lngValue
@@ -256,19 +263,21 @@ class Map extends Component {
 		})
 
 		let selectedPlace = {
-			city: this.getCity(addressArray),
-			area: this.getArea(addressArray),
-			state: this.getState(addressArray),
-			postal_code: this.getPostalCode(addressArray),
-			lat: place.geometry.location.lat(),
-			lng: place.geometry.location.lng(),
+			cityId: this.state.city.value, //this.getCity(addressArray), //place_id, //36842, //this.getCity(addressArray),
+			areaAcres: this.state.area, //this.getArea(addressArray), //20, //this.getArea(addressArray),
+			// state: this.getState(addressArray),
+			postalCode: this.getPostalCode(addressArray),
+			latitude: place.geometry.location.lat(),
+			longitude: place.geometry.location.lng(),
 			address: place.formatted_address,
 		}
 		this.props.getSelectedPlace(selectedPlace);
 	};
 
+	
 
 	render() {
+		console.log("city12::", this.state.city.label);
 		const AsyncMap = withScriptjs(
 			withGoogleMap(
 				props => (
@@ -307,7 +316,13 @@ class Map extends Component {
 			map = <Fragment>
 				{/* <div className="autocmplt"> */}
 				<Row>
-					<Col md='12'>
+					<Col md='6'>
+						<FormGroup>
+							<Label for="type">Area</Label>
+							<Input type="text" name="area" className="form-control" onChange={(e) => this.setState({ area: e.target.value })} value={this.state.area} />
+						</FormGroup>
+					</Col>
+					<Col md='6'>
 						<FormGroup>
 							<Label for="search">Search Location For Property</Label>
 							<Autocomplete
@@ -320,22 +335,24 @@ class Map extends Component {
 								className="form-control"
 								onPlaceSelected={this.onPlaceSelected}
 								types={['(regions)']}
+								componentRestrictions={{ city: this.state.city.label }}
 							/>
 						</FormGroup>
 					</Col>
+
 				</Row>
 				{/* </div> */}
 				<Row>
 					<Col md='6'>
-						<FormGroup>
+						{/* <FormGroup>
 							<Label for="type">Area</Label>
 							<Input type="text" name="area" className="form-control" onChange={this.onChange} readOnly="readOnly" value={this.state.area} />
-						</FormGroup>
+						</FormGroup> */}
 
-						<FormGroup>
+						{/* <FormGroup>
 							<Label for="type">City</Label>
 							<Input type="text" name="city" className="form-control" onChange={this.onChange} readOnly="readOnly" value={this.state.city} />
-						</FormGroup>
+						</FormGroup> */}
 
 						{/* <div className="form-group">
 					<label htmlFor="">State</label>
@@ -349,7 +366,7 @@ class Map extends Component {
 
 						<FormGroup>
 							<Label for="type">Postal Code</Label>
-							<Input type="text" name="postal_code" className="form-control" onChange={this.onChange} readOnly="readOnly" value={this.state.postal_code} />
+							<Input type="text" name="postalCode" className="form-control" onChange={this.onChange} readOnly="readOnly" value={this.state.postalCode} />
 						</FormGroup>
 
 					</Col>

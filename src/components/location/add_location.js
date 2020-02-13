@@ -49,8 +49,8 @@ class AddLocation extends Component {
 
 
     componentDidMount = async () => {
-        const { fetchlocationitemdata, fetchorganizationdata, fetchlocationtypesdata } = this.props;
-        fetchlocationitemdata();
+        const { fetchorganizationdata, fetchlocationtypesdata } = this.props;
+        // fetchlocationitemdata();
         fetchorganizationdata();
         fetchlocationtypesdata();
 
@@ -288,7 +288,7 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    fetchlocationitemdata: fetchlocationitemdata,
+    // fetchlocationitemdata: fetchlocationitemdata,
     fetchorganizationdata: fetchorganizationdata,
     fetchlocationtypesdata: fetchlocationtypesdata,
     business_hours: business_hours,

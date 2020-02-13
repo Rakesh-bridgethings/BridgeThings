@@ -35,13 +35,13 @@ class AddProperty extends Component {
         propertytype: '',
         selectedPlace: {},
         postal_code: 0,
+        label: '',
+        city: '',
     };
 
     componentDidMount = async () => {
-        const { fetchlocationitemdata, fetchorganizationdata, fetchlocationtypesdata, fetchpropertytypesdata } = this.props;
-        fetchlocationitemdata();
+        const {  fetchorganizationdata, fetchpropertytypesdata } = this.props;
         fetchorganizationdata();
-        fetchlocationtypesdata();
         fetchpropertytypesdata();
     };
 
@@ -55,16 +55,17 @@ class AddProperty extends Component {
         this.validator.showMessageFor('label')
         if (this.validator.allValid()) {
             let selectedPlace = this.state.selectedPlace;
-            selectedPlace.orgnization = this.state.orgnization.value;
-            selectedPlace.propertytype = this.state.propertytype.value;
+            selectedPlace.entityId = this.state.orgnization.value;
+            selectedPlace.propertyType = this.state.propertytype.value;
             selectedPlace.label = this.state.label;
             const { add_property } = this.props;
+            add_property(selectedPlace);
             this.props.isaddpropertymodal(!this.props.addpropertymodal);
-            console.log("property::", selectedPlace);
         }
-        // add_property(selectedPlace);
+        
 
     }
+
 
 
     toggle = () => {
@@ -79,6 +80,7 @@ class AddProperty extends Component {
         let propertytypedata = Location.propertytype.map(function (item) {
             return { value: item.id, label: item.value };
         })
+        let citydata = [{value:1, label:'Ahmedabad'},{value:2, label:'Mumbai'},{value:3, label:'Pune'}];
         return (
             <Fragment>
                 <ReactCSSTransitionGroup
@@ -115,7 +117,7 @@ class AddProperty extends Component {
                                         </Col>
                                     </Row>
                                     <Row>
-                                        <Col md='12'>
+                                        <Col md='6'>
                                             <FormGroup>
                                                 <Label for="type">Type</Label>
                                                 <Select
@@ -125,6 +127,16 @@ class AddProperty extends Component {
                                                 />
                                             </FormGroup>
                                         </Col>
+                                        <Col md='6'>
+                                            <FormGroup>
+                                                <Label for="city">City</Label>
+                                                <Select
+                                                    value={this.state.city}
+                                                    onChange={(city) =>  this.setState({ city })}
+                                                    options={citydata}
+                                                />
+                                            </FormGroup>
+                                        </Col>                                    
                                         {/* <Col md='6'>
                                             <FormGroup>
                                                 <Label for="postal_code">Postal Code</Label>
@@ -142,6 +154,7 @@ class AddProperty extends Component {
                                         height='100%'
                                         zoom={15}
                                         getSelectedPlace={this.getSelectedPlace}
+                                        city={this.state.city}
                                     />
                                 </Form>
                             </ModalBody>
@@ -165,9 +178,7 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    fetchlocationitemdata: fetchlocationitemdata,
     fetchorganizationdata: fetchorganizationdata,
-    fetchlocationtypesdata: fetchlocationtypesdata,
     fetchpropertytypesdata: fetchpropertytypesdata,
     add_property: add_property,
 }, dispatch)
