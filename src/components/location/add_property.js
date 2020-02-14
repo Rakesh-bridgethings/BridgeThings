@@ -16,8 +16,8 @@ import Select from 'react-select';
 import SimpleReactValidator from 'simple-react-validator';
 // import Autocomplete from 'react-google-autocomplete';
 import Map from '../../library/map';
+import Geocode from "react-geocode";
 // import LocationSearchInput from './placeautocomplete';
-
 class AddProperty extends Component {
     constructor(props) {
         super(props);
@@ -26,7 +26,6 @@ class AddProperty extends Component {
             element: (message, className) => <div className='required_message'>{message}</div>
         })
     }
-
     state = {
         addlocationmodal: false,
         addorganizationmodal: false,
@@ -37,10 +36,11 @@ class AddProperty extends Component {
         postal_code: 0,
         label: '',
         city: '',
+        latLng: { lat: 18.5204, lng: 73.8567 },
     };
 
     componentDidMount = async () => {
-        const {  fetchorganizationdata, fetchpropertytypesdata } = this.props;
+        const { fetchorganizationdata, fetchpropertytypesdata } = this.props;
         fetchorganizationdata();
         fetchpropertytypesdata();
     };
@@ -49,7 +49,6 @@ class AddProperty extends Component {
         this.setState({ selectedPlace: val });
         this.setState({ postal_code: val.postal_code })
     }
-
     onSave = () => {
         this.validator.showMessageFor('orgnization');
         this.validator.showMessageFor('label')
@@ -62,14 +61,27 @@ class AddProperty extends Component {
             add_property(selectedPlace);
             this.props.isaddpropertymodal(!this.props.addpropertymodal);
         }
-        
 
     }
-
-
-
     toggle = () => {
         this.props.isaddpropertymodal(!this.props.addpropertymodal);
+    }
+
+    // getlatLng = (val) => {
+    //     this.setState({latLng: val});
+    // }
+    ChngCity = (city) => {
+        this.setState({ city });
+        Geocode.fromAddress(city.label).then(
+            response => {
+                const { lat, lng } = response.results[0].geometry.location;
+                this.setState({ latLng: { lat: lat, lng: lng } });
+                // console.log("aaa::", lat, lng);
+            },
+            error => {
+                console.error(error);
+            }
+        );
     }
 
     render() {
@@ -80,7 +92,7 @@ class AddProperty extends Component {
         let propertytypedata = Location.propertytype.map(function (item) {
             return { value: item.id, label: item.value };
         })
-        let citydata = [{value:1, label:'Ahmedabad'},{value:2, label:'Mumbai'},{value:3, label:'Pune'}];
+        let citydata = [{ value: 1, label: 'Ahmedabad' }, { value: 2, label: 'Mumbai' }, { value: 3, label: 'Pune' }];
         return (
             <Fragment>
                 <ReactCSSTransitionGroup
@@ -132,11 +144,11 @@ class AddProperty extends Component {
                                                 <Label for="city">City</Label>
                                                 <Select
                                                     value={this.state.city}
-                                                    onChange={(city) =>  this.setState({ city })}
+                                                    onChange={(city) => this.ChngCity(city)}
                                                     options={citydata}
                                                 />
                                             </FormGroup>
-                                        </Col>                                    
+                                        </Col>
                                         {/* <Col md='6'>
                                             <FormGroup>
                                                 <Label for="postal_code">Postal Code</Label>
@@ -150,10 +162,11 @@ class AddProperty extends Component {
                                     </Row> */}
                                     <Map
                                         google={this.props.google}
-                                        center={{ lat: 18.5204, lng: 73.8567 }}
+                                        center={{ lat: this.state.latLng.lat, lng: this.state.latLng.lng }}
                                         height='100%'
                                         zoom={15}
                                         getSelectedPlace={this.getSelectedPlace}
+                                        // getlatLng={this.getlatLng}
                                         city={this.state.city}
                                     />
                                 </Form>
@@ -171,8 +184,6 @@ class AddProperty extends Component {
         );
     }
 }
-
-
 const mapStateToProps = state => ({
     data: state,
 })

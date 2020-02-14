@@ -23,6 +23,8 @@ class Map extends Component {
 			city: '',
 			area: '',
 			state: '',
+			citylat: '',
+			citylng: '',
 			postalCode: 0,
 			mapPosition: {
 				lat: this.props.center.lat,
@@ -37,7 +39,7 @@ class Map extends Component {
 	/**
 	 * Get the current address from the default map position and set those values in the state
 	 */
-	componentDidMount() {
+	componentDidMount() {		
 		Geocode.fromLatLng(this.state.mapPosition.lat, this.state.mapPosition.lng).then(
 			response => {
 				const address = response.results[0].formatted_address,
@@ -70,6 +72,7 @@ class Map extends Component {
 			error => {
 				console.error(error);
 			}
+			
 		);
 	};
 	/**
@@ -80,6 +83,15 @@ class Map extends Component {
 	 * @return {boolean}
 	 */
 	shouldComponentUpdate(nextProps, nextState) {
+		// let glatlng = {
+		// 	lat: this.state.citylat,
+		// 	lng: this.state.citylng
+		// }
+		// // if(glatlng.lat !== '' && glatlng.lng !== ''){
+		// // 	this.props.getlatLng(glatlng);
+		// // }
+		// this.setState({markerPosition: glatlng});
+
 		if (
 			this.state.markerPosition.lat !== this.props.center.lat ||
 			this.state.address !== nextState.address ||
@@ -91,18 +103,29 @@ class Map extends Component {
 		} else if (this.props.center.lat === nextProps.center.lat) {
 			return false
 		}
-	}
 
+	}
 	componentWillReceiveProps = (props) => {
-		this.setState({city: props.city})
+		this.setState({ city: props.city })
+
 	}
 
+	// getcitylat=(e)=>{
+	// 	this.setState({citylat:e.target.value});
+	// }
+	// getcitylag=(e)=>{
+	// 	this.setState({citylng:e.target.value});
+	// }
 	/**
 	 * Get the city and set the city input value to the one selected
 	 *
 	 * @param addressArray
 	 * @return {string}
 	 */
+	// Geocode=()=>{
+
+
+	// }
 	getCity = (addressArray) => {
 		let city = '';
 		for (let i = 0; i < addressArray.length; i++) {
@@ -160,9 +183,6 @@ class Map extends Component {
 			}
 		}
 	}
-
-
-
 	/**
 	 * And function for city,state and address input
 	 * @param event
@@ -178,6 +198,35 @@ class Map extends Component {
 	onInfoWindowClose = (event) => {
 
 	};
+
+	// /**
+	//   * When the user types an address in the search box
+	//   * @param place
+	//   */
+	//  onPlaceSelected = ( place ) => {
+	// 	const address = place.formatted_address,
+	// 	addressArray =  place.address_components,
+	// 	city = this.getCity( addressArray ),
+	// 	area = this.getArea( addressArray ),
+	// 	state = this.getState( addressArray ),
+	// 	latValue = place.geometry.location.lat(),
+	// 	lngValue = place.geometry.location.lng();
+	//  // Set these values in the state.
+	//    this.setState({
+	// 	address: ( address ) ? address : '',
+	// 	area: ( area ) ? area : '',
+	// 	city: ( city ) ? city : '',
+	// 	state: ( state ) ? state : '',
+	// 	markerPosition: {
+	// 	 lat: latValue,
+	// 	 lng: lngValue
+	// 	},
+	// 	mapPosition: {
+	// 	 lat: latValue,
+	// 	 lng: lngValue
+	// 	},
+	//    })
+	//   };
 
 	/**
 	 * When the marker is dragged you get the lat and long using the functions available from event object.
@@ -274,19 +323,17 @@ class Map extends Component {
 		this.props.getSelectedPlace(selectedPlace);
 	};
 
-	
-
 	render() {
-		console.log("city12::", this.state.city.label);
+		console.log("city12::", this.state.markerPosition);
+		const mapurl = `https://maps.googleapis.com/maps/api/js?key=AIzaSyDQAwNqjxL0L2-5X8yqNLEfpsZj6Z1B_Is&libraries=places`;
 		const AsyncMap = withScriptjs(
 			withGoogleMap(
 				props => (
 					<Fragment>
 						<GoogleMap google={this.props.google}
 							defaultZoom={this.props.zoom}
-							defaultCenter={{ lat: this.state.mapPosition.lat, lng: this.state.mapPosition.lng }}
+							defaultCenter={{ lat: this.state.markerPosition.lat, lng: this.state.markerPosition.lng }}
 						>
-
 							{/* InfoWindow on top of marker */}
 							<InfoWindow
 								onClose={this.onInfoWindowClose}
@@ -335,7 +382,7 @@ class Map extends Component {
 								className="form-control"
 								onPlaceSelected={this.onPlaceSelected}
 								types={['(regions)']}
-								componentRestrictions={{ city: this.state.city.label }}
+							// componentRestrictions={{ city: this.state.city.label }}
 							/>
 						</FormGroup>
 					</Col>
@@ -373,7 +420,7 @@ class Map extends Component {
 					<Col md="6">
 
 						<AsyncMap
-							googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyDQAwNqjxL0L2-5X8yqNLEfpsZj6Z1B_Is&libraries=places"
+							googleMapURL={mapurl}
 							loadingElement={
 								<div style={{ height: `100%` }} />
 							}
@@ -392,5 +439,7 @@ class Map extends Component {
 		}
 		return (map)
 	}
+
 }
+
 export default Map
