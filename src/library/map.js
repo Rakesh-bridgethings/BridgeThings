@@ -10,10 +10,10 @@ import {
 	Modal, ModalHeader, ModalBody, ModalFooter,
 	Form, Label, Input, FormGroup, DropdownItem
 } from 'reactstrap';
+import Select from 'react-select';
 
 Geocode.setApiKey("AIzaSyDQAwNqjxL0L2-5X8yqNLEfpsZj6Z1B_Is");
 Geocode.enableDebug();
-// googlemapsclient = require('@google/maps').createClient({ key: 'AIzaSyDQAwNqjxL0L2-5X8yqNLEfpsZj6Z1B_Is' });
 
 class Map extends Component {
 	constructor(props) {
@@ -33,13 +33,14 @@ class Map extends Component {
 			markerPosition: {
 				lat: this.props.center.lat,
 				lng: this.props.center.lng
-			}
+			},
+			cityData: '',
 		}
 	}
 	/**
 	 * Get the current address from the default map position and set those values in the state
 	 */
-	componentDidMount() {		
+	componentWillMount() {
 		Geocode.fromLatLng(this.state.mapPosition.lat, this.state.mapPosition.lng).then(
 			response => {
 				const address = response.results[0].formatted_address,
@@ -58,21 +59,30 @@ class Map extends Component {
 					postalCode: (postalCode) ? postalCode : 0,
 				})
 
+				// let selectedPlace = {
+				// 	city: this.getCity(addressArray),
+				// 	area: this.getArea(addressArray),
+				// 	state: this.getState(addressArray),
+				// 	postalCode: this.getPostalCode(addressArray),
+				// 	lat: this.state.mapPosition.lat,
+				// 	lng: this.state.mapPosition.lat,
+				// 	address: response.results[0].formatted_address,
+				// }
 				let selectedPlace = {
-					city: this.getCity(addressArray),
-					area: this.getArea(addressArray),
-					state: this.getState(addressArray),
+					cityId: this.state.cityData.value, //this.getCity(addressArray),
+					areaAcres: null, //this.state.area, //this.getArea(addressArray),
+					// state: this.getState(addressArray),
 					postalCode: this.getPostalCode(addressArray),
-					lat: this.state.mapPosition.lat,
-					lng: this.state.mapPosition.lat,
-					address: response.results[0].formatted_address,
+					latitude: this.state.mapPosition.lat,
+					longitude: this.state.mapPosition.lng,
+					address: address,
 				}
 				this.props.getSelectedPlace(selectedPlace);
 			},
 			error => {
 				console.error(error);
 			}
-			
+
 		);
 	};
 	/**
@@ -83,17 +93,8 @@ class Map extends Component {
 	 * @return {boolean}
 	 */
 	shouldComponentUpdate(nextProps, nextState) {
-		// let glatlng = {
-		// 	lat: this.state.citylat,
-		// 	lng: this.state.citylng
-		// }
-		// // if(glatlng.lat !== '' && glatlng.lng !== ''){
-		// // 	this.props.getlatLng(glatlng);
-		// // }
-		// this.setState({markerPosition: glatlng});
-
 		if (
-			this.state.markerPosition.lat !== this.props.center.lat ||
+			this.state.markerPosition !== nextProps.center ||
 			this.state.address !== nextState.address ||
 			this.state.city !== nextState.city ||
 			this.state.area !== nextState.area ||
@@ -103,29 +104,34 @@ class Map extends Component {
 		} else if (this.props.center.lat === nextProps.center.lat) {
 			return false
 		}
-
-	}
-	componentWillReceiveProps = (props) => {
-		this.setState({ city: props.city })
-
 	}
 
-	// getcitylat=(e)=>{
-	// 	this.setState({citylat:e.target.value});
+	// getSnapshotBeforeUpdate(prevProps, prevState) {
+	// 	if (prevProps.center !== this.props.center) {
+	// 		const newVariable = this.props.center;
+	// 		return newVariable;
+	// 	}
+	// 	return null;
 	// }
-	// getcitylag=(e)=>{
-	// 	this.setState({citylng:e.target.value});
+
+	// componentDidUpdate(prevProps, prevState, snapshot) {
+	// 	console.log("snapshot::", snapshot);
 	// }
+
+	componentWillReceiveProps = (newProps) => {
+		// this.setState({ city: newProps.city })
+		// if(newProps.city !== this.props.city){
+
+		// }
+	}
+
 	/**
 	 * Get the city and set the city input value to the one selected
 	 *
 	 * @param addressArray
 	 * @return {string}
 	 */
-	// Geocode=()=>{
 
-
-	// }
 	getCity = (addressArray) => {
 		let city = '';
 		for (let i = 0; i < addressArray.length; i++) {
@@ -190,6 +196,56 @@ class Map extends Component {
 	onChange = (event) => {
 		this.setState({ [event.target.name]: event.target.value });
 	};
+
+	ChngCity = (cityDta) => {
+		
+		this.setState({ cityData: cityDta });
+		Geocode.fromAddress(cityDta.label).then(
+			response => {
+				const { lat, lng } = response.results[0].geometry.location;
+				let pos = {
+					lat: lat,
+					lng: lng
+				}
+				this.setState({ markerPosition: pos, mapPosition: pos });
+				Geocode.fromLatLng(pos.lat, pos.lng).then(
+					response => {
+						const address = response.results[0].formatted_address,
+							addressArray = response.results[0].address_components,
+							city = this.getCity(addressArray),
+							area = this.getArea(addressArray),
+							state = this.getState(addressArray),
+							postalCode = this.getPostalCode(addressArray);
+		
+						this.setState({
+							address: (address) ? address : '',
+							area: (area) ? area : '',
+							city: (city) ? city : '',
+							state: (state) ? state : '',
+							postalCode: (postalCode) ? postalCode : 0,		
+						});
+						let selectedPlace = {
+							cityId: cityDta.value, //this.getCity(addressArray),
+							areaAcres: null, //this.state.area, //this.getArea(addressArray),
+							// state: this.getState(addressArray),
+							postalCode: this.getPostalCode(addressArray),
+							latitude: pos.lat,
+							longitude: pos.lng,
+							address: address,
+						}
+						this.props.getSelectedPlace(selectedPlace);
+
+					});
+			},
+			error => {
+				console.error(error);
+			}
+		);
+		
+
+
+	}
+
 	/**
 	 * This Event triggers when the marker window is closed
 	 *
@@ -199,35 +255,6 @@ class Map extends Component {
 
 	};
 
-	// /**
-	//   * When the user types an address in the search box
-	//   * @param place
-	//   */
-	//  onPlaceSelected = ( place ) => {
-	// 	const address = place.formatted_address,
-	// 	addressArray =  place.address_components,
-	// 	city = this.getCity( addressArray ),
-	// 	area = this.getArea( addressArray ),
-	// 	state = this.getState( addressArray ),
-	// 	latValue = place.geometry.location.lat(),
-	// 	lngValue = place.geometry.location.lng();
-	//  // Set these values in the state.
-	//    this.setState({
-	// 	address: ( address ) ? address : '',
-	// 	area: ( area ) ? area : '',
-	// 	city: ( city ) ? city : '',
-	// 	state: ( state ) ? state : '',
-	// 	markerPosition: {
-	// 	 lat: latValue,
-	// 	 lng: lngValue
-	// 	},
-	// 	mapPosition: {
-	// 	 lat: latValue,
-	// 	 lng: lngValue
-	// 	},
-	//    })
-	//   };
-
 	/**
 	 * When the marker is dragged you get the lat and long using the functions available from event object.
 	 * Use geocode to get the address, city, area and state from the lat and lng positions.
@@ -235,7 +262,9 @@ class Map extends Component {
 	 *
 	 * @param event
 	 */
+
 	onMarkerDragEnd = (event) => {
+		// this.setState({ cityData: '' });
 		let newLat = event.latLng.lat(),
 			newLng = event.latLng.lng();
 
@@ -263,13 +292,13 @@ class Map extends Component {
 					},
 				})
 				let selectedPlace = {
-					city: this.state.city.value, //this.getCity(addressArray),
-					area: this.state.area, //this.getArea(addressArray),
+					cityId: this.state.cityData.value, //this.getCity(addressArray),
+					areaAcres: null, //this.state.area, //this.getArea(addressArray),
 					// state: this.getState(addressArray),
 					postalCode: this.getPostalCode(addressArray),
 					latitude: event.latLng.lat(),
 					longitude: event.latLng.lng(),
-					address: response.results[0].formatted_address,
+					address: address,
 				}
 				this.props.getSelectedPlace(selectedPlace);
 			},
@@ -284,6 +313,7 @@ class Map extends Component {
 	 * @param place
 	 */
 	onPlaceSelected = (place) => {
+		// this.setState({ cityData: '' });
 		const address = place.formatted_address,
 			place_id = place.place_id,
 			addressArray = place.address_components,
@@ -310,21 +340,21 @@ class Map extends Component {
 				lng: lngValue
 			},
 		})
-
 		let selectedPlace = {
-			cityId: this.state.city.value, //this.getCity(addressArray), //place_id, //36842, //this.getCity(addressArray),
-			areaAcres: this.state.area, //this.getArea(addressArray), //20, //this.getArea(addressArray),
+			cityId: this.state.cityData.value, //this.getCity(addressArray),
+			areaAcres: null, //this.state.area, //this.getArea(addressArray),
 			// state: this.getState(addressArray),
 			postalCode: this.getPostalCode(addressArray),
 			latitude: place.geometry.location.lat(),
 			longitude: place.geometry.location.lng(),
-			address: place.formatted_address,
+			address: address,
 		}
 		this.props.getSelectedPlace(selectedPlace);
 	};
 
 	render() {
-		console.log("city12::", this.state.markerPosition);
+		console.log("city::", this.state.cityData);
+		let citydata = [{ value: 1, label: 'Ahmedabad' }, { value: 2, label: 'Mumbai' }, { value: 3, label: 'Pune' }, { value: 4, label: 'Toronto' }];
 		const mapurl = `https://maps.googleapis.com/maps/api/js?key=AIzaSyDQAwNqjxL0L2-5X8yqNLEfpsZj6Z1B_Is&libraries=places`;
 		const AsyncMap = withScriptjs(
 			withGoogleMap(
@@ -362,14 +392,39 @@ class Map extends Component {
 		if (this.props.center.lat !== undefined) {
 			map = <Fragment>
 				{/* <div className="autocmplt"> */}
-				<Row>
-					<Col md='6'>
-						<FormGroup>
-							<Label for="type">Area</Label>
-							<Input type="text" name="area" className="form-control" onChange={(e) => this.setState({ area: e.target.value })} value={this.state.area} />
-						</FormGroup>
+				{/* <Row>
+					<Col md='12'>
+
 					</Col>
+
+				</Row> */}
+				{/* </div> */}
+				<Row>
+
 					<Col md='6'>
+
+						{/* <FormGroup>
+							<Label for="type">Area</Label>
+							<Input type="text" name="area" className="form-control" onChange={this.onChange} readOnly="readOnly" value={this.state.area} />
+						</FormGroup> */}
+
+						{/* <FormGroup>
+							<Label for="type">City</Label>
+							<Input type="text" name="city" className="form-control" onChange={this.onChange} readOnly="readOnly" value={this.state.city} />
+						</FormGroup> */}
+
+						{/* <div className="form-group">
+							<label htmlFor="">State</label>
+							<input type="text" name="state" className="form-control" onChange={this.onChange} readOnly="readOnly" value={this.state.state} />
+						</div> */}
+						<FormGroup>
+							<Label for="city">City</Label>
+							<Select
+								value={this.state.cityData}
+								onChange={(city) => this.ChngCity(city)}
+								options={citydata}
+							/>
+						</FormGroup>
 						<FormGroup>
 							<Label for="search">Search Location For Property</Label>
 							<Autocomplete
@@ -382,30 +437,27 @@ class Map extends Component {
 								className="form-control"
 								onPlaceSelected={this.onPlaceSelected}
 								types={['(regions)']}
-							// componentRestrictions={{ city: this.state.city.label }}
+							// componentRestrictions= {{country: "in"}}
+							// bounds = {[{lat: 23.50846, lng: 72.84009999999999},{ lat: 21.9817599, lng: 71.83994 }]}
+							// strictbounds= {true}
+							// types= {['(cities)']}
+							// componentRestrictions= {{city: "in"}}
 							/>
+							{/* <GooglePlacesAutocomplete
+								onSelect={this.onPlaceSelected}
+								autocompletionRequest={{
+									// location: this.state.markerPosition,
+									bounds: [
+										{ lat: 23.50846, lng: 72.84009999999999 },
+										{ lat: 21.9817599, lng: 71.83994 }
+									],
+								}}
+							/> */}
 						</FormGroup>
-					</Col>
-
-				</Row>
-				{/* </div> */}
-				<Row>
-					<Col md='6'>
-						{/* <FormGroup>
+						<FormGroup>
 							<Label for="type">Area</Label>
-							<Input type="text" name="area" className="form-control" onChange={this.onChange} readOnly="readOnly" value={this.state.area} />
-						</FormGroup> */}
-
-						{/* <FormGroup>
-							<Label for="type">City</Label>
-							<Input type="text" name="city" className="form-control" onChange={this.onChange} readOnly="readOnly" value={this.state.city} />
-						</FormGroup> */}
-
-						{/* <div className="form-group">
-					<label htmlFor="">State</label>
-					<input type="text" name="state" className="form-control" onChange={this.onChange} readOnly="readOnly" value={this.state.state} />
-				</div> */}
-
+							<Input type="text" name="area" className="form-control" onChange={(e) => this.setState({ area: e.target.value })} value={this.state.area} />
+						</FormGroup>
 						<FormGroup>
 							<Label for="type">Address</Label>
 							<Input type="text" name="address" className="form-control" onChange={this.onChange} readOnly="readOnly" value={this.state.address} />
@@ -415,10 +467,8 @@ class Map extends Component {
 							<Label for="type">Postal Code</Label>
 							<Input type="text" name="postalCode" className="form-control" onChange={this.onChange} readOnly="readOnly" value={this.state.postalCode} />
 						</FormGroup>
-
 					</Col>
 					<Col md="6">
-
 						<AsyncMap
 							googleMapURL={mapurl}
 							loadingElement={

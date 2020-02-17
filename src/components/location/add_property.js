@@ -14,10 +14,9 @@ import {
 } from 'reactstrap';
 import Select from 'react-select';
 import SimpleReactValidator from 'simple-react-validator';
-// import Autocomplete from 'react-google-autocomplete';
 import Map from '../../library/map';
 import Geocode from "react-geocode";
-// import LocationSearchInput from './placeautocomplete';
+
 class AddProperty extends Component {
     constructor(props) {
         super(props);
@@ -61,7 +60,6 @@ class AddProperty extends Component {
             add_property(selectedPlace);
             this.props.isaddpropertymodal(!this.props.addpropertymodal);
         }
-
     }
     toggle = () => {
         this.props.isaddpropertymodal(!this.props.addpropertymodal);
@@ -70,19 +68,19 @@ class AddProperty extends Component {
     // getlatLng = (val) => {
     //     this.setState({latLng: val});
     // }
-    ChngCity = (city) => {
-        this.setState({ city });
-        Geocode.fromAddress(city.label).then(
-            response => {
-                const { lat, lng } = response.results[0].geometry.location;
-                this.setState({ latLng: { lat: lat, lng: lng } });
-                // console.log("aaa::", lat, lng);
-            },
-            error => {
-                console.error(error);
-            }
-        );
-    }
+    // ChngCity = (city) => {
+    //     this.setState({ city });
+    //     Geocode.fromAddress(city.label).then(
+    //         response => {
+    //             const { lat, lng } = response.results[0].geometry.location;
+    //             this.setState({ latLng: { lat: lat, lng: lng } });
+    //             // console.log("aaa::", lat, lng);
+    //         },
+    //         error => {
+    //             console.error(error);
+    //         }
+    //     );
+    // }
 
     render() {
         const { Location } = this.props.data;
@@ -92,7 +90,7 @@ class AddProperty extends Component {
         let propertytypedata = Location.propertytype.map(function (item) {
             return { value: item.id, label: item.value };
         })
-        let citydata = [{ value: 1, label: 'Ahmedabad' }, { value: 2, label: 'Mumbai' }, { value: 3, label: 'Pune' }];
+        // let citydata = [{ value: 1, label: 'Ahmedabad' }, { value: 2, label: 'Mumbai' }, { value: 3, label: 'Pune' }, { value: 4, label: 'Toronto' }];
         return (
             <Fragment>
                 <ReactCSSTransitionGroup
@@ -101,7 +99,7 @@ class AddProperty extends Component {
                     transitionAppear={true}
                     transitionAppearTimeout={0}
                     transitionEnter={false}
-                    transitionLeave={false}>
+                    transitionLeave={false}>                   
                     <div>
                         <Modal isOpen={this.props.addpropertymodal} toggle={() => this.toggle()} className={this.props.className} id='add_property'>
                             <ModalHeader toggle={() => this.toggle()}>Add Property</ModalHeader>
@@ -129,7 +127,7 @@ class AddProperty extends Component {
                                         </Col>
                                     </Row>
                                     <Row>
-                                        <Col md='6'>
+                                        <Col md='12'>
                                             <FormGroup>
                                                 <Label for="type">Type</Label>
                                                 <Select
@@ -139,7 +137,7 @@ class AddProperty extends Component {
                                                 />
                                             </FormGroup>
                                         </Col>
-                                        <Col md='6'>
+                                        {/* <Col md='6'>
                                             <FormGroup>
                                                 <Label for="city">City</Label>
                                                 <Select
@@ -148,7 +146,7 @@ class AddProperty extends Component {
                                                     options={citydata}
                                                 />
                                             </FormGroup>
-                                        </Col>
+                                        </Col> */}
                                         {/* <Col md='6'>
                                             <FormGroup>
                                                 <Label for="postal_code">Postal Code</Label>
@@ -167,7 +165,7 @@ class AddProperty extends Component {
                                         zoom={15}
                                         getSelectedPlace={this.getSelectedPlace}
                                         // getlatLng={this.getlatLng}
-                                        city={this.state.city}
+                                        // city={this.state.city}
                                     />
                                 </Form>
                             </ModalBody>
