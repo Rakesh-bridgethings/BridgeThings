@@ -5,6 +5,8 @@ import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import HeaderLogo from './AppLogo';
 import SearchBox from './SearchBox';
 import UserBox from './UserBox';
+import HeaderCustom from './header';
+import Footer from './footer';
 
 class Header extends React.Component {
     render() {
@@ -15,7 +17,7 @@ class Header extends React.Component {
         } = this.props;
         return (
             <Fragment>
-                <ReactCSSTransitionGroup
+                {/* <ReactCSSTransitionGroup
                     component="div"
                     className={cx("app-header", headerBackgroundColor, {'header-shadow': enableHeaderShadow})}
                     transitionName="HeaderAnimation"
@@ -37,7 +39,9 @@ class Header extends React.Component {
                             <UserBox/>
                         </div>
                     </div>
-                </ReactCSSTransitionGroup>
+                </ReactCSSTransitionGroup> */}
+                <HeaderCustom />
+                <Footer />
             </Fragment>
         );
     }
@@ -53,57 +57,4 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({});
 
 export default connect(mapStateToProps, mapDispatchToProps)(Header);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
