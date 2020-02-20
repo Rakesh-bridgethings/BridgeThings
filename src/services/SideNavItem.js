@@ -1,4 +1,4 @@
-import { fetch_sidenavitem_pending, fetch_sidenavitem_success, fetch_topUseritem_success, fetch_sidenavitem_error } from '../actions/sidenavitem';
+import { fetch_sidenavitem_pending, fetch_sidenavitem_success, fetch_topUseritem_success } from '../actions/sidenavitem';
 // import axios from 'axios';
 
 
@@ -180,7 +180,7 @@ let dashboards = [
         "key": "Users",
         "text": "Users",
         "icon": "icon-user-group",
-        "url": null,
+        "url": 'users',
         "menuItems": [
 
         ]

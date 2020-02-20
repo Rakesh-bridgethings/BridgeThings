@@ -1,4 +1,4 @@
-import { fetch_locationitem_pending, fetch_locationitem_success, fetch_locationitem_error, fetch_organizationdata_pending, fetch_organizationdata_success, fetch_organizationdata_error, fetch_location_types_pending, fetch_location_types_success, fetch_entity_types_pending, fetch_entity_types_success, fetch_property_types_pending, fetch_property_types_success, fetch_day_intervals_pending, fetch_day_intervals_success, fetch_property_pending, fetch_property_success, edit_location_data_success, edit_location_data_pending, update_locationitem_success, delete_location_data_success, data_post_status } from '../actions/locationitem';
+import { fetch_locationitem_success, fetch_organizationdata_success, fetch_location_types_success, fetch_entity_types_success, fetch_property_types_success,  fetch_day_intervals_success,  fetch_property_success, edit_location_data_success, data_post_status, fetch_region_success } from '../actions/locationitem';
 import axios from 'axios';
 import { SERVER_URL, HEADER } from '../config/config';
 import statusMessage from './status';
@@ -97,6 +97,22 @@ export function fetchpropertydata(id) {
             statusMessage(dispatch, "loading", false);
             resolve(
                dispatch(fetch_property_success(res.data.list))
+            );
+         });
+      } catch (error) {
+         reject(error);
+      }
+   }).catch(async (err) => { await statusMessage(dispatch, 'error', err); throw err; });
+}
+
+export function fetchcityregion(country) {
+   return dispatch => new Promise(async (resolve, reject) => {
+      await statusMessage(dispatch, 'loading', true);
+      try {
+         axios.get(`${SERVER_URL}region/list?country=${country}`, { headers: HEADER }).then(async (res) => {
+            statusMessage(dispatch, "loading", false);
+            resolve(
+               dispatch(fetch_region_success(res.data.list))
             );
          });
       } catch (error) {

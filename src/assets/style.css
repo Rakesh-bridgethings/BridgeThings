@@ -103,8 +103,17 @@ ul.pagination {
     border: 1px solid #ced4da;
     border-radius: 0.25rem;
 }
-
-
+#user_tbl .container {
+    max-width: 100%;
+    padding: 0;
+}
+#user_tbl .pe-7s-mail, #user_tbl .pe-7s-comment {
+    font-size: 25px;
+    color: #000;
+}
+#user_tbl .pe-7s-mail {
+    padding-left: 3px;
+}
 
 
 

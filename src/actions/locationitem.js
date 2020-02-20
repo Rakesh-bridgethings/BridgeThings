@@ -34,7 +34,7 @@ export const UPDATE_LOCATION__DATA_SUCCESS = 'UPDATE_LOCATION__DATA_SUCCESS';
 export const DELETE_LOCATION__DATA_SUCCESS = 'DELETE_LOCATION__DATA_SUCCESS';
 
 export const DATA_POST_SUCCESS = 'DATA_POST_SUCCESS';
-
+export const FETCH_REGION_SUCCESS = 'FETCH_REGION_SUCCESS';
 // locations
 export function fetch_locationitem_pending() {
     return {
@@ -55,6 +55,13 @@ export function fetch_locationitem_success(locationitem_data) {
     return {
         type: FETCH_LOCATIONITEM_SUCCESS,
         locationitem:locationitem_data
+    }
+}
+
+export function fetch_region_success(region_data) {
+    return {
+        type: FETCH_REGION_SUCCESS,
+        regiondata:region_data
     }
 }
 

@@ -5,13 +5,12 @@ import { bindActionCreators } from 'redux';
 import ResizeDetector from 'react-resize-detector';
 import Header from '../components/includes/Header';
 import LeftSidebar from '../components/includes/LeftSidebar';
-import Location from '../components/location/index';
+import Location from '../components/location';
+import User from '../components/users';
 import PerformanceDashboard from '../components/dashboards/performance';
 import { Route, Link, Switch, BrowserRouter as Router } from 'react-router-dom'
 // import { fetchsidenavitemdata } from '../services/SideNavItem';
 // const PeroformanceDashboard = lazy(() => import('./dashboards/performance'));
-
-
 class Main extends Component {
     constructor(props) {
         super(props);
@@ -71,6 +70,7 @@ class Main extends Component {
                                             {/* </Suspense> */}
                                             <Route path="/test_dashboard" component={PerformanceDashboard} />
                                             <Route path="/locations" component={Location} />
+                                            <Route path="/users" component={User} />
                                         </div>
                                     </div>
                                 </div>
@@ -82,7 +82,6 @@ class Main extends Component {
         )
     }
 }
-
 const mapStateToProps = state => ({
     colorScheme: state.ThemeOptions.colorScheme,
     enableFixedHeader: state.ThemeOptions.enableFixedHeader,

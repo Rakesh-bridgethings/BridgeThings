@@ -1,7 +1,7 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component, Fragment, createRef } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { fetchlocationitemdata, fetchorganizationdata, fetchlocationtypesdata, fetchpropertytypesdata, add_property } from '../../services/Location'
+import { fetchlocationitemdata, fetchorganizationdata, fetchlocationtypesdata, fetchpropertytypesdata, add_property, fetchcityregion } from '../../services/Location'
 import PageTitle from '../../components/includes/PageTitle';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {
@@ -14,13 +14,18 @@ import {
 } from 'reactstrap';
 import Select from 'react-select';
 import SimpleReactValidator from 'simple-react-validator';
-import Map from '../../library/map';
+import Autocomplete from 'react-google-autocomplete';
+import { withGoogleMap, GoogleMap, withScriptjs, InfoWindow, Marker } from "react-google-maps";
 import Geocode from "react-geocode";
+
+Geocode.setApiKey("AIzaSyDQAwNqjxL0L2-5X8yqNLEfpsZj6Z1B_Is");
+Geocode.enableDebug();
 
 class AddProperty extends Component {
     constructor(props) {
         super(props);
         this.toggle = this.toggle.bind(this);
+        this.autocomplet = React.createRef();
         this.validator = new SimpleReactValidator({
             element: (message, className) => <div className='required_message'>{message}</div>
         })
@@ -32,55 +37,277 @@ class AddProperty extends Component {
         orgnization: '',
         propertytype: '',
         selectedPlace: {},
-        postal_code: 0,
         label: '',
+        country: {},
+        address: '',
         city: '',
-        latLng: { lat: 18.5204, lng: 73.8567 },
+        area: '',
+        state: '',
+        postalCode: 0,
+        mapPosition: { lat: 18.5204, lng: 73.8567 },
+        markerPosition: { lat: 18.5204, lng: 73.8567 },
+        center: { lat: 18.5204, lng: 73.8567 },
+        cityId: 0,
     };
 
     componentDidMount = async () => {
         const { fetchorganizationdata, fetchpropertytypesdata } = this.props;
         fetchorganizationdata();
         fetchpropertytypesdata();
+        Geocode.fromLatLng(this.state.mapPosition.lat, this.state.mapPosition.lng).then(
+            response => {
+                const address = response.results[0].formatted_address,
+                    addressArray = response.results[0].address_components,
+                    city = this.getCity(addressArray),
+                    area = this.getArea(addressArray),
+                    state = this.getState(addressArray),
+                    postalCode = this.getPostalCode(addressArray);
+
+                this.setState({
+                    address: (address) ? address : '',
+                    area: (area) ? area : '',
+                    city: (city) ? city : '',
+                    state: (state) ? state : '',
+                    postalCode: (postalCode) ? postalCode : 0,
+                })
+                let selectedPlace = {
+                    cityId: this.state.city.value, //this.getCity(addressArray),
+                    areaAcres: null, //this.state.area, //this.getArea(addressArray),
+                    // state: this.getState(addressArray),
+                    postalCode: this.getPostalCode(addressArray),
+                    latitude: this.state.mapPosition.lat,
+                    longitude: this.state.mapPosition.lng,
+                    address: address,
+                }
+                this.setState({ selectedPlace: selectedPlace });
+                // this.props.getSelectedPlace(selectedPlace);
+            },
+            error => {
+                console.error(error);
+            }
+        );
     };
 
-    getSelectedPlace = (val) => {
-        this.setState({ selectedPlace: val });
-        this.setState({ postal_code: val.postal_code })
-    }
     onSave = () => {
         this.validator.showMessageFor('orgnization');
         this.validator.showMessageFor('label')
         if (this.validator.allValid()) {
             let selectedPlace = this.state.selectedPlace;
+            selectedPlace.cityId = this.state.cityId;
             selectedPlace.entityId = this.state.orgnization.value;
             selectedPlace.propertyType = this.state.propertytype.value;
             selectedPlace.label = this.state.label;
             const { add_property } = this.props;
+            console.log("selectedPlace::", selectedPlace);
             add_property(selectedPlace);
             this.props.isaddpropertymodal(!this.props.addpropertymodal);
         }
     }
+
     toggle = () => {
         this.props.isaddpropertymodal(!this.props.addpropertymodal);
     }
 
-    // getlatLng = (val) => {
-    //     this.setState({latLng: val});
-    // }
-    // ChngCity = (city) => {
-    //     this.setState({ city });
-    //     Geocode.fromAddress(city.label).then(
-    //         response => {
-    //             const { lat, lng } = response.results[0].geometry.location;
-    //             this.setState({ latLng: { lat: lat, lng: lng } });
-    //             // console.log("aaa::", lat, lng);
-    //         },
-    //         error => {
-    //             console.error(error);
-    //         }
-    //     );
-    // }
+    ChngCountry = (country) => {
+        this.setState({ country: country });
+        const { fetchcityregion } = this.props;
+        fetchcityregion(country.value);
+    }
+
+    ChngCity = (city) => {
+        this.setState({ city });
+        this.setState({ cityId: city.value });
+        Geocode.fromAddress(city.label).then(
+            response => {
+                const { lat, lng } = response.results[0].geometry.location;
+                let pos = {
+                    lat: lat,
+                    lng: lng
+                }
+                this.setState({ markerPosition: pos, mapPosition: pos });
+                Geocode.fromLatLng(pos.lat, pos.lng).then(
+                    response => {
+                        const address = response.results[0].formatted_address,
+                            addressArray = response.results[0].address_components,
+                            city = this.getCity(addressArray),
+                            area = this.getArea(addressArray),
+                            state = this.getState(addressArray),
+                            postalCode = this.getPostalCode(addressArray);
+
+                        this.setState({
+                            address: (address) ? address : '',
+                            area: (area) ? area : '',
+                            city: (city) ? city : '',
+                            state: (state) ? state : '',
+                            postalCode: (postalCode) ? postalCode : 0,
+                        });
+                        let selectedPlace = {
+                            cityId: city.value, //this.getCity(addressArray),
+                            areaAcres: null, //this.state.area, //this.getArea(addressArray),
+                            // state: this.getState(addressArray),
+                            postalCode: this.getPostalCode(addressArray),
+                            latitude: pos.lat,
+                            longitude: pos.lng,
+                            address: address,
+                        }
+                        // this.props.getSelectedPlace(selectedPlace);
+                        this.setState({ selectedPlace: selectedPlace });
+                    });
+            },
+            error => {
+                console.error(error);
+            }
+        );
+    }
+
+    getState = (addressArray) => {
+        let state = '';
+        for (let i = 0; i < addressArray.length; i++) {
+            for (let i = 0; i < addressArray.length; i++) {
+                if (addressArray[i].types[0] && 'administrative_area_level_1' === addressArray[i].types[0]) {
+                    state = addressArray[i].long_name;
+                    return state;
+                }
+            }
+        }
+    };
+
+    getPostalCode = (addressArray) => {
+        let postal_code = '';
+        for (let i = 0; i < addressArray.length; i++) {
+            for (let i = 0; i < addressArray.length; i++) {
+                if (addressArray[i].types[0] && 'postal_code' === addressArray[i].types[0]) {
+                    postal_code = addressArray[i].long_name;
+                    return postal_code;
+                }
+            }
+        }
+    }
+
+    getArea = (addressArray) => {
+        let area = '';
+        for (let i = 0; i < addressArray.length; i++) {
+            if (addressArray[i].types[0]) {
+                for (let j = 0; j < addressArray[i].types.length; j++) {
+                    if ('sublocality_level_1' === addressArray[i].types[j] || 'locality' === addressArray[i].types[j]) {
+                        area = addressArray[i].long_name;
+                        return area;
+                    }
+                }
+            }
+        }
+    };
+
+    getCity = (addressArray) => {
+        let city = '';
+        for (let i = 0; i < addressArray.length; i++) {
+            if (addressArray[i].types[0] && 'administrative_area_level_2' === addressArray[i].types[0]) {
+                city = addressArray[i].long_name;
+                return city;
+            }
+        }
+    };
+
+    onChange = (event) => {
+        this.setState({ [event.target.name]: event.target.value });
+    };
+
+    onPlaceSelected = (place) => {
+        const address = place.formatted_address,
+            place_id = place.place_id,
+            addressArray = place.address_components,
+            city = this.getCity(addressArray),
+            area = this.getArea(addressArray),
+            state = this.getState(addressArray),
+            postalCode = this.getPostalCode(addressArray),
+            latValue = place.geometry.location.lat(),
+            lngValue = place.geometry.location.lng();
+        // Set these values in the state.
+        this.setState({
+            address: (address) ? address : '',
+            area: (area) ? area : '',
+            city: (city) ? city : '',
+            state: (state) ? state : '',
+            place_id: (place_id) ? place_id : '',
+            postalCode: (postalCode) ? postalCode : 0,
+            markerPosition: {
+                lat: latValue,
+                lng: lngValue
+            },
+            mapPosition: {
+                lat: latValue,
+                lng: lngValue
+            },
+        })
+        let selectedPlace = {
+            cityId: this.state.city.value, //this.getCity(addressArray),
+            areaAcres: null, //this.state.area, //this.getArea(addressArray),
+            // state: this.getState(addressArray),
+            postalCode: this.getPostalCode(addressArray),
+            latitude: place.geometry.location.lat(),
+            longitude: place.geometry.location.lng(),
+            address: address,
+        }
+        // this.props.getSelectedPlace(selectedPlace);
+        this.setState({ selectedPlace });
+    };
+
+    onMarkerDragEnd = (event) => {
+        // this.setState({ cityData: '' });
+        let newLat = event.latLng.lat(),
+            newLng = event.latLng.lng();
+
+        Geocode.fromLatLng(newLat, newLng).then(
+            response => {
+                const address = response.results[0].formatted_address,
+                    addressArray = response.results[0].address_components,
+                    city = this.getCity(addressArray),
+                    area = this.getArea(addressArray),
+                    state = this.getState(addressArray),
+                    postalCode = this.getPostalCode(addressArray);
+                this.setState({
+                    address: (address) ? address : '',
+                    area: (area) ? area : '',
+                    city: (city) ? city : '',
+                    state: (state) ? state : '',
+                    postalCode: (postalCode) ? postalCode : 0,
+                    markerPosition: {
+                        lat: newLat,
+                        lng: newLng
+                    },
+                    mapPosition: {
+                        lat: newLat,
+                        lng: newLng
+                    },
+                })
+                let selectedPlace = {
+                    cityId: this.state.city.value, //this.getCity(addressArray),
+                    areaAcres: null, //this.state.area, //this.getArea(addressArray),
+                    // state: this.getState(addressArray),
+                    postalCode: this.getPostalCode(addressArray),
+                    latitude: event.latLng.lat(),
+                    longitude: event.latLng.lng(),
+                    address: address,
+                }
+                // this.props.getSelectedPlace(selectedPlace);
+                this.setState({ selectedPlace });
+            },
+            error => {
+                console.error(error);
+            }
+        );
+    };
+
+    onInfoWindowClose = (event) => { };
+
+    shouldComponentUpdate = (nextProps, nextState) => {
+        if (nextState.country === this.state.country) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 
     render() {
         const { Location } = this.props.data;
@@ -90,7 +317,44 @@ class AddProperty extends Component {
         let propertytypedata = Location.propertytype.map(function (item) {
             return { value: item.id, label: item.value };
         })
-        // let citydata = [{ value: 1, label: 'Ahmedabad' }, { value: 2, label: 'Mumbai' }, { value: 3, label: 'Pune' }, { value: 4, label: 'Toronto' }];
+        let citydata = Location.regiondata.length > 0 ? Location.regiondata.map(function (item) {
+            return { value: item.id, label: item.value };
+        }) : [];
+        let countrydata = [{ value: 'USA', label: 'USA', code: 'us' }, { value: 'IND', label: 'India', code: 'in' }, { value: 'CANADA', label: 'Canada', code: 'CA' }];
+        const AsyncMap = withScriptjs(
+            withGoogleMap(
+                props => (
+                    <Fragment>
+                        <GoogleMap google={this.props.google}
+                            defaultZoom={15}
+                            defaultCenter={{ lat: this.state.markerPosition.lat, lng: this.state.markerPosition.lng }}
+                        >
+                            {/* InfoWindow on top of marker */}
+                            <InfoWindow
+                                onClose={this.onInfoWindowClose}
+                                position={{ lat: (this.state.markerPosition.lat + 0.0018), lng: this.state.markerPosition.lng }}
+                            >
+                                <div>
+                                    <span style={{ padding: 0, margin: 0 }}>{this.state.address}</span>
+                                </div>
+                            </InfoWindow>
+                            {/*Marker*/}
+                            <Marker google={this.props.google}
+                                name={'Dolores park'}
+                                draggable={true}
+                                onDragEnd={this.onMarkerDragEnd}
+                                position={{ lat: this.state.markerPosition.lat, lng: this.state.markerPosition.lng }}
+                            />
+                            <Marker />
+                            {/* For Auto complete Search Box */}
+
+                        </GoogleMap>
+                    </Fragment>
+                )
+            )
+        );
+        let map;
+        // if (this.state.center.lat !== undefined) {
         return (
             <Fragment>
                 <ReactCSSTransitionGroup
@@ -99,7 +363,7 @@ class AddProperty extends Component {
                     transitionAppear={true}
                     transitionAppearTimeout={0}
                     transitionEnter={false}
-                    transitionLeave={false}>                   
+                    transitionLeave={false}>
                     <div>
                         <Modal isOpen={this.props.addpropertymodal} toggle={() => this.toggle()} className={this.props.className} id='add_property'>
                             <ModalHeader toggle={() => this.toggle()}>Add Property</ModalHeader>
@@ -127,7 +391,7 @@ class AddProperty extends Component {
                                         </Col>
                                     </Row>
                                     <Row>
-                                        <Col md='12'>
+                                        <Col md='6'>
                                             <FormGroup>
                                                 <Label for="type">Type</Label>
                                                 <Select
@@ -137,7 +401,19 @@ class AddProperty extends Component {
                                                 />
                                             </FormGroup>
                                         </Col>
-                                        {/* <Col md='6'>
+                                        <Col md='6'>
+                                            <FormGroup>
+                                                <Label for="country">Country</Label>
+                                                <Select
+                                                    value={this.state.country}
+                                                    onChange={(country) => this.ChngCountry(country)}
+                                                    options={countrydata}
+                                                />
+                                            </FormGroup>
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col md='6'>
                                             <FormGroup>
                                                 <Label for="city">City</Label>
                                                 <Select
@@ -146,27 +422,56 @@ class AddProperty extends Component {
                                                     options={citydata}
                                                 />
                                             </FormGroup>
-                                        </Col> */}
-                                        {/* <Col md='6'>
+                                        </Col>
+                                        <Col md="6">
                                             <FormGroup>
-                                                <Label for="postal_code">Postal Code</Label>
-                                                <Input type='text' value={this.state.postal_code !== 0 ? this.state.postal_code : ''} readOnly="readOnly" name="postal_code" className="form-control" />
+                                                <Label for="search">Search Location For Property</Label>
+                                                <Autocomplete
+                                                    style={{
+                                                        width: '100%',
+                                                        height: '40px',
+                                                        paddingLeft: '16px',
+                                                        marginTop: '2px',
+                                                    }}
+                                                    className="form-control"
+                                                    onPlaceSelected={this.onPlaceSelected}
+                                                    types={['(regions)']}
+                                                    componentRestrictions={{ country: this.state.country.code !== undefined && this.state.country.code }}
+                                                />
                                             </FormGroup>
-                                        </Col> */}
+                                        </Col>
                                     </Row>
-                                    {/* <LocationSearchInput />   */}
-                                    {/* <Row style={{ marginBottom: '5em' }}>
-                                        <Col md='12'> <Label for="search">Search Location For Property</Label></Col>
-                                    </Row> */}
-                                    <Map
-                                        google={this.props.google}
-                                        center={{ lat: this.state.latLng.lat, lng: this.state.latLng.lng }}
-                                        height='100%'
-                                        zoom={15}
-                                        getSelectedPlace={this.getSelectedPlace}
-                                        // getlatLng={this.getlatLng}
-                                        // city={this.state.city}
-                                    />
+                                    <Row>
+                                        <Col md={6}>
+                                            <FormGroup>
+                                                <Label for="type">Area</Label>
+                                                <Input type="text" name="area" className="form-control" onChange={(e) => this.setState({ area: e.target.value })} value={this.state.area} />
+                                            </FormGroup>
+                                            <FormGroup>
+                                                <Label for="type">Address</Label>
+                                                <Input type="text" name="address" className="form-control" onChange={this.onChange} readOnly="readOnly" value={this.state.address} />
+                                            </FormGroup>
+
+                                            <FormGroup>
+                                                <Label for="type">Postal Code</Label>
+                                                <Input type="text" name="postalCode" className="form-control" onChange={this.onChange} readOnly="readOnly" value={this.state.postalCode} />
+                                            </FormGroup>
+                                        </Col>
+                                        <Col md={6}>
+                                            <AsyncMap
+                                                googleMapURL='https://maps.googleapis.com/maps/api/js?key=AIzaSyDQAwNqjxL0L2-5X8yqNLEfpsZj6Z1B_Is&libraries=places'
+                                                loadingElement={
+                                                    <div style={{ height: `100%` }} />
+                                                }
+                                                containerElement={
+                                                    <div style={{ height: '100%' }} />
+                                                }
+                                                mapElement={
+                                                    <div style={{ height: `100%` }} />
+                                                }
+                                            />
+                                        </Col>
+                                    </Row>
                                 </Form>
                             </ModalBody>
                             <ModalFooter>
@@ -174,12 +479,14 @@ class AddProperty extends Component {
                                 <Button color="dark" onClick={() => this.onSave()}>Save</Button>{' '}
                             </ModalFooter>
                         </Modal>
-
                     </div>
                 </ReactCSSTransitionGroup>
             </Fragment>
-
-        );
+            // } else {
+            // map = <div style={{ height: '100%' }} />
+            // }
+        )
+        // return (map)
     }
 }
 const mapStateToProps = state => ({
@@ -190,6 +497,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     fetchorganizationdata: fetchorganizationdata,
     fetchpropertytypesdata: fetchpropertytypesdata,
     add_property: add_property,
+    fetchcityregion: fetchcityregion,
 }, dispatch)
 
 export default connect(
