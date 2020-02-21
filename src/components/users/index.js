@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PageTitle from '../../components/includes/PageTitle';
-import { fetchuseritemdata } from '../../services/User';
+import { fetchuseritemdata, fetchUpdateUserStatus } from '../../services/User';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import Adduser from './add_user';
 import Switch from "react-switch";
@@ -18,6 +18,8 @@ import {
 import { DataTable } from 'react-data-components';
 import Loading from '../../library/loader';
 import Edituser from './edit_user';
+import Notification from '../../library/notification';
+
 class Users extends Component {
     constructor(props) {
         super(props);
@@ -28,7 +30,8 @@ class Users extends Component {
         addusermodal: false,
         showaddnoti: '',
         checked: false,
-        editusermodal: false
+        editusermodal: false,
+        notitype: '',
 
     }
     componentWillReceiveProps = (props) => {
@@ -60,8 +63,15 @@ class Users extends Component {
         await fetchuseritemdata();
     }
     handleChange(row, checked) {
-        console.log("row::", row, "checked::", checked);
+        this.setState({ notitype: '' });
         this.setState({ checked });
+        let updatestatus = { "id": row.id, "status": row.status === 0 ? 1 : 0 };
+        let { fetchUpdateUserStatus } = this.props;
+        fetchUpdateUserStatus(updatestatus);
+        console.log("this.prop.data::", this.props.data);
+        // if (this.prop.data.User) {
+            this.setState({ notitype: 'userstatus' });
+        // }
     }
 
     isaddusermodal = () => {
@@ -141,7 +151,7 @@ class Users extends Component {
                 render: (val, row) => <div>
                     <Switch
                         checked={row.status && row.status === 1 ? true : false}
-                        onChange={(row) => this.handleChange(row)}
+                        onChange={() => this.handleChange(row)}
                         height={20}
                         width={35}
                         className="react-switch"
@@ -171,6 +181,11 @@ class Users extends Component {
                                 heading="Users"
                                 icon="pe-7s-users icon-gradient bg-mean-fruit"
                             />
+                            {Status.status !== '' && Status.page === 'userstatus' && this.state.notitype === 'userstatus' &&
+                                <Fragment>
+                                    <Notification msg={Status.notificationMsg} status={Status.status} show={this.props.addlocationmodal} />
+                                </Fragment>
+                            }
                             <Card className="main-card mb-3">
                                 <CardHeader>
                                     <Row style={{ width: '100%' }}>
@@ -208,8 +223,8 @@ const mapStateToProps = state => ({
     data: state,
 })
 const mapDispatchToProps = dispatch => bindActionCreators({
-    fetchuseritemdata: fetchuseritemdata
-
+    fetchuseritemdata: fetchuseritemdata,
+    fetchUpdateUserStatus: fetchUpdateUserStatus,
 }, dispatch)
 export default connect(
     mapStateToProps,

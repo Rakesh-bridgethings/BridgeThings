@@ -23,12 +23,13 @@ class Notification extends Component {
                 <ToastContainer
                     position="top-right"
                     autoClose={7000}
-                    hideProgressBar={false}
                     newestOnTop={false}
-                    closeOnClick
+                    closeOnClick={true}
+                    hideProgressBar={false}
                     // rtl={false}
+                    //transition= "bounce" //zoom, silde, bounce, flip
                     pauseOnVisibilityChange={false}
-                    draggable
+                    draggable={false}
                     // pauseOnHover
                 />
             </Fragment>

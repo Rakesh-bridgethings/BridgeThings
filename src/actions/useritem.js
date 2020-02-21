@@ -8,6 +8,9 @@ export const FETCH_ROLE_TYPES_ERROR = 'FETCH_ROLE_TYPES_ERROR';
 export const FETCH_ORGANIZATIONUSER_TYPES_SUCESS = 'FETCH_ORGANIZATIONUSER_TYPES_SUCESS';
 export const FETCH_ORGANIZATIONUSER_TYPES_PENDING = 'FETCH_ORGANIZATIONUSER_TYPES_PENDING';
 export const FETCH_ORGANIZATIONUSER_TYPES_ERROR='FETCH_ORGANIZATIONUSER_TYPES_ERROR';
+export const DATA_USER_STATUS='DATA_USER_STATUS';
+export const FETCH_PRIMARY_LOCATION='FETCH_PRIMARY_LOCATION';
+
 export function fetch_useritemdata_pending() {
     return {
         type: FETCH_USERITEMDATA_PENDING
@@ -61,10 +64,25 @@ export function fetch_organizationuser_types_success(oraganizationuseritem_data)
         oraganizationuseritem: oraganizationuseritem_data
     }
 }
+export function primary_location(primary_loc_data) {
+    return {
+        type: FETCH_PRIMARY_LOCATION,
+        primary_loc_data: primary_loc_data
+    }
+}
+
+export function data_user_status(userstatus) {
+    return {
+        type: DATA_USER_STATUS,
+        userstatus: userstatus
+    }
+}
 export function fetch_organizationuser_types_error(error) {
     return {
         type: FETCH_ORGANIZATIONUSER_TYPES_ERROR,
         error: error
     }
 }
+
+
 

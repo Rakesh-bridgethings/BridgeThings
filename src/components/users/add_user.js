@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import Select from 'react-select';
 import Checkbox from 'rc-checkbox';
 import 'rc-checkbox/assets/index.css';
-import { fetchroleitemdata, fechorganizationitemdata } from '../../services/User';
+import { fetchroleitemdata, fechorganizationitemdata, addUser } from '../../services/User';
 import PageTitle from '../../components/includes/PageTitle';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {
@@ -29,17 +29,18 @@ class Adduser extends Component {
         })
     }
     state = {
-        nextclick: false,
         firstname: '',
         lastname: '',
         phonenumber: '',
         email: '',
         role: '',
         oraganization: '',
-        userstepdata:[],
-        disabled: false,
+        userstepdata: [],
+        disabledSMS: true,
         nextmodaluser: false,
         addnextmodaluser: false,
+        notificationEmail: false,
+        notificationSMS: false,
     }
     componentDidMount = async () => {
         const { fetchroleitemdata, fechorganizationitemdata } = this.props;
@@ -49,21 +50,18 @@ class Adduser extends Component {
     componentWillReceiveProps = (props) => {
 
     }
-    onChange(e) {
-        console.log('Checkbox:', (e.target.checked));
+    onCheckedEmail(e) {
+        // console.log('CheckboxEmail:', (e.target.checked));
+        this.setState({ notificationEmail: e.target.checked });
     }
-    onFirstname = (e) => {
-        this.setState({ firstname: e.target.value })
-        // this.validator.showMessageFor('FirstName');
+    onCheckedSMS(e) {
+        // console.log('CheckboxSMS:', (e.target.checked));
+        this.setState({ notificationSMS: e.target.checked });
     }
-    onLastname = (e) => {
-        this.setState({ lastname: e.target.value })
-        // this.validator.showMessageFor('Lastname');
 
-    }
     onPhonenumber = (e) => {
         this.setState({ phonenumber: e.target.value })
-        // this.validator.showMessageFor('Phonenumber');
+        this.validator.showMessageFor('Phonenumber');        
     }
     onEmail = (e) => {
         this.setState({ email: e.target.value });
@@ -73,7 +71,7 @@ class Adduser extends Component {
         this.setState({ addnextmodaluser: !this.state.addnextmodaluser });
         this.setState({ nextmodaluser: !this.state.nextmodaluser });
         this.setState({ notitype: 'primarylocation' });
-         this.props.isaddusermodal();
+        this.props.isaddusermodal();
     }
 
     isclosemodalsuser = () => {
@@ -90,33 +88,41 @@ class Adduser extends Component {
         this.validator.showMessageFor('label');
         this.validator.showMessageFor('role');
         this.validator.showMessageFor('Email');
-        this.validator.showMessageFor('Phonenumber');
         if (this.validator.allValid()) {
             this.setState({ nextmodaluser: !this.state.nextmodaluser });
             this.setState({ addnextmodaluser: !this.state.addnextmodaluser });
             this.props.isaddusermodal();
             let data = {
-                firstname:this.state.firstname,
-                lastname:this.state.lastname,
-                phonenumber:this.state.phonenumber,
-                label: this.state.label,
-                email:this.state.email,
-                role:this.state.role,
-                oraganization:this.state.oraganization,
+                firstName: this.state.firstname,
+                lastName: this.state.lastname,
+                mobileNo: this.state.phonenumber,
+                email: this.state.email,
+                role: this.state.role.value,
+                entityId: this.state.oraganization.value,
+                notifications: { "email": this.state.notificationEmail, "phone": this.state.notificationSMS },
+                status: 1,
             };
-            this.setState({userstepdata:data});
-                    this.props.shownoti('');
-        this.setState({ notitype: 'primarylocation' });
+            this.setState({ userstepdata: data });
+            this.setState({ notitype: 'primarylocation' });
         }
-   
+        this.props.shownoti('');
     }
+
+    AdduserData = (value) => {
+        let { addUser } = this.props;
+        addUser(value);
+        this.props.shownoti('adduser');
+    }
+
+
+
     render() {
         const { User } = this.props.data;
         let roleadduser = User.roleitem.rows && User.roleitem.rows.map(function (item) {
             return { value: item.id, label: item.name };
         })
         let oraguseritem = User.oraganizationuseritem && User.oraganizationuseritem.map(function (item) {
-            return { value: item.id, label: item.reference };
+            return { value: item.id, label: item.name };
         })
         const { Status } = this.props.data;
         return (
@@ -143,15 +149,15 @@ class Adduser extends Component {
                                             <FormGroup>
                                                 <Label for="Firstname">First Name*</Label>
                                                 <Input type='text' id="Firstname"
-                                                    onChange={(e) => this.onFirstname(e)} value={this.state.firstname} />
-                                                {this.validator.message('FirstName', this.state.firstname, 'required|alpha')}
+                                                    onChange={(e) => this.setState({ firstname: e.target.value })} value={this.state.firstname} />
+                                                {this.validator.message('FirstName', this.state.firstname, 'required|alpha_num')}
                                             </FormGroup>
                                         </Col>
                                         <Col md='6'>
                                             <FormGroup>
                                                 <Label for="lastname">Last Name*</Label>
-                                                <Input type='text' id="lastname" onChange={(e) => this.onLastname(e)} value={this.state.lastname}/>
-                                                {this.validator.message('Lastname', this.state.lastname, 'required|alpha')}
+                                                <Input type='text' id="lastname" onChange={(e) => this.setState({ lastname: e.target.value })} value={this.state.lastname} />
+                                                {this.validator.message('Lastname', this.state.lastname, 'required|alpha_num')}
                                             </FormGroup>
                                         </Col>
                                     </Row>
@@ -161,18 +167,17 @@ class Adduser extends Component {
                                                 <Label for="role" placeholder='Select Roles'>Role*</Label>
                                                 <Select
                                                     value={this.state.role}
-                                                     onChange={(role) => this.setState({ role })}
+                                                    onChange={(role) => this.setState({ role })}
                                                     options={roleadduser}
                                                 />
                                                 {this.validator.message('role', this.state.role, 'required')}
 
                                             </FormGroup>
                                         </Col>
-
                                         <Col md='6'>
                                             <FormGroup>
                                                 <Label for="email">Email*</Label>
-                                                <Input type='text' id="email" onChange={(e) => this.onEmail(e)} value={this.state.email} />                                             
+                                                <Input type='text' id="email" onChange={(e) => this.onEmail(e)} value={this.state.email} />
                                                 {this.validator.message('Email', this.state.email, 'email|required')}
                                             </FormGroup>
                                         </Col>
@@ -195,29 +200,30 @@ class Adduser extends Component {
                                         <Col md='12'>
                                             <FormGroup>
                                                 <Label for="phonenumber">Phone Number</Label>
-                                                <Input type='text' id="phonenumber" onChange={(e) => this.onPhonenumber(e)}   value={this.state.phonenumber} />
+                                                <Input type='text' id="phonenumber" onChange={(e) => this.onPhonenumber(e)} value={this.state.phonenumber} />
                                                 {this.validator.message('Phonenumber', this.state.phonenumber, 'phone')}
                                             </FormGroup>
                                         </Col>
                                     </Row>
                                     <Row>
-                                        <Col md='3'>
+                                        <Col md='12'>
                                             <FormGroup>
                                                 <Label for="alerts">Alerts</Label>
                                                 <br />
-                                                <label>
+                                                <label style={{ cursor: 'pointer' }}>
                                                     <Checkbox
-                                                        defaultChecked
-                                                        onChange={(e) => this.onChange(e)}
-                                                        disabled={this.state.disabled}
+                                                        checked={this.state.notificationEmail}
+                                                        onChange={(e) => this.onCheckedEmail(e)}
+                                                    // disabled={this.state.disabled}
                                                     />
                                                     &nbsp;Email
-                                                   {''}
+                                                    </label>&nbsp;&nbsp;&nbsp;
+                                                    <label style={{ cursor: 'pointer' }}>
                                                     <Checkbox
-                                                        defaultChecked
-                                                        onChange={(e) => this.onChange(e)}
-                                                        disabled={this.state.disabled}
-                                                    />SMS
+                                                        checked={this.state.notificationSMS}
+                                                        onChange={(e) => this.onCheckedSMS(e)}
+                                                        disabled={this.state.phonenumber === '' ? true : false}
+                                                    />&nbsp;SMS
                                                     </label>
                                             </FormGroup>
                                         </Col>
@@ -229,7 +235,7 @@ class Adduser extends Component {
                                 <Button color="success" onClick={() => this.nextuser()}>Next</Button>{' '}
                             </ModalFooter>
                         </Modal>
-                        {this.state.addnextmodaluser && <Primarylocation requiredMessage={this.props.requiredMessage} addnextmodaluser={this.state.addnextmodaluser} isaddnextmodaluser={this.isaddnextmodaluser} isclosemodalsuser={this.isclosemodalsuser} />}
+                        {this.state.addnextmodaluser && <Primarylocation addUserData={this.state.userstepdata} requiredMessage={this.props.requiredMessage} addnextmodaluser={this.state.addnextmodaluser} isaddnextmodaluser={this.isaddnextmodaluser} isclosemodalsuser={this.isclosemodalsuser} AdduserData={this.AdduserData} />}
                     </div>
                 </ReactCSSTransitionGroup>
             </Fragment>
@@ -242,7 +248,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => bindActionCreators({
     fetchroleitemdata: fetchroleitemdata,
-    fechorganizationitemdata: fechorganizationitemdata
+    fechorganizationitemdata: fechorganizationitemdata,
+    addUser: addUser,
 
 }, dispatch)
 
