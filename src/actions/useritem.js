@@ -10,6 +10,8 @@ export const FETCH_ORGANIZATIONUSER_TYPES_PENDING = 'FETCH_ORGANIZATIONUSER_TYPE
 export const FETCH_ORGANIZATIONUSER_TYPES_ERROR='FETCH_ORGANIZATIONUSER_TYPES_ERROR';
 export const DATA_USER_STATUS='DATA_USER_STATUS';
 export const FETCH_PRIMARY_LOCATION='FETCH_PRIMARY_LOCATION';
+export const FETCH_EDIT_USER_DATA_SUCESS='FETCH_EDIT_USER_DATA_SUCESS';
+export const EDIT_PRIMARY_LOCATION_DATA='EDIT_PRIMARY_LOCATION_DATA';
 
 export function fetch_useritemdata_pending() {
     return {
@@ -77,12 +79,26 @@ export function data_user_status(userstatus) {
         userstatus: userstatus
     }
 }
+
+export function edit_primary_location_data(editlocationdata){
+    return{
+       type:EDIT_PRIMARY_LOCATION_DATA,
+       editlocationdata:editlocationdata
+    }
+}
+
+export function Fetch_edit_user_data_success(edituserdata){
+    return{
+       type:FETCH_EDIT_USER_DATA_SUCESS,
+       edituseritem:edituserdata
+    }
+
+}
+
 export function fetch_organizationuser_types_error(error) {
     return {
         type: FETCH_ORGANIZATIONUSER_TYPES_ERROR,
         error: error
     }
 }
-
-
 

@@ -1,5 +1,5 @@
 import {FETCH_USERITEMDATA_PENDING, FETCH_USERITEMDATA_SUCESS,FETCH_USERITEMDATA_ERROR, FETCH_ROLE_TYPES_SUCESS, FETCH_ROLE_TYPES_PENDING, FETCH_ROLE_TYPES_ERROR,
-     FETCH_ORGANIZATIONUSER_TYPES_PENDING,FETCH_ORGANIZATIONUSER_TYPES_SUCESS,FETCH_ORGANIZATIONUSER_TYPES_ERROR, DATA_USER_STATUS, FETCH_PRIMARY_LOCATION
+     FETCH_ORGANIZATIONUSER_TYPES_PENDING,FETCH_ORGANIZATIONUSER_TYPES_SUCESS,FETCH_ORGANIZATIONUSER_TYPES_ERROR, DATA_USER_STATUS, FETCH_PRIMARY_LOCATION, FETCH_EDIT_USER_DATA_SUCESS, EDIT_PRIMARY_LOCATION_DATA
     } from '../actions/useritem';
 const initialState = {
     pending: false,
@@ -9,6 +9,7 @@ const initialState = {
     oraganizationuseritem:[],
     userstatus:[],
     primary_loc_data: [],
+    editlocationdata: [],
 }
 const useritem = (state = initialState, action) => {
     switch (action.type) {
@@ -81,7 +82,25 @@ const useritem = (state = initialState, action) => {
                 pending: false,
                 primary_loc_data:action.primary_loc_data,
                 error: ''
-            }            
+            }   
+
+            case FETCH_EDIT_USER_DATA_SUCESS:
+                return {
+                    ...state,
+                    pending: false,
+                    edituseritem: action.edituseritem,
+                    error: ''
+                }
+
+            case EDIT_PRIMARY_LOCATION_DATA:
+                return {
+                    ...state,
+                    pending: false,
+                    editlocationdata: action.editlocationdata,
+                    error: ''
+                }
+                
+        
         case FETCH_ORGANIZATIONUSER_TYPES_ERROR:
             return {
                 ...state,

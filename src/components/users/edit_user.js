@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import Select from 'react-select';
 import Checkbox from 'rc-checkbox';
 import 'rc-checkbox/assets/index.css';
-import { fetchroleitemdata, fechorganizationitemdata } from '../../services/User';
+import { fetchroleitemdata, fechorganizationitemdata, updatedUserData } from '../../services/User';
 import PageTitle from '../../components/includes/PageTitle';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {
@@ -17,7 +17,9 @@ import {
 } from 'reactstrap';
 import SimpleReactValidator from 'simple-react-validator';
 import Notification from '../../library/notification';
-import Editprimarylocation from'./edit_primarylocation';
+import Editprimarylocation from './edit_primarylocation';
+var diff = require('deep-diff').diff;
+
 class Edituser extends Component {
     constructor(props) {
         super(props);
@@ -28,28 +30,59 @@ class Edituser extends Component {
     }
     state = {
         nextedituser: false,
+        emailNotification: false,
+        smsNotification: false,
         nextclick: false,
         firstname: '',
         lastname: '',
         phonenumber: '',
         email: '',
         role: '',
+        id: '',
         oraganization: '',
-        userstepdata: [],
-        disabled: false,
+        userstepdata: {},
+        disabledSMS: false,
         nextmodaluser: false,
         addnextmodaluser: false,
-        editprilocmodal:false,
-        editusermodal: false
+        editprilocmodal: false,
+        nexteditprimarylocation: false,
+        editusermodal: false,
+        getEditData: {},
+        activeStatus: 0,
+        locationdata: [],
     }
     componentDidMount = async () => {
         const { fetchroleitemdata, fechorganizationitemdata } = this.props;
         await fetchroleitemdata();
         await fechorganizationitemdata();
     }
-    componentWillReceiveProps = (props) => {
-
+    componentWillReceiveProps = async (props) => {
+        let { User } = props.data;
+        User.edituseritem && await this.setState({
+            id: User.edituseritem.id,
+            firstname: User.edituseritem.firstName,
+            lastname: User.edituseritem.lastName,
+            email: User.edituseritem.email,
+            phonenumber: User.edituseritem.mobileNo,
+            role: { value: User.edituseritem.role, label: User.edituseritem.roleName },
+            oraganization: { value: User.edituseritem.entityId, label: User.edituseritem.entityName },
+            activeStatus: User.edituseritem.status
+        });
+        if (User.edituseritem) {
+            User.edituseritem.notificationMode === 'Email' ? await this.setState({ emailNotification: true }) : User.edituseritem.notificationMode === 'Phone' ? await this.setState({ smsNotification: true }) : User.edituseritem.notificationMode === null ? await this.setState({ emailNotification: false, smsNotification: false }) : await this.setState({ emailNotification: true, smsNotification: true });
+            const getEditData = {
+                id: this.props.data.User.edituseritem.id,
+                firstname: this.props.data.User.edituseritem.firstName,
+                lastname: this.props.data.User.edituseritem.lastName,
+                email: this.props.data.User.edituseritem.email,
+                phonenumber: this.props.data.User.edituseritem.mobileNo,
+                role: this.props.data.User.edituseritem.role,
+                oraganization: this.props.data.User.edituseritem.entityId,
+            };
+            this.setState({ getEditData });
+        }
     }
+
     onFirstname = (e) => {
         this.setState({ firstname: e.target.value })
         this.validator.showMessageFor('FirstName');
@@ -59,13 +92,20 @@ class Edituser extends Component {
         this.validator.showMessageFor('Lastname');
     }
     onPhonenumber = (e) => {
-        this.setState({ phonenumber: e.target.value })
+        this.setState({ phonenumber: e.target.value });
         this.validator.showMessageFor('Phonenumber');
     }
     onEmail = (e) => {
         this.setState({ email: e.target.value });
         this.validator.showMessageFor('Email');
     }
+    onsmsnoti = () => {
+        this.setState({ smsNotification: true });
+    }
+    onemailnoti = () => {
+        this.setState({ emailNotification: true });
+    }
+
     iseditnextmodaluser = () => {
         this.setState({ editusermodal: !this.state.editusermodal });
         this.setState({ nextedituser: !this.state.nextedituser });
@@ -76,12 +116,22 @@ class Edituser extends Component {
         this.setState({ editusermodal: !this.state.editusermodal });
         this.setState({ nextedituser: !this.state.nextedituser });
     }
-    toggle = () => {
+
+    iscloseeditmodalprilocsuser = () => {
+        this.setState({ editprilocmodal: !this.setState.editprilocmodal });
+        this.setState({ nexteditprimarylocation: !this.state.nexteditprimarylocation });
         this.props.iseditusermodal();
     }
-    iseditprilocmodaluser=()=>{
-        this.setState({editprilocmodal:!this.state.editprilocmodal});
-        this.setState({notitype:'editprimarylocation'})
+    iseditnextprilocmodaluser = () => {
+        this.setState({ editprilocmodal: !this.state.editprilocmodal });
+        this.setState({ nexteditprimarylocation: !this.state.nexteditprimarylocation });
+        this.setState({ notitype: 'editprimarylocation' });
+    }
+    iseditprilocmodaluser = () => {
+        this.setState({ editprilocmodal: !this.state.editprilocmodal });        
+    }
+    toggle = () => {
+        this.props.iseditusermodal();
     }
     nextuser = () => {
         this.validator.showMessageFor('FirstName');
@@ -97,27 +147,47 @@ class Edituser extends Component {
             this.setState({ addnextmodaluser: !this.state.addnextmodaluser });
             this.props.iseditusermodal();
             let data = {
-                firstname: this.state.firstname,
-                lastname: this.state.lastname,
+                firstName: this.state.firstname,
+                lastName: this.state.lastname,
                 phonenumber: this.state.phonenumber,
                 label: this.state.label,
                 email: this.state.email,
-                role: this.state.role,
-                oraganization: this.state.oraganization,
+                role: this.state.role.value,
+                entityId: this.state.oraganization.value,
+                notifications: { 'email': this.state.emailNotification, 'phone': this.state.smsNotification },
+                status: this.state.activeStatus,
             };
             this.setState({ userstepdata: data });
-        }      
-      
+        }
         this.props.shownoti('');
         this.setState({ notitype: 'editprimarylocation' });
     }
+    locationData = (val) => {
+        this.setState({ locationdata: val });
+        let userstepdata = this.state.userstepdata;
+        userstepdata.locations = val;
+        var differences = diff(this.state.getEditData, userstepdata);
+        var dif = { ...dif };
+        if (differences) {
+            differences.map((item, index) => {
+                var value = item.rhs;
+                dif[item.path[0]] = value;
+            })
+        }
+        dif.id = this.state.id;
+        dif.locations = val;
+        const { updatedUserData } = this.props;
+        updatedUserData(this.state.id, dif);
+        this.props.shownoti('edituser');
+    }
+
     render() {
         const { User } = this.props.data;
         let roleadduser = User.roleitem.rows && User.roleitem.rows.map(function (item) {
             return { value: item.id, label: item.name };
         })
         let oraguseritem = User.oraganizationuseritem && User.oraganizationuseritem.map(function (item) {
-            return { value: item.id, label: item.reference };
+            return { value: item.id, label: item.name };
         })
         const { Status } = this.props.data;
         return (
@@ -135,7 +205,7 @@ class Edituser extends Component {
                                 <Notification msg={Status.notificationMsg} status={Status.status} show={this.props.addusermodal} />
                             </Fragment>
                         }
-                        <Modal isOpen={this.props.editusermodal} toggle={() => this.toggle()} className={this.props.className} id='edit_user'>
+                        <Modal isOpen={this.props.editusermodal} toggle={() => this.toggle()} className={this.props.className} id='add_location'>
                             <ModalHeader toggle={() => this.toggle()}>Edit User</ModalHeader>
                             <ModalBody>
                                 <Form>
@@ -197,7 +267,7 @@ class Edituser extends Component {
                                             <FormGroup>
                                                 <Label for="phonenumber">Phone Number</Label>
                                                 <Input type='text' id="phonenumber" onChange={(e) => this.onPhonenumber(e)} value={this.state.phonenumber} />
-                                                {this.validator.message('Phonenumber', this.state.firstname, 'phone')}
+                                                {this.validator.message('Phonenumber', this.state.phonenumber, 'phone')}
                                             </FormGroup>
                                         </Col>
                                     </Row>
@@ -206,19 +276,19 @@ class Edituser extends Component {
                                             <FormGroup>
                                                 <Label for="alerts">Alerts</Label>
                                                 <br />
-                                                <label>
+                                                <label style={{ cursor: 'pointer' }}>
                                                     <Checkbox
-                                                        defaultChecked
-                                                        // onChange={onChange}
-                                                        disabled={this.state.disabled}
+                                                        checked={this.state.emailNotification}
+                                                        onChange={(e) => this.setState({ emailNotification: e.target.checked })}
                                                     />
                                                     &nbsp;Email
-                                                   {''}
+                                                    </label>&nbsp;&nbsp;&nbsp;
+                                                    <label style={{ cursor: 'pointer' }}>
                                                     <Checkbox
-                                                        defaultChecked
-                                                        // onChange={onChange}
-                                                        disabled={this.state.disabled}
-                                                    />SMS
+                                                        checked={this.state.smsNotification}
+                                                        onChange={(e) => this.setState({ smsNotification: e.target.checked })}
+                                                        disabled={this.state.phonenumber === '' ? true : false}
+                                                    />&nbsp;SMS
                                                     </label>
                                             </FormGroup>
                                         </Col>
@@ -228,9 +298,9 @@ class Edituser extends Component {
                             <ModalFooter>
                                 <Button color="light" onClick={() => this.toggle()}>Cancel</Button>
                                 <Button color="success" onClick={() => this.nextuser()}>Next</Button>{' '}
-                            </ModalFooter>                           
+                            </ModalFooter>
                         </Modal>
-                        {this.state.editprilocmodal && <Editprimarylocation shownoti={this.shownoti} notitype={this.state.notitype} requiredMessage={this.state.requiredMessage} editprilocmodal={this.state.editprilocmodal} iseditprilocmodaluser={this.iseditprilocmodaluser} />}
+                        {this.state.editprilocmodal && <Editprimarylocation shownoti={this.shownoti} notitype={this.state.notitype} requiredMessage={this.state.requiredMessage} editprilocmodal={this.state.editprilocmodal} iseditnextprilocmodaluser={this.iseditnextprilocmodaluser} iscloseeditmodalprilocsuser={this.iscloseeditmodalprilocsuser} iseditprilocmodaluser={this.iseditprilocmodaluser} entityId={this.state.userstepdata.entityId} editid={this.state.id} locationData={this.locationData} />}
                     </div>
                 </ReactCSSTransitionGroup>
             </Fragment>
@@ -243,7 +313,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => bindActionCreators({
     fetchroleitemdata: fetchroleitemdata,
-    fechorganizationitemdata: fechorganizationitemdata
+    fechorganizationitemdata: fechorganizationitemdata,
+    updatedUserData: updatedUserData,
 
 }, dispatch)
 

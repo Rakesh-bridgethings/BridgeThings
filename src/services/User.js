@@ -1,5 +1,5 @@
 
-import {fetch_useritemdata_sucess,fetch_role_types_success,fetch_organizationuser_types_success, primary_location} from '../actions/useritem';
+import {fetch_useritemdata_sucess,fetch_role_types_success,fetch_organizationuser_types_success, primary_location, edit_primary_location_data, Fetch_edit_user_data_success} from '../actions/useritem';
 import {data_post_status} from '../actions/locationitem';
 import axios from 'axios';
 import { SERVER_URL, HEADER } from '../config/config';
@@ -109,6 +109,22 @@ export function fetchPrimaryLocation(entityid) {
    }).catch(async (err) => { await statusMessage(dispatch, 'error', err); throw err; });
 }
 
+export function fetchEditPrimaryLocation(entityid, userid) {
+   return dispatch => new Promise(async (resolve, reject) => {
+      await statusMessage(dispatch, 'loading', true);      
+      try {
+         axios.get(`${SERVER_URL}user_locations?entity=${entityid}&user=${userid}`, { headers: HEADER }).then(async (res) => {
+            statusMessage(dispatch, "loading", false);
+            resolve(
+               dispatch(edit_primary_location_data(res.data))
+            );
+         });
+      } catch (error) {
+         reject(error);
+      }
+   }).catch(async (err) => { await statusMessage(dispatch, 'error', err); throw err; });
+}
+
 export function addUser(val) {
    return dispatch => new Promise(async (resolve, reject) => {
       await statusMessage(dispatch, 'loading', true);
@@ -122,10 +138,16 @@ export function addUser(val) {
             if (res.status === 200 && res.data === '') {
                status = 'error';
             }
+            axios.post(`${SERVER_URL}user/list`,locations, { headers: HEADER })
+            .then(async (res) => {
+               statusMessage(dispatch, "loading", false);
+               resolve(
+                   dispatch(fetch_useritemdata_sucess(res.data.rows))            
+               );
+            });
             resolve(
                dispatch(data_post_status(status, res.data, 'adduser'))
-            );
-            fetchuseritemdata();
+            );            
          }).catch(error => {
             statusMessage(dispatch, 'error', error);
             reject(error);
@@ -139,5 +161,64 @@ export function addUser(val) {
    }).catch(async (err) => { await statusMessage(dispatch, 'error', err); throw err; });
 }
 
+export function edituser(usereditid){
+   let edituserdata=[];
+   return dispatch =>new Promise(async(resolve,reject)=>{
+      await statusMessage(dispatch,'loading',true);
+      try{
+         axios.post(`${SERVER_URL}user/list`, locations, { headers: HEADER }).then(async (res) => {
+            statusMessage(dispatch, "loading", false);
+            res.data.rows.map((item, index) => {
+               if (item.id === usereditid) {
+                  edituserdata.push(item);              
+               }  
 
+            })  
+            resolve(
+               dispatch(Fetch_edit_user_data_success(edituserdata[0]))
+              
+            );
 
+         });
+      } catch (error) {
+         reject(error);
+      }
+   }).catch(async (err) => { await statusMessage(dispatch, 'error', err); throw err; });
+}
+
+export function updatedUserData(id, editdata) {
+   let aa = {"id":240,"zone":"aaa","aggregateId":"aaa","propertyId":33,"floor":"SR Block","locationBusinessHoursList":[]}
+   return dispatch => new Promise(async (resolve, reject) => {
+      await statusMessage(dispatch, 'loading', true);
+      try {
+         axios.put(`${SERVER_URL}users`, editdata, { headers: HEADER }).then(async (res) => {
+            statusMessage(dispatch, "loading", false);
+            var status = '';
+            if (res.status === 200 && res.data !== '') {
+               status = 'success';
+            }
+            if (res.status === 200 && res.data === '') {
+               status = 'error';
+            }
+            axios.post(`${SERVER_URL}user/list`,locations, { headers: HEADER })
+            .then(async (res) => {
+               statusMessage(dispatch, "loading", false);
+               resolve(
+                   dispatch(fetch_useritemdata_sucess(res.data.rows))            
+               );
+            });
+            resolve(
+               dispatch(data_post_status(status, res.data, 'edituser'))
+            );
+         }).catch(error => {
+            statusMessage(dispatch, 'error', error);
+            reject(error);
+            resolve(
+               dispatch(data_post_status('error', error, 'edituser'))
+            );
+         });
+      } catch (error) {
+         reject(error);
+      }
+   }).catch(async (err) => { await statusMessage(dispatch, 'error', err); throw err; });
+}

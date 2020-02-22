@@ -51,11 +51,9 @@ class Adduser extends Component {
 
     }
     onCheckedEmail(e) {
-        // console.log('CheckboxEmail:', (e.target.checked));
         this.setState({ notificationEmail: e.target.checked });
     }
     onCheckedSMS(e) {
-        // console.log('CheckboxSMS:', (e.target.checked));
         this.setState({ notificationSMS: e.target.checked });
     }
 
@@ -113,8 +111,6 @@ class Adduser extends Component {
         addUser(value);
         this.props.shownoti('adduser');
     }
-
-
 
     render() {
         const { User } = this.props.data;

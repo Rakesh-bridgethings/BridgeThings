@@ -262,7 +262,7 @@ class Primarylocation extends Component {
         let alluserdata = this.state.alluserdata;
         alluserdata.locations = this.state.selectedLocation;
         this.props.AdduserData(alluserdata);
-        this.props.isclosemodalsuser();        
+        this.props.isclosemodalsuser();    
     }
 
     render() {

@@ -21,7 +21,6 @@ import Notification from '../../library/notification';
 // import Getdiff from '../library/deepDiffMapper';
 var diff = require('deep-diff').diff;
 
-
 class EditLocation extends Component {
     constructor(props) {
         super(props);
@@ -51,7 +50,6 @@ class EditLocation extends Component {
         editid: 0,
         entityReference: '',
         propertyName: '',
-        updatedFields: {},
         getEditData: {},
         getEdittedData: {},
         propertydatalist: [],
@@ -71,9 +69,6 @@ class EditLocation extends Component {
             propertyName: props.getEditData.property,
             propertydatalist: props.getEditData.propertydatalist && props.getEditData.propertydatalist,
         });
-        let updatedFields = this.state.updatedFields;
-        updatedFields.id = props.geteditid;
-        this.setState({ updatedFields });
 
         const getEditData = {
             id: this.props.geteditid,
@@ -154,8 +149,6 @@ class EditLocation extends Component {
 
     business_hrsdata = (val) => {
         this.setState({ business_hours: val });
-        let updatedFields = this.state.updatedFields;
-        updatedFields.locationBusinessHoursList = val;
         let getEdittedData = this.state.getEdittedData;
         getEdittedData.locationBusinessHoursList = val;
         var differences = diff(this.state.getEditData, getEdittedData);
@@ -176,49 +169,23 @@ class EditLocation extends Component {
     onZone = (e) => {
         this.setState({ zone: e.target.value })
         this.validator.showMessageFor('Zone');
-        let updatedFields = this.state.updatedFields;
-        updatedFields.zone = e.target.value;
-        this.setState({ updatedFields });
     }
 
     onAggregateId = (e) => {
         this.setState({ aggregationid: e.target.value });
         this.validator.showMessageFor('AggregationId');
-        let updatedFields = this.state.updatedFields;
-        updatedFields.aggregateId = e.target.value;
-        this.setState({ updatedFields });
     }
-
-    // onChngOrg = async (organization) => {
-    //     const { fetchpropertydata } = this.props;
-    //     await fetchpropertydata(organization.value);
-    //     let updatedFields = this.state.updatedFields;
-    //     updatedFields.entityId = organization.value;
-    //     updatedFields.entityReference = organization.label;
-    //     this.setState({ updatedFields });
-    //     this.setState({ property: '' });
-    //     this.setState({ organization: organization });
-    // }
 
     onChngproperty = (property) => {
         this.setState({ property });
-        let updatedFields = this.state.updatedFields;
-        updatedFields.propertyId = property.value;
-        this.setState({ updatedFields });
     }
 
     onChngloctype = (locationtype) => {
         this.setState({ locationtype });
-        let updatedFields = this.state.updatedFields;
-        updatedFields.locationtype = locationtype.value; //{id: locationtype.value, value: locationtype.label};
-        this.setState({ updatedFields });
     }
 
     onchnglabel = (e) => {
         this.setState({ label: e.target.value });
-        let updatedFields = this.state.updatedFields;
-        updatedFields.floor = e.target.value;
-        this.setState({ updatedFields });
     }
 
     render() {

@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PageTitle from '../../components/includes/PageTitle';
-import { fetchuseritemdata, fetchUpdateUserStatus } from '../../services/User';
+import { fetchuseritemdata, fetchUpdateUserStatus, edituser } from '../../services/User';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import Adduser from './add_user';
 import Switch from "react-switch";
@@ -59,8 +59,9 @@ class Users extends Component {
         // console.log("alll::",alluserdata)
     }
     componentDidMount = async () => {
-        const { fetchuseritemdata } = this.props;
+        const { fetchuseritemdata,edituser } = this.props;
         await fetchuseritemdata();
+        await edituser();
     }
     handleChange(row, checked) {
         this.setState({ notitype: '' });
@@ -68,8 +69,6 @@ class Users extends Component {
         let updatestatus = { "id": row.id, "status": row.status === 0 ? 1 : 0 };
         let { fetchUpdateUserStatus } = this.props;
         fetchUpdateUserStatus(updatestatus);
-        console.log("this.prop.data::", this.props.data);
-        // if (this.prop.data.User) {
             this.setState({ notitype: 'userstatus' });
         // }
     }
@@ -80,11 +79,13 @@ class Users extends Component {
     };
     add_user = () => {
         this.setState({ addusermodal: !this.state.addusermodal });
-        this.setState({ notitype: 'adduser' });
+        this.setState({ notitype: '' });
     };
-    edit_user = () => {
+    edit_user = (item) => {
+        const {edituser} = this.props;
+        edituser(item.id);
         this.setState({ editusermodal: !this.state.editusermodal });
-        this.setState({ notitype: 'edituser' })
+        this.setState({ notitype: '' });
     }
     iseditusermodal = () => {
         this.setState({ editusermodal: !this.state.editusermodal });
@@ -225,6 +226,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => bindActionCreators({
     fetchuseritemdata: fetchuseritemdata,
     fetchUpdateUserStatus: fetchUpdateUserStatus,
+    edituser: edituser,
 }, dispatch)
 export default connect(
     mapStateToProps,

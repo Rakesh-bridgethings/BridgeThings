@@ -65,18 +65,16 @@ class Editprimarylocation extends Component {
                                                                     {
                                                                         value: item3.key.split('||')[1],
                                                                         label: item3.label,
-                                                                        checked: item3.checked,
-                                                                        partialChecked: item3.partialChecked
                                                                     }
                                                                 )
                                                             }),
-                                                        checked: item2.checked,
-                                                        partialChecked: item2.partialChecked
+                                                        checked: item.checked,
+                                                        partialChecked: item.partialChecked
                                                     }
                                                 )
                                             }),
-                                        checked: item1.checked,
-                                        partialChecked: item1.partialChecked
+                                        checked: item.checked,
+                                        partialChecked: item.partialChecked
                                     }
                                 )
                             }),
@@ -124,6 +122,7 @@ class Editprimarylocation extends Component {
     filterNodes(filtered, node) {
         const { filterText } = this.state;
         const children = (node.children || []).reduce(this.filterNodes, []);
+
         if (
             // Node's label matches the search string
             node.label.toLocaleLowerCase().indexOf(filterText.toLocaleLowerCase()) > -1 ||
@@ -132,8 +131,10 @@ class Editprimarylocation extends Component {
         ) {
             filtered.push({ ...node, children });
         }
+
         return filtered;
     }
+
 
     render() {
         const { Status } = this.props.data;
@@ -155,13 +156,13 @@ class Editprimarylocation extends Component {
                         <Modal isOpen={this.props.editprilocmodal} toggle={() => this.toggle()} className={this.props.className} id='edit_location'>
                             <ModalHeader toggle={() => this.toggle()}>Edit Primary Location</ModalHeader>
                             <ModalBody>
-                                <Card>
+                                <Card >
                                     <CardHeader>
                                         <h5 for="primarylocation">Locations</h5>
                                     </CardHeader>
                                     <CardBody>
                                         <Row>
-                                            <Input type="search" className="filterTree" placeholder="Search..." name="search" onChange={(e) => this.onChangeSearch(e)} value={this.state.filterText} autocomplete="off" />
+                                            <Input type="search" className="filterTree" name="search" onChange={(e) => this.onChangeSearch(e)} value={this.state.filterText} autoCorrect={false} />
                                         </Row>
                                         <Row>
                                             <Col md='12'>
@@ -185,6 +186,7 @@ class Editprimarylocation extends Component {
                                 </Card>
                             </ModalBody>
                             <ModalFooter>
+
                                 <Button color="light" onClick={() => this.backedit()}>Back</Button>
                                 <Button color="success" onClick={() => this.onSave()}>Save</Button>{' '}
                             </ModalFooter>
