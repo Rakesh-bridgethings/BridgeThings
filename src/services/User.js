@@ -98,7 +98,6 @@ export function fetchPrimaryLocation(entityid) {
       try {
          axios.get(`${SERVER_URL}user_locations?entity=${entityid}`, { headers: HEADER }).then(async (res) => {
             statusMessage(dispatch, "loading", false);
-            console.log("res.data::", res);
             resolve(
                dispatch(primary_location(res.data))
             );

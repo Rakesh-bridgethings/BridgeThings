@@ -9,38 +9,80 @@ import {
     Nav, NavItem, NavLink,
     UncontrolledTooltip, UncontrolledButtonDropdown,
     Modal, ModalHeader, ModalBody, ModalFooter,
-    Form, Label, Input, FormGroup, DropdownItem
+    Form, Label, FormGroup, DropdownItem
 } from 'reactstrap';
 import { fetchEditPrimaryLocation } from '../../services/User';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import SimpleReactValidator from 'simple-react-validator';
 import Notification from '../../library/notification';
+import _ from "lodash";
+import { Input } from "semantic-ui-react";
 
 class Editprimarylocation extends Component {
     constructor(props) {
         super(props);
         this.toggle = this.toggle.bind(this);
-        this.onChangeSearch = this.onChangeSearch.bind(this);
-        this.filterTree = this.filterTree.bind(this);
-        this.filterNodes = this.filterNodes.bind(this);
     }
+
     state = {
         editprilocmodal: false,
         nexteditprimarylocation: false,
         selectedLocation: [],
         expanded: [],
         treeData: [],
-        nodesFiltered: [],
-        filterText: '',
+        keyword: '',
     }
 
     componentWillMount = async () => {
-        let { fetchEditPrimaryLocation } = this.props;
-        await fetchEditPrimaryLocation(this.props.entityId, this.props.editid);
-
+        if (this.props.data.User.editlocationdata && this.props.data.User.editlocationdata.length > 0) {
+            let treeData = this.props.data.User.editlocationdata && this.props.data.User.editlocationdata.map((item, index) => {
+                return (
+                    {
+                        value: item.key,
+                        label: item.label,
+                        children:
+                            item.children && item.children.map((item1, index1) => {
+                                return (
+                                    {
+                                        value: item1.key,
+                                        label: item1.label,
+                                        children:
+                                            item1.children && item1.children.map((item2, index2) => {
+                                                return (
+                                                    {
+                                                        value: item2.key,
+                                                        label: item2.label,
+                                                        children:
+                                                            item2.children && item2.children.map((item3, index3) => {
+                                                                return (
+                                                                    {
+                                                                        value: item3.key.split('||')[1],
+                                                                        label: item3.label,
+                                                                        checked: item3.checked,
+                                                                        partialChecked: item3.partialChecked
+                                                                    }
+                                                                )
+                                                            }),
+                                                        checked: item2.checked,
+                                                        partialChecked: item2.partialChecked
+                                                    }
+                                                )
+                                            }),
+                                        checked: item1.checked,
+                                        partialChecked: item1.partialChecked
+                                    }
+                                )
+                            }),
+                        checked: item.checked,
+                        partialChecked: item.partialChecked
+                    }
+                )
+            })
+            await this.setState({ treeData: treeData });
+        }
     }
 
-    componentWillReceiveProps = (props) => {
+    componentWillReceiveProps = async (props) => {
         if (props.data.User.editlocationdata && props.data.User.editlocationdata.length > 0) {
             let treeData = props.data.User.editlocationdata && props.data.User.editlocationdata.map((item, index) => {
                 return (
@@ -85,7 +127,7 @@ class Editprimarylocation extends Component {
                     }
                 )
             })
-            this.setState({ treeData: treeData, nodesFiltered: treeData });
+            await this.setState({ treeData: treeData });
         }
     }
 
@@ -103,40 +145,107 @@ class Editprimarylocation extends Component {
         this.props.iseditprilocmodaluser();
     }
 
-    onChangeSearch = (e) => {
-        this.setState({ filterText: e.target.value }, this.filterTree);
+    onSearchInputChange = (event, data, searchedNodes) => {
+        this.setState(prevState => {
+            if (prevState.keyword.trim() && !data.value.trim()) {
+                return {
+                    expanded: [],
+                    keyword: data.value
+                };
+            }
+            return {
+                expanded: this.getAllValuesFromNodes(searchedNodes, true),
+                keyword: data.value
+            };
+        });
+    };
+
+    getHighlightText = (text, keyword) => {
+        const startIndex = text.indexOf(keyword);
+        return startIndex !== -1 ? (
+            <span>
+                {text.substring(0, startIndex)}
+                <span style={{ color: "#2cb664" }}>
+                    {text.substring(startIndex, startIndex + keyword.length)}
+                </span>
+                {text.substring(startIndex + keyword.length)}
+            </span>
+        ) : (
+                <span>{text}</span>
+            );
+    };
+
+    keywordFilter = (nodes, keyword) => {
+        let newNodes = [];
+        for (let n of nodes) {
+            if (n.children) {
+                const nextNodes = this.keywordFilter(n.children, keyword);
+                if (nextNodes.length > 0) {
+                    n.children = nextNodes;
+                } else if (n.label.toLowerCase().includes(keyword.toLowerCase())) {
+                    n.children = nextNodes.length > 0 ? nextNodes : [];
+                }
+                if (
+                    nextNodes.length > 0 ||
+                    n.label.toLowerCase().includes(keyword.toLowerCase())
+                ) {
+                    n.label = this.getHighlightText(n.label, keyword);
+                    newNodes.push(n);
+                }
+            } else {
+                if (n.label.toLowerCase().includes(keyword.toLowerCase())) {
+                    n.label = this.getHighlightText(n.label, keyword);
+                    newNodes.push(n);
+                }
+            }
+        }
+        return newNodes;
+    };
+
+    getAllValuesFromNodes = (nodes, firstLevel) => {
+        if (firstLevel) {
+            const values = [];
+            for (let n of nodes) {
+                values.push(n.value);
+                if (n.children) {
+                    values.push(...this.getAllValuesFromNodes(n.children, false));
+                }
+            }
+            return values;
+        } else {
+            const values = [];
+            for (let n of nodes) {
+                values.push(n.value);
+                if (n.children) {
+                    values.push(...this.getAllValuesFromNodes(n.children, false));
+                }
+            }
+            return values;
+        }
+    };
+
+    shouldComponentUpdate(nextProps, nextState) {
+        if (this.state.keyword !== nextState.keyword) {
+            return true;
+        }
+        if (!_.isEqual(this.state.selectedLocation, nextState.selectedLocation)) {
+            return true;
+        }
+        if (_.isEqual(this.state.expanded, nextState.expanded)) {
+            return false;
+        }
+        return true;
     }
 
-    filterTree() {
-        // Reset nodes back to unfiltered state
-        if (!this.state.filterText) {
-            this.setState((prevState) => ({
-                nodesFiltered: prevState.treeData,
-            }));
-            return;
-        }
-        const nodesFiltered = (prevState) => (
-            { nodesFiltered: prevState.treeData.reduce(this.filterNodes, []) }
-        );
-        this.setState(nodesFiltered);
-    }
-
-    filterNodes(filtered, node) {
-        const { filterText } = this.state;
-        const children = (node.children || []).reduce(this.filterNodes, []);
-        if (
-            // Node's label matches the search string
-            node.label.toLocaleLowerCase().indexOf(filterText.toLocaleLowerCase()) > -1 ||
-            // Or a children has a matching node
-            children.length
-        ) {
-            filtered.push({ ...node, children });
-        }
-        return filtered;
+    OncheckTreeData = async (checked) => {
+        await this.setState({ selectedLocation: checked });
     }
 
     render() {
         const { Status } = this.props.data;
+        let searchedNodes = this.state.keyword.trim()
+            ? this.keywordFilter(_.cloneDeep(this.state.treeData), this.state.keyword)
+            : this.state.treeData;
         return (
             <Fragment>
                 <ReactCSSTransitionGroup
@@ -161,23 +270,41 @@ class Editprimarylocation extends Component {
                                     </CardHeader>
                                     <CardBody>
                                         <Row>
-                                            <Input type="search" className="filterTree" placeholder="Search..." name="search" onChange={(e) => this.onChangeSearch(e)} value={this.state.filterText} autocomplete="off" />
+                                            <Col md='12'>
+                                                <FormGroup>
+                                                    <Input
+                                                        className='search_location'
+                                                        style={{ marginBottom: "20px" }}
+                                                        fluid
+                                                        icon="search"
+                                                        placeholder="Search Primary Locations..."
+                                                        iconPosition="left"
+                                                        onChange={(event, data) => {
+                                                            this.onSearchInputChange(event, data, searchedNodes);
+                                                        }}
+                                                        autoComplete='off'
+                                                    />
+                                                </FormGroup>
+                                            </Col>
                                         </Row>
                                         <Row>
                                             <Col md='12'>
                                                 <FormGroup>
-                                                    {this.state.nodesFiltered.length > 0 &&
                                                         <CheckboxTree
-                                                            nodes={this.state.nodesFiltered}
-                                                            showNodeIcon={false}
+                                                            nodes={searchedNodes}
                                                             checked={this.state.selectedLocation}
                                                             expanded={this.state.expanded}
-                                                            onCheck={checked => this.setState({ selectedLocation: checked })}
+                                                            onCheck={checked => {
+                                                                this.OncheckTreeData(checked)
+                                                            }}
                                                             onExpand={expanded => this.setState({ expanded })}
-                                                        />}
-                                                    {this.state.nodesFiltered.length === 0 &&
-                                                        <p>No Location exist</p>
-                                                    }
+                                                            expandOnClick
+                                                            onClick={() => {
+                                                                console.log("on click");
+                                                            }}
+                                                            showNodeIcon={false}
+                                                        />
+                                                   
                                                 </FormGroup>
                                             </Col>
                                         </Row>

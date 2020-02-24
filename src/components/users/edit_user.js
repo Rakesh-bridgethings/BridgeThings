@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import Select from 'react-select';
 import Checkbox from 'rc-checkbox';
 import 'rc-checkbox/assets/index.css';
-import { fetchroleitemdata, fechorganizationitemdata, updatedUserData } from '../../services/User';
+import { fetchroleitemdata, fechorganizationitemdata, updatedUserData, fetchEditPrimaryLocation } from '../../services/User';
 import PageTitle from '../../components/includes/PageTitle';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {
@@ -133,7 +133,7 @@ class Edituser extends Component {
     toggle = () => {
         this.props.iseditusermodal();
     }
-    nextuser = () => {
+    nextuser = async() => {
         this.validator.showMessageFor('FirstName');
         this.validator.showMessageFor('Lastname')
         this.validator.showMessageFor('oraganizations')
@@ -142,10 +142,8 @@ class Edituser extends Component {
         this.validator.showMessageFor('Email');
         this.validator.showMessageFor('Phonenumber');
         if (this.validator.allValid()) {
-            this.setState({ editprilocmodal: !this.state.editprilocmodal });
-            this.setState({ nextmodaluser: !this.state.nextmodaluser });
-            this.setState({ addnextmodaluser: !this.state.addnextmodaluser });
-            this.props.iseditusermodal();
+            let { fetchEditPrimaryLocation } = this.props;
+            await fetchEditPrimaryLocation(this.state.oraganization.value, this.state.id);
             let data = {
                 firstName: this.state.firstname,
                 lastName: this.state.lastname,
@@ -158,6 +156,10 @@ class Edituser extends Component {
                 status: this.state.activeStatus,
             };
             this.setState({ userstepdata: data });
+            this.setState({ editprilocmodal: !this.state.editprilocmodal });
+            this.setState({ nextmodaluser: !this.state.nextmodaluser });
+            this.setState({ addnextmodaluser: !this.state.addnextmodaluser });
+            this.props.iseditusermodal();
         }
         this.props.shownoti('');
         this.setState({ notitype: 'editprimarylocation' });
@@ -315,6 +317,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     fetchroleitemdata: fetchroleitemdata,
     fechorganizationitemdata: fechorganizationitemdata,
     updatedUserData: updatedUserData,
+    fetchEditPrimaryLocation: fetchEditPrimaryLocation,
 
 }, dispatch)
 

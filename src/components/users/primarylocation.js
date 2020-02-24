@@ -11,224 +11,13 @@ import {
     Nav, NavItem, NavLink,
     UncontrolledTooltip, UncontrolledButtonDropdown,
     Modal, ModalHeader, ModalBody, ModalFooter,
-    Form, Label, Input, FormGroup, DropdownItem
+    Form, Label, FormGroup, DropdownItem
 } from 'reactstrap';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import Notification from '../../library/notification';
 import Loading from '../../library/loader';
-
-const nodes = [{
-    "label": "Brakes India Private Limited",
-    "key": "o48",
-    "id": null,
-    "children": [
-        {
-            "label": "Chennai,TN",
-            "key": "o48r6743",
-            "id": null,
-            "children": [
-                {
-                    "label": "Padi",
-                    "key": "o48r6743p31",
-                    "id": null,
-                    "children": [
-                        {
-                            "label": "ty",
-                            "key": "o48r6743p31l||100",
-                            "id": null,
-                            "children": null,
-                            "checked": true,
-                            "partialChecked": true
-                        },
-                        {
-                            "label": "grtgh",
-                            "key": "o48r6743p31l||171",
-                            "id": null,
-                            "children": null,
-                            "checked": false,
-                            "partialChecked": false
-                        },
-                        {
-                            "label": "rtrtrtrty",
-                            "key": "o48r6743p31l||170",
-                            "id": null,
-                            "children": null,
-                            "checked": false,
-                            "partialChecked": false
-                        },
-                        {
-                            "label": "sdferfg",
-                            "key": "o48r6743p31l||158",
-                            "id": null,
-                            "children": null,
-                            "checked": false,
-                            "partialChecked": false
-                        },
-                        {
-                            "label": "nghnghnghn",
-                            "key": "o48r6743p31l||204",
-                            "id": null,
-                            "children": null,
-                            "checked": false,
-                            "partialChecked": false
-                        },
-                        {
-                            "label": "kikikikiki",
-                            "key": "o48r6743p31l||199",
-                            "id": null,
-                            "children": null,
-                            "checked": false,
-                            "partialChecked": false
-                        },
-                        {
-                            "label": "jyjuyjuy",
-                            "key": "o48r6743p31l||186",
-                            "id": null,
-                            "children": null,
-                            "checked": false,
-                            "partialChecked": false
-                        },
-                        {
-                            "label": "qqqq",
-                            "key": "o48r6743p31l||165",
-                            "id": null,
-                            "children": null,
-                            "checked": false,
-                            "partialChecked": false
-                        },
-                        {
-                            "label": "jyjuyjuy",
-                            "key": "o48r6743p31l||187",
-                            "id": null,
-                            "children": null,
-                            "checked": false,
-                            "partialChecked": false
-                        },
-                        {
-                            "label": "rakesh",
-                            "key": "o48r6743p31l||240",
-                            "id": null,
-                            "children": null,
-                            "checked": false,
-                            "partialChecked": false
-                        },
-                        {
-                            "label": "tyhtyh",
-                            "key": "o48r6743p31l||167",
-                            "id": null,
-                            "children": null,
-                            "checked": false,
-                            "partialChecked": false
-                        },
-                        {
-                            "label": "efwef",
-                            "key": "o48r6743p31l||160",
-                            "id": null,
-                            "children": null,
-                            "checked": false,
-                            "partialChecked": false
-                        },
-                        {
-                            "label": "efwef",
-                            "key": "o48r6743p31l||159",
-                            "id": null,
-                            "children": null,
-                            "checked": false,
-                            "partialChecked": false
-                        },
-                        {
-                            "label": "34",
-                            "key": "o48r6743p31l||98",
-                            "id": null,
-                            "children": null,
-                            "checked": true,
-                            "partialChecked": true
-                        },
-                        {
-                            "label": "df",
-                            "key": "o48r6743p31l||101",
-                            "id": null,
-                            "children": null,
-                            "checked": true,
-                            "partialChecked": true
-                        },
-                        {
-                            "label": "ewfwef",
-                            "key": "o48r6743p31l||161",
-                            "id": null,
-                            "children": null,
-                            "checked": false,
-                            "partialChecked": false
-                        },
-                        {
-                            "label": "sfsdf",
-                            "key": "o48r6743p31l||102",
-                            "id": null,
-                            "children": null,
-                            "checked": true,
-                            "partialChecked": true
-                        },
-                        {
-                            "label": "eryrthrt",
-                            "key": "o48r6743p31l||169",
-                            "id": null,
-                            "children": null,
-                            "checked": false,
-                            "partialChecked": false
-                        },
-                        {
-                            "label": "main",
-                            "key": "o48r6743p31l||104",
-                            "id": null,
-                            "children": null,
-                            "checked": true,
-                            "partialChecked": true
-                        },
-                        {
-                            "label": "Main Building",
-                            "key": "o48r6743p31l||89",
-                            "id": null,
-                            "children": null,
-                            "checked": true,
-                            "partialChecked": true
-                        },
-                        {
-                            "label": "grtghefwef",
-                            "key": "o48r6743p31l||173",
-                            "id": null,
-                            "children": null,
-                            "checked": false,
-                            "partialChecked": false
-                        },
-                        {
-                            "label": "grtgh",
-                            "key": "o48r6743p31l||172",
-                            "id": null,
-                            "children": null,
-                            "checked": false,
-                            "partialChecked": false
-                        },
-                        {
-                            "label": "sdf",
-                            "key": "o48r6743p31l||105",
-                            "id": null,
-                            "children": null,
-                            "checked": true,
-                            "partialChecked": true
-                        }
-                    ],
-                    "checked": false,
-                    "partialChecked": false
-                }
-            ],
-            "checked": false,
-            "partialChecked": false
-        }
-    ],
-    "checked": false,
-    "partialChecked": false
-}];
-
+import _ from "lodash";
+import { Input } from "semantic-ui-react";
 
 class Primarylocation extends Component {
     constructor(props) {
@@ -236,19 +25,206 @@ class Primarylocation extends Component {
         this.toggle = this.toggle.bind(this);
     }
     state = {
+        alluserdata: {},
         selectedLocation: [],
         expanded: [],
-        alluserdata: {},
+        treeData: [],
+        keyword: '',
     }
 
     componentWillMount = async () => {
         this.setState({ alluserdata: this.props.addUserData });
-        let { fetchPrimaryLocation } = this.props;
-        await fetchPrimaryLocation(this.props.addUserData.entityId);
+        if (this.props.data.User.primary_loc_data && this.props.data.User.primary_loc_data.length > 0) {
+            let treeData = this.props.data.User.primary_loc_data && this.props.data.User.primary_loc_data.map((item, index) => {
+                return (
+                    {
+                        value: item.key,
+                        label: item.label,
+                        children:
+                            item.children && item.children.map((item1, index1) => {
+                                return (
+                                    {
+                                        value: item1.key,
+                                        label: item1.label,
+                                        children:
+                                            item1.children && item1.children.map((item2, index2) => {
+                                                return (
+                                                    {
+                                                        value: item2.key,
+                                                        label: item2.label,
+                                                        children:
+                                                            item2.children && item2.children.map((item3, index3) => {
+                                                                return (
+                                                                    {
+                                                                        value: item3.key.split('||')[1],
+                                                                        label: item3.label,
+                                                                        checked: item3.checked,
+                                                                        partialChecked: item3.partialChecked
+                                                                    }
+                                                                )
+                                                            }),
+                                                        checked: item2.checked,
+                                                        partialChecked: item2.partialChecked
+                                                    }
+                                                )
+                                            }),
+                                        checked: item1.checked,
+                                        partialChecked: item1.partialChecked
+                                    }
+                                )
+                            }),
+                        checked: item.checked,
+                        partialChecked: item.partialChecked
+                    }
+                )
+            })
+            await this.setState({ treeData: treeData });
+        }
     }
 
-    primaryChecked = (checked) => {
-        this.setState({ selectedLocation: checked });
+    componentWillReceiveProps = async (props) => {
+        if (props.data.User.primary_loc_data && props.data.User.primary_loc_data.length > 0) {
+            let treeData = props.data.User.primary_loc_data && props.data.User.primary_loc_data.map((item, index) => {
+                return (
+                    {
+                        value: item.key,
+                        label: item.label,
+                        children:
+                            item.children && item.children.map((item1, index1) => {
+                                return (
+                                    {
+                                        value: item1.key,
+                                        label: item1.label,
+                                        children:
+                                            item1.children && item1.children.map((item2, index2) => {
+                                                return (
+                                                    {
+                                                        value: item2.key,
+                                                        label: item2.label,
+                                                        children:
+                                                            item2.children && item2.children.map((item3, index3) => {
+                                                                return (
+                                                                    {
+                                                                        value: item3.key.split('||')[1],
+                                                                        label: item3.label,
+                                                                        checked: item3.checked,
+                                                                        partialChecked: item3.partialChecked
+                                                                    }
+                                                                )
+                                                            }),
+                                                        checked: item2.checked,
+                                                        partialChecked: item2.partialChecked
+                                                    }
+                                                )
+                                            }),
+                                        checked: item1.checked,
+                                        partialChecked: item1.partialChecked
+                                    }
+                                )
+                            }),
+                        checked: item.checked,
+                        partialChecked: item.partialChecked
+                    }
+                )
+            })
+            await this.setState({ treeData: treeData });
+        }
+    }
+
+    onSearchInputChange = (event, data, searchedNodes) => {
+        this.setState(prevState => {
+            if (prevState.keyword.trim() && !data.value.trim()) {
+                return {
+                    expanded: [],
+                    keyword: data.value
+                };
+            }
+            return {
+                expanded: this.getAllValuesFromNodes(searchedNodes, true),
+                keyword: data.value
+            };
+        });
+    };
+
+    getHighlightText = (text, keyword) => {
+        const startIndex = text.indexOf(keyword);
+        return startIndex !== -1 ? (
+            <span>
+                {text.substring(0, startIndex)}
+                <span style={{ color: "#2cb664" }}>
+                    {text.substring(startIndex, startIndex + keyword.length)}
+                </span>
+                {text.substring(startIndex + keyword.length)}
+            </span>
+        ) : (
+                <span>{text}</span>
+            );
+    };
+
+    keywordFilter = (nodes, keyword) => {
+        let newNodes = [];
+        for (let n of nodes) {
+            if (n.children) {
+                const nextNodes = this.keywordFilter(n.children, keyword);
+                if (nextNodes.length > 0) {
+                    n.children = nextNodes;
+                } else if (n.label.toLowerCase().includes(keyword.toLowerCase())) {
+                    n.children = nextNodes.length > 0 ? nextNodes : [];
+                }
+                if (
+                    nextNodes.length > 0 ||
+                    n.label.toLowerCase().includes(keyword.toLowerCase())
+                ) {
+                    n.label = this.getHighlightText(n.label, keyword);
+                    newNodes.push(n);
+                }
+            } else {
+                if (n.label.toLowerCase().includes(keyword.toLowerCase())) {
+                    n.label = this.getHighlightText(n.label, keyword);
+                    newNodes.push(n);
+                }
+            }
+        }
+        return newNodes;
+    };
+
+    getAllValuesFromNodes = (nodes, firstLevel) => {
+        if (firstLevel) {
+            const values = [];
+            for (let n of nodes) {
+                values.push(n.value);
+                if (n.children) {
+                    values.push(...this.getAllValuesFromNodes(n.children, false));
+                }
+            }
+            return values;
+        } else {
+            const values = [];
+            for (let n of nodes) {
+                values.push(n.value);
+                if (n.children) {
+                    values.push(...this.getAllValuesFromNodes(n.children, false));
+                }
+            }
+            return values;
+        }
+    };
+
+    shouldComponentUpdate(nextProps, nextState) {
+        if (this.state.keyword !== nextState.keyword) {
+            return true;
+        }
+        if (!_.isEqual(this.state.selectedLocation, nextState.selectedLocation)) {
+            return true;
+        }
+        if (_.isEqual(this.state.expanded, nextState.expanded)) {
+            return false;
+        }
+        return true;
+    }
+
+    OncheckTreeData = async (checked) => {
+        await this.setState({ selectedLocation: checked });
     }
 
     back = () => {
@@ -258,54 +234,18 @@ class Primarylocation extends Component {
     toggle = () => {
         this.props.isaddnextmodaluser();
     }
-    save = () => {        
+    save = () => {
         let alluserdata = this.state.alluserdata;
         alluserdata.locations = this.state.selectedLocation;
         this.props.AdduserData(alluserdata);
-        this.props.isclosemodalsuser();    
+        this.props.isclosemodalsuser();
     }
 
     render() {
         const { Status } = this.props.data;
-        const { User } = this.props.data;
-        const treeData = nodes && nodes.map((item, index) => {
-            return (
-                {
-                    value: item.key,
-                    label: item.label,
-                    children:
-                        item.children && item.children.map((item1, index1) => {
-                            return (
-                                {
-                                    value: item1.key,
-                                    label: item1.label,
-                                    children:
-                                        item1.children && item1.children.map((item2, index2) => {
-                                            return (
-                                                {
-                                                    value: item2.key,
-                                                    label: item2.label,
-                                                    children:
-                                                        item2.children && item2.children.map((item3, index3) => {
-                                                            return (
-                                                                {
-                                                                    value: item3.key.split('||')[1],
-                                                                    label: item3.label,
-                                                                }
-                                                            )
-                                                        })
-
-                                                }
-                                            )
-                                        })
-
-                                }
-                            )
-                        })
-
-                }
-            )
-        })
+        let searchedNodes = this.state.keyword.trim()
+            ? this.keywordFilter(_.cloneDeep(this.state.treeData), this.state.keyword)
+            : this.state.treeData;
         return (
             <Fragment>
                 <ReactCSSTransitionGroup
@@ -340,15 +280,39 @@ class Primarylocation extends Component {
                                         <Row>
                                             <Col md='12'>
                                                 <FormGroup>
+                                                    <Input
+                                                        className='search_location'
+                                                        style={{ marginBottom: "20px" }}
+                                                        fluid
+                                                        icon="search"
+                                                        placeholder="Search Primary Locations..."
+                                                        iconPosition="left"
+                                                        onChange={(event, data) => {
+                                                            this.onSearchInputChange(event, data, searchedNodes);
+                                                        }}
+                                                        autoComplete='off'
+                                                    />
+                                                </FormGroup>
+                                            </Col>
+                                        </Row>
+                                        <Row>
+                                            <Col md='12'>
+                                                <FormGroup>
                                                     <CheckboxTree
-                                                        nodes={treeData} //User.primary_loc_data
-                                                        showNodeIcon={false}
+                                                        nodes={searchedNodes}
                                                         checked={this.state.selectedLocation}
                                                         expanded={this.state.expanded}
-                                                        searchEnabled={true}
-                                                        onCheck={checked => this.primaryChecked(checked)}
+                                                        onCheck={checked => {
+                                                            this.OncheckTreeData(checked)
+                                                        }}
                                                         onExpand={expanded => this.setState({ expanded })}
+                                                        expandOnClick
+                                                        onClick={() => {
+                                                            console.log("on click");
+                                                        }}
+                                                        showNodeIcon={false}
                                                     />
+
                                                 </FormGroup>
                                             </Col>
                                         </Row>

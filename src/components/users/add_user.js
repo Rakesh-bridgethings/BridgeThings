@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import Select from 'react-select';
 import Checkbox from 'rc-checkbox';
 import 'rc-checkbox/assets/index.css';
-import { fetchroleitemdata, fechorganizationitemdata, addUser } from '../../services/User';
+import { fetchroleitemdata, fechorganizationitemdata, addUser, fetchPrimaryLocation } from '../../services/User';
 import PageTitle from '../../components/includes/PageTitle';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {
@@ -47,9 +47,6 @@ class Adduser extends Component {
         await fetchroleitemdata();
         await fechorganizationitemdata();
     }
-    componentWillReceiveProps = (props) => {
-
-    }
     onCheckedEmail(e) {
         this.setState({ notificationEmail: e.target.checked });
     }
@@ -58,8 +55,8 @@ class Adduser extends Component {
     }
 
     onPhonenumber = (e) => {
-        this.setState({ phonenumber: e.target.value })
-        this.validator.showMessageFor('Phonenumber');        
+        this.setState({ phonenumber: e.target.value });
+        this.validator.showMessageFor('Phonenumber');
     }
     onEmail = (e) => {
         this.setState({ email: e.target.value });
@@ -79,16 +76,16 @@ class Adduser extends Component {
     toggle = () => {
         this.props.isaddusermodal();
     }
-    nextuser = () => {
-        this.validator.showMessageFor('FirstName');
+    nextuser = async() => {
+        this.validator.showMessageFor('FirstName')
         this.validator.showMessageFor('Lastname')
         this.validator.showMessageFor('oraganizations')
-        this.validator.showMessageFor('label');
-        this.validator.showMessageFor('role');
-        this.validator.showMessageFor('Email');
+        this.validator.showMessageFor('label')
+        this.validator.showMessageFor('role')
+        this.validator.showMessageFor('Email')
         if (this.validator.allValid()) {
-            this.setState({ nextmodaluser: !this.state.nextmodaluser });
-            this.setState({ addnextmodaluser: !this.state.addnextmodaluser });
+            let { fetchPrimaryLocation } = this.props;
+            await fetchPrimaryLocation(this.state.oraganization.value);
             this.props.isaddusermodal();
             let data = {
                 firstName: this.state.firstname,
@@ -100,6 +97,8 @@ class Adduser extends Component {
                 notifications: { "email": this.state.notificationEmail, "phone": this.state.notificationSMS },
                 status: 1,
             };
+            this.setState({ nextmodaluser: !this.state.nextmodaluser });
+            this.setState({ addnextmodaluser: !this.state.addnextmodaluser });
             this.setState({ userstepdata: data });
             this.setState({ notitype: 'primarylocation' });
         }
@@ -246,7 +245,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     fetchroleitemdata: fetchroleitemdata,
     fechorganizationitemdata: fechorganizationitemdata,
     addUser: addUser,
-
+    fetchPrimaryLocation: fetchPrimaryLocation,
 }, dispatch)
 
 export default connect(
