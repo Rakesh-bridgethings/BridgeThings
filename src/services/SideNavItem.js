@@ -226,7 +226,7 @@ let dashboards = [
         "key": "Entities",
         "text": "Entities",
         "icon": "icon-building-2",
-        "url": null,
+        "url": "Entities",
         "menuItems": [
 
         ]

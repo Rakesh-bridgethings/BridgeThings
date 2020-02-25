@@ -7,6 +7,7 @@ import Header from '../components/includes/Header';
 import LeftSidebar from '../components/includes/LeftSidebar';
 import Location from '../components/location';
 import User from '../components/users';
+import Entities from '../components/entities';
 import PerformanceDashboard from '../components/dashboards/performance';
 import { Route, Link, Switch, BrowserRouter as Router } from 'react-router-dom'
 // import { fetchsidenavitemdata } from '../services/SideNavItem';
@@ -18,12 +19,10 @@ class Main extends Component {
             closedSmallerSidebar: false
         };
     }
-
     componentDidMount = async () => {
         // const { fetchsidenavitemdata } = this.props;
         // fetchsidenavitemdata();
     }
-
     render() {
         let {
             colorScheme,
@@ -71,6 +70,7 @@ class Main extends Component {
                                             <Route path="/test_dashboard" component={PerformanceDashboard} />
                                             <Route path="/locations" component={Location} />
                                             <Route path="/users" component={User} />
+                                            <Route path="/entities" component={Entities}/>
                                         </div>
                                     </div>
                                 </div>
