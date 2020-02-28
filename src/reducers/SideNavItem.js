@@ -8,7 +8,6 @@ const initialState = {
 }
 
 const sidenavitem = (state = initialState, action) => {
-    // console.log("action::", action);
     switch (action.type) {
         case FETCH_SIDENAVITEM_PENDING: {
             return {

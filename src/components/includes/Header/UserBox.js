@@ -44,8 +44,6 @@ class UserBox extends React.Component {
 
 
     render() {
-        // const { SideNavItem } = this.props.data;
-        // console.log("props::", this.props);
         return (
             <Fragment>
                 <div className="header-btn-lg pr-0">

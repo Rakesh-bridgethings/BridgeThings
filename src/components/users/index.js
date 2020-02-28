@@ -56,7 +56,6 @@ class Users extends Component {
             )
         })
         this.setState({ alluserdata });
-        // console.log("alll::",alluserdata)
     }
     componentDidMount = async () => {
         const { fetchuseritemdata,edituser } = this.props;

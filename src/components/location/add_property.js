@@ -98,7 +98,6 @@ class AddProperty extends Component {
             selectedPlace.propertyType = this.state.propertytype.value;
             selectedPlace.label = this.state.label;
             const { add_property } = this.props;
-            console.log("selectedPlace::", selectedPlace);
             add_property(selectedPlace);
             this.props.isaddpropertymodal(!this.props.addpropertymodal);
         }

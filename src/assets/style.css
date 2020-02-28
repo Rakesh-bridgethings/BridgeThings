@@ -130,6 +130,18 @@ ul.pagination {
     color: rgb(255, 0, 0);
 
 }
+     
+     /*MODAL CSS START*/
+     .add_btn_modal{text-align: right;margin-bottom: 10px;}
+     #add_location .modal-header{border-bottom: none;}
+     #add_location .modal_form{padding: 10px;border:  1px solid rgba(0,0,0,.2) ;border-radius: .3rem;}
+     .close_btn{ color: #fff !important;
+        background-color: #0062cc !important;
+        border-color: #005cbf !important;
+        background: #005cbf !important;
+    }
+     /*MODAL CSS WRAP*/
+
 
 
 

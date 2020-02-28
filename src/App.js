@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import './App.css';
 import './assets/base.css';
 import './assets/style.css';
-import Main from './config/route';
+import Route from './config/route';
 import store from './store';
 import { Provider } from 'react-redux';
 
@@ -14,7 +14,7 @@ class App extends React.Component {
   render() {
     return (
         <Provider store={store}>
-        <Main />
+        <Route />
         </Provider>
     );
   }

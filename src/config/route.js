@@ -34,7 +34,6 @@ class Main extends Component {
             enableMobileMenu,
             enablePageTabsAlt,
         } = this.props;
-        // console.log("pp::", this.props);
         return (
             <ResizeDetector
                 handleWidth
