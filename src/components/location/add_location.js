@@ -43,17 +43,13 @@ class AddLocation extends Component {
         label: '',
         firststepData: [],
         nextclick: false,
-        errorClass: 'is-invalid',
         page: '',
     };
 
-
     componentDidMount = async () => {
         const { fetchorganizationdata, fetchlocationtypesdata } = this.props;
-        // fetchlocationitemdata();
         fetchorganizationdata();
         fetchlocationtypesdata();
-
     }
 
 
@@ -260,7 +256,7 @@ class AddLocation extends Component {
                                             <FormGroup>
                                                 <Label for="label">Label *</Label>
                                                 <Input type='text' id='label' value={this.state.label}
-                                                    className={`form-control ${this.state.nextclick && this.state.label === '' && this.state.errorClass}`}
+                                                    className='form-control'
                                                     onChange={(e) => this.setState({ label: e.target.value })} />
                                                 {this.validator.message('label', this.state.label, 'required')}
                                             </FormGroup>

@@ -4,8 +4,8 @@ import { bindActionCreators } from 'redux';
 import Select from 'react-select';
 import Checkbox from 'rc-checkbox';
 import 'rc-checkbox/assets/index.css';
-import { fetchroleitemdata, fechorganizationitemdata, updatedUserData, fetchEditPrimaryLocation } from '../../services/User';
-import PageTitle from '../../components/includes/PageTitle';
+import { fetchroleitemdata, updatedUserData, fetchEditPrimaryLocation } from '../../services/User';
+import { fetchorganizationdata } from '../../services/Location';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {
     Row, Col, Card, CardBody, CardTitle, Table, CardHeader, Button,
@@ -52,9 +52,9 @@ class Edituser extends Component {
         locationdata: [],
     }
     componentDidMount = async () => {
-        const { fetchroleitemdata, fechorganizationitemdata } = this.props;
+        const { fetchroleitemdata, fetchorganizationdata } = this.props;
         await fetchroleitemdata();
-        await fechorganizationitemdata();
+        await fetchorganizationdata();
     }
     componentWillReceiveProps = async (props) => {
         let { User } = props.data;
@@ -185,10 +185,11 @@ class Edituser extends Component {
 
     render() {
         const { User } = this.props.data;
+        const { Location } = this.props.data;
         let roleadduser = User.roleitem.rows && User.roleitem.rows.map(function (item) {
             return { value: item.id, label: item.name };
         })
-        let oraguseritem = User.oraganizationuseritem && User.oraganizationuseritem.map(function (item) {
+        let oraguseritem = Location.orgnizationdata && Location.orgnizationdata.map(function (item) {
             return { value: item.id, label: item.name };
         })
         const { Status } = this.props.data;
@@ -315,7 +316,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => bindActionCreators({
     fetchroleitemdata: fetchroleitemdata,
-    fechorganizationitemdata: fechorganizationitemdata,
+    fetchorganizationdata: fetchorganizationdata,
     updatedUserData: updatedUserData,
     fetchEditPrimaryLocation: fetchEditPrimaryLocation,
 

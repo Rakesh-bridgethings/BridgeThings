@@ -1,5 +1,5 @@
 
-import {fetch_useritemdata_sucess,fetch_role_types_success,fetch_organizationuser_types_success, primary_location, edit_primary_location_data, Fetch_edit_user_data_success} from '../actions/useritem';
+import {fetch_useritemdata_sucess,fetch_role_types_success, primary_location, edit_primary_location_data, Fetch_edit_user_data_success} from '../actions/useritem';
 import {data_post_status} from '../actions/locationitem';
 import axios from 'axios';
 import { SERVER_URL, HEADER } from '../config/config';
@@ -32,22 +32,6 @@ export function fetchroleitemdata(){
             statusMessage(dispatch, "loading", false);
             resolve(
                dispatch(fetch_role_types_success(res.data))
-            );
-         });
-      } catch (error) {
-         reject(error);
-      }
-   }).catch(async (err) => { await statusMessage(dispatch, 'error', err); throw err; });
-}
-
-export function fechorganizationitemdata(){
-   return dispatch=>new Promise(async(resolve,reject)=>{
-      await statusMessage(dispatch,"loading",false);
-      try{
-         axios.get(`${SERVER_URL}entities`, { headers: HEADER }).then(async (res) => {
-            statusMessage(dispatch, "loading", false);
-            resolve(
-               dispatch(fetch_organizationuser_types_success(res.data.rows))
             );
          });
       } catch (error) {

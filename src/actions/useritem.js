@@ -1,7 +1,6 @@
 export const FETCH_USERITEMDATA_SUCESS = 'FETCH_USERITEMDATA_SUCESS';
 export const DATA_POST_SUCCESS = 'DATA_POST_SUCCESS';
 export const FETCH_ROLE_TYPES_SUCESS = 'FETCH_ROLE_TYPES_SUCESS';
-export const FETCH_ORGANIZATIONUSER_TYPES_SUCESS = 'FETCH_ORGANIZATIONUSER_TYPES_SUCESS';
 export const DATA_USER_STATUS='DATA_USER_STATUS';
 export const FETCH_PRIMARY_LOCATION='FETCH_PRIMARY_LOCATION';
 export const FETCH_EDIT_USER_DATA_SUCESS='FETCH_EDIT_USER_DATA_SUCESS';
@@ -25,12 +24,6 @@ export function fetch_role_types_success(roleitem_data) {
     return {
         type: FETCH_ROLE_TYPES_SUCESS,
         roleitem: roleitem_data,
-    }
-}
-export function fetch_organizationuser_types_success(oraganizationuseritem_data) {
-    return {
-        type: FETCH_ORGANIZATIONUSER_TYPES_SUCESS,
-        oraganizationuseritem: oraganizationuseritem_data
     }
 }
 export function primary_location(primary_loc_data) {

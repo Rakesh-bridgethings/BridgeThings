@@ -1,4 +1,4 @@
-import { FETCH_USERITEMDATA_SUCESS, FETCH_ROLE_TYPES_SUCESS, FETCH_ORGANIZATIONUSER_TYPES_SUCESS, DATA_USER_STATUS, FETCH_PRIMARY_LOCATION, FETCH_EDIT_USER_DATA_SUCESS, EDIT_PRIMARY_LOCATION_DATA
+import { FETCH_USERITEMDATA_SUCESS, FETCH_ROLE_TYPES_SUCESS, DATA_USER_STATUS, FETCH_PRIMARY_LOCATION, FETCH_EDIT_USER_DATA_SUCESS, EDIT_PRIMARY_LOCATION_DATA
     } from '../actions/useritem';
 const initialState = {   
     error: null,
@@ -25,12 +25,7 @@ const useritem = (state = initialState, action) => {
             return {
                 ...state,                
                 userstatus: action.userstatus,                
-            }            
-        case FETCH_ORGANIZATIONUSER_TYPES_SUCESS:
-            return {
-                ...state,               
-                oraganizationuseritem:action.oraganizationuseritem,                
-            }
+            }    
         case FETCH_PRIMARY_LOCATION:
             return {
                 ...state,               

@@ -226,7 +226,7 @@ let dashboards = [
         "key": "Entities",
         "text": "Entities",
         "icon": "icon-building-2",
-        "url": "Entities",
+        "url": "entities",
         "menuItems": [
 
         ]
@@ -235,7 +235,7 @@ let dashboards = [
         "key": "IOTDevices",
         "text": "IOTDevices",
         "icon": "icon-building",
-        "url": null,
+        "url": 'iotdevices',
         "menuItems": [
 
         ]
@@ -244,7 +244,7 @@ let dashboards = [
         "key": "Sensors",
         "text": "Sensors",
         "icon": "icon-meter-1",
-        "url": null,
+        "url": 'sensors',
         "menuItems": [
 
         ]

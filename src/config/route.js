@@ -8,8 +8,10 @@ import LeftSidebar from '../components/includes/LeftSidebar';
 import Location from '../components/location';
 import User from '../components/users';
 import Entities from '../components/entities';
+import IOTDevices from '../components/IOTdevices';
 import PerformanceDashboard from '../components/dashboards/performance';
-import { Route, Link, Switch, BrowserRouter as Router } from 'react-router-dom'
+
+import { Route, Link, Switch, BrowserRouter as Router } from 'react-router-dom';
 // import { fetchsidenavitemdata } from '../services/SideNavItem';
 // const PeroformanceDashboard = lazy(() => import('./dashboards/performance'));
 class Main extends Component {
@@ -70,6 +72,7 @@ class Main extends Component {
                                             <Route path="/locations" component={Location} />
                                             <Route path="/users" component={User} />
                                             <Route path="/entities" component={Entities}/>
+                                             <Route path="/iotdevices" component={IOTDevices}/>
                                         </div>
                                     </div>
                                 </div>
