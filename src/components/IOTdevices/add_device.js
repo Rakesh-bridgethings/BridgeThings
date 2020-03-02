@@ -43,7 +43,7 @@ class AddIOTDevice extends Component {
     }
 
     toggle = () => {
-        this.props.isaddiotdevicemodal();
+        this.props.isaddiotdevicemodalcancle();
     }
 
     onChangeOrg = async(organization) => {

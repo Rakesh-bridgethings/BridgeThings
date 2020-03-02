@@ -1,4 +1,4 @@
-import { FETCH_DEVICEITEM_DATA, FETCH_LOCATION_DATA, FETCH_APPLICATION_DATA, FETCH_DEVICETYPE_DATA, FETCH_DEVICEPROFILE_DATA, FETCH_EDIT_DATA } from '../actions/IOTdeviceitem';
+import { FETCH_DEVICEITEM_DATA, FETCH_LOCATION_DATA, FETCH_APPLICATION_DATA, FETCH_DEVICETYPE_DATA, FETCH_DEVICEPROFILE_DATA, FETCH_EDIT_DATA, FETCH_LORA_CONFIG_DATA } from '../actions/IOTdeviceitem';
 
 const initialState = {
     // devicedata: [],
@@ -37,7 +37,12 @@ const locationitem = (state = initialState, action) => {
             return {
                 ...state,
                 editdata: action.editdata,
-            }                                              
+            }   
+        case FETCH_LORA_CONFIG_DATA:
+            return {
+                ...state,
+                loraconfigdata: action.loraconfigdata,
+            }
         default:
             return state
     }

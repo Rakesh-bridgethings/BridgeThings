@@ -10,6 +10,11 @@
         max-width: 1000px;
         margin: 1.75rem auto;
     }
+    #loraconfig{
+        max-width: 1140px;
+        margin: 1.75rem auto;
+    }
+
 }
 .pagination a {
     margin-left: 0;
@@ -141,9 +146,20 @@ ul.pagination {
         background: #005cbf !important;
     }
      /*MODAL CSS WRAP*/
-
-
-
-
+.table_margin{
+    margin-top: 25px;
+}
+.table_wid {
+    width: 95%;
+    margin: 0 auto;
+    box-shadow: 0px 0px 7px 3px #cccccc4f;
+}
+.status_lora{
+    font-size: 1.5em;
+    color: rgb(0, 0, 139);
+}
+.wid_lora_param{
+    width: 25%;
+}
 
 

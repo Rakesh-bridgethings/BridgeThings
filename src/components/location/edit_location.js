@@ -90,9 +90,6 @@ class EditLocation extends Component {
         fetchlocationitemdata();
         fetchorganizationdata();
         fetchlocationtypesdata();
-        // fetchpropertydata();
-        // const { fetchpropertydata } = this.props;
-
     }
 
     toggle = () => {
@@ -237,7 +234,7 @@ class EditLocation extends Component {
                     transitionEnter={false}
                     transitionLeave={false}>
                     <div>
-                        {Status.status !== '' && Status.page === 'update' && this.props.notitype === 'update' &&
+                        {Status.status !== '' && Status.page === 'editdevice' && this.props.notitype === 'editdevice' &&
                             <Fragment>
                                 <Notification msg={Status.notificationMsg} status={Status.status} show={this.props.addlocationmodal} />
                             </Fragment>

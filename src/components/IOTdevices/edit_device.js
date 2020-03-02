@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import Select from 'react-select';
 import Checkbox from 'rc-checkbox';
 import 'rc-checkbox/assets/index.css';
-import { fetchlocationdata, fetchdevicetypedata, fetchdeviceprofiledata, add_iotdevices } from '../../services/IOTDevice';
+import { fetchlocationdata, fetchdevicetypedata, fetchdeviceprofiledata, add_iotdevices, update_iotdevices } from '../../services/IOTDevice';
 import { fetchorganizationdata } from '../../services/Location';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {
@@ -17,6 +17,7 @@ import {
 } from 'reactstrap';
 import SimpleReactValidator from 'simple-react-validator';
 import Notification from '../../library/notification';
+var diff = require('deep-diff').diff;
 
 class EditIOTDevice extends Component {
     constructor(props) {
@@ -33,6 +34,8 @@ class EditIOTDevice extends Component {
         application: '',
         dutycyclemin: '',
         deviceprofile: '',
+        getEditData: [],
+        id: '',
     }
 
     componentDidMount = async () => {
@@ -40,20 +43,53 @@ class EditIOTDevice extends Component {
         await fetchorganizationdata();
         await fetchdevicetypedata();
         await fetchdeviceprofiledata();
+        let props = this.props;
+        if (props.getEditData) {
+            const { fetchlocationdata } = this.props;
+            await fetchlocationdata(props.getEditData.entity.id);
+            this.setState({
+                id: props.getEditData.id,
+                organization: { value: props.getEditData.entity.id, label: props.getEditData.entity.name },
+                location: { value: props.getEditData.location.id, label: props.getEditData.location.label },
+                deviceid: props.getEditData.deviceId,
+                devicetype: { value: props.getEditData.deviceType.id, label: props.getEditData.deviceType.value },
+                dutycyclemin: props.getEditData.dutyCycleMin,
+                deviceprofile: {}
+            })
+        }
+    }
+
+    componentWillReceiveProps = async (props) => {
+        const { IOTDevice } = props.data;
+        IOTDevice.applicationdata && IOTDevice.applicationdata.map((item, index) => {
+            if (item.reference === IOTDevice.editdata.application) {
+                this.setState({ application: { value: item.reference, label: item.value } });
+            }
+        })
+
+        const getEditData = {
+            locations: { "id": props.getEditData.location.id },
+            deviceId: props.getEditData.deviceId,
+            deviceTypes: { value: props.getEditData.deviceType.id, label: props.getEditData.deviceType.value },
+            application: props.getEditData.application,
+            dutyCycleMin: props.getEditData.dutyCycleMin,
+            deviceProfileType: {}
+        };
+        this.setState({ getEditData });
     }
 
     toggle = () => {
-        this.props.iseditdevicemodal();
+        this.props.iseditdevicemodalcancle();
     }
 
-    onChangeOrg = async(organization) => {
+    onChangeOrg = async (organization) => {
         this.setState({ organization });
         const { fetchlocationdata } = this.props;
         await fetchlocationdata(organization.value);
-        this.setState({ location: '', application: ''})
+        this.setState({ location: '', application: '' })
     }
 
-    onSave = async() => {
+    onSave = async () => {
         this.validator.showMessageFor('organization');
         this.validator.showMessageFor('location');
         this.validator.showMessageFor('deviceid');
@@ -64,15 +100,26 @@ class EditIOTDevice extends Component {
         if (this.validator.allValid()) {
             let data = {
                 'deviceId': this.state.deviceid,
-                "deviceTypes":{"id":this.state.devicetype.value},
-                "application":this.state.application.value,
-                "dutyCycleMin":this.state.dutycyclemin,
-                "locations":{"id":this.state.location.value},
-                "deviceProfileType":this.state.deviceprofile.value
+                "deviceTypes": { "id": this.state.devicetype.value },
+                "application": this.state.application.value,
+                "dutyCycleMin": this.state.dutycyclemin,
+                "locations": { "id": this.state.location.value },
+                "deviceProfileType": this.state.deviceprofile.value
             }
-            const { add_iotdevices } = this.props;
-            await add_iotdevices(data);
-            this.props.isaddiotdevicemodal();
+            let getEdittedData = this.state.getEdittedData;
+            var differences = diff(getEdittedData, data);
+            var dif = { ...dif };
+            if (differences) {
+                differences.map((item, index) => {
+                    dif = item.rhs;
+                    // console.log("item::", item);
+                    // dif[item.path[0]] = value;
+                })
+            }
+            dif.id = this.state.id;         
+            const { update_iotdevices } = this.props;
+            await update_iotdevices(dif);
+            this.props.iseditdevicemodal();
         }
     }
 
@@ -95,6 +142,7 @@ class EditIOTDevice extends Component {
         let deviceprofiledata = IOTDevice.deviceprofiledata && IOTDevice.deviceprofiledata.map(function (item) {
             return { value: item, label: item };
         })
+        // console.log("IOTDevice::", IOTDevice);
         return (
             <Fragment>
                 <ReactCSSTransitionGroup
@@ -111,7 +159,7 @@ class EditIOTDevice extends Component {
                             </Fragment>
                         }
                         <Modal isOpen={this.props.editdevicemodal} toggle={() => this.toggle()} className={this.props.className} id='add_location'>
-                            <ModalHeader toggle={() => this.toggle()}>Add IOT Device</ModalHeader>
+                            <ModalHeader toggle={() => this.toggle()}>Edit IOT Device</ModalHeader>
                             <ModalBody>
                                 <Form>
                                     <Row>
@@ -197,7 +245,7 @@ class EditIOTDevice extends Component {
                             </ModalBody>
                             <ModalFooter>
                                 <Button color="light" onClick={() => this.toggle()}>Cancel</Button>
-                                <Button color="success" onClick={() => this.onSave()}>Save</Button>{' '}
+                                <Button color="success" onClick={() => this.onSave()}>Update</Button>{' '}
                             </ModalFooter>
                         </Modal>
                     </div>
@@ -216,6 +264,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     fetchdeviceprofiledata: fetchdeviceprofiledata,
     fetchdevicetypedata: fetchdevicetypedata,
     add_iotdevices: add_iotdevices,
+    update_iotdevices: update_iotdevices,
 }, dispatch)
 
 export default connect(

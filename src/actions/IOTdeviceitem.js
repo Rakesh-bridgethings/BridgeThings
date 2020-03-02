@@ -4,6 +4,7 @@ export const FETCH_APPLICATION_DATA='FETCH_APPLICATION_DATA';
 export const FETCH_DEVICETYPE_DATA='FETCH_DEVICETYPE_DATA';
 export const FETCH_DEVICEPROFILE_DATA='FETCH_DEVICEPROFILE_DATA';
 export const FETCH_EDIT_DATA='FETCH_EDIT_DATA';
+export const FETCH_LORA_CONFIG_DATA='FETCH_LORA_CONFIG_DATA';
 
 export function fetch_device_item_data(devicedata) {
     return {
@@ -47,5 +48,10 @@ export function edit_device_data(editdata) {
     }
 }
 
-
+export function fetch_lora_config_data(loraconfigdata) {
+    return {
+        type: FETCH_LORA_CONFIG_DATA,
+        loraconfigdata: loraconfigdata
+    }
+}
 

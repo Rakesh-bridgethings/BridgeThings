@@ -253,7 +253,7 @@ let dashboards = [
         "key": "Gateways",
         "text": "Gateways",
         "icon": "icon-electric-tower",
-        "url": null,
+        "url": 'gateways',
         "menuItems": [
 
         ]

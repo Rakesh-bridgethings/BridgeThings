@@ -78,9 +78,9 @@ class AddLocation extends Component {
 
     next = () => {
         this.validator.showMessageFor('organization');
-        this.validator.showMessageFor('property')
-        this.validator.showMessageFor('locationtype')
-        this.validator.showMessageFor('label')
+        this.validator.showMessageFor('property');
+        this.validator.showMessageFor('locationtype');
+        this.validator.showMessageFor('label');
         this.validator.showMessageFor('Zone');
         this.validator.showMessageFor('AggregationId');
         if (this.validator.allValid()) {
@@ -95,7 +95,7 @@ class AddLocation extends Component {
                 },
                 propertyId: this.state.property.value,
                 label: this.state.label,
-                locationType: this.state.locationtype.value, //{ id: this.state.locationtype.value, value: this.state.locationtype.label },    
+                locationType: this.state.locationtype.value,    
                 locationBusinessHoursList: [],
             };
             this.setState({ firststepData: data });
