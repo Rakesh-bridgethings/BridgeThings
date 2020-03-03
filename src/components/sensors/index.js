@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import ReactDOM from 'react-dom';
-import { fetchsensoritemdata } from '../../services/Sensors';
+import { fetchsensoritemdata, fetchEditSensorData } from '../../services/Sensors';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PageTitle from '../../components/includes/PageTitle';
@@ -51,9 +51,6 @@ class Sensors extends Component {
         await fetchsensoritemdata();
     }
 
-    add_sensor = () => {
-    }
-
     isaddsensoemodal = () => {
         this.setState({ addsensormodal: !this.state.addsensormodal });
         this.setState({ notitype: 'addsensor' });
@@ -69,16 +66,22 @@ class Sensors extends Component {
         this.setState({ editsensormodal: !this.state.editsensormodal });
     }
 
-    add_sensor = () => {
+    addSensor = () => {
         this.setState({ addsensormodal: !this.state.addsensormodal });
         this.setState({ notitype: 'addsensor' });
         this.setState({ notitype: '' });
     }
 
+    editSensor = async(row) => {
+        let { fetchEditSensorData } = this.props;
+        await fetchEditSensorData(row.id);
+        this.setState({ editsensormodal: !this.state.editsensormodal });
+        this.setState({ notitype: 'editsensor' });
+        this.setState({ notitype: '' });
+    }
+
     render() {
-        const { Status } = this.props.data;
-        const { Sensors } = this.props.data;
-        // console.log(";;;",this.props.data);
+        const { Status, Sensors } = this.props.data;
         const columns = [
             {
                 title: 'Reference',
@@ -117,7 +120,7 @@ class Sensors extends Component {
             },
             {
                 title: 'Actions',
-                render: (val, row) => <div><i className="lnr-pencil" style={{ cursor: 'pointer' }} /></div>,
+                render: (val, row) => <div><i className="lnr-pencil" style={{ cursor: 'pointer' }} onClick={() => this.editSensor(row)} /></div>,
 
             },
         ];
@@ -144,7 +147,7 @@ class Sensors extends Component {
                                         </Col>
                                         <Col md="6" style={{ textAlign: 'right' }} >
                                             <Button color="success"
-                                                onClick={() => this.add_sensor()}
+                                                onClick={() => this.addSensor()}
                                             >Add Sensors
                                              </Button>
                                             <Addsensor shownoti={this.shownoti} notitype={this.state.notitype} addsensormodal={this.state.addsensormodal} isaddsensoemodal={this.isaddsensoemodal} isaddsensoemodalcancle={this.isaddsensoemodalcancle} />
@@ -159,7 +162,7 @@ class Sensors extends Component {
                                         initialPageLength={10}
                                         initialSortBy={{ prop: 'channelNo', prop: 'sensorStatus', order: 'descending' }}
                                     />
-                                    <EditSensor shownoti={this.shownoti} notitype={this.state.notitype} editsensormodal={this.state.editsensormodal} iseditsensoemodal={this.iseditsensoemodal} iseditsensoemodalcancle={this.iseditsensoemodalcancle} />
+                                    {Sensors.editdata && <EditSensor shownoti={this.shownoti} notitype={this.state.notitype} editsensormodal={this.state.editsensormodal} iseditsensoemodal={this.iseditsensoemodal} iseditsensoemodalcancle={this.iseditsensoemodalcancle} getEditData={Sensors.editdata} />}
                                 </CardBody>
                             </Card>
                         </div>
@@ -174,8 +177,8 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    fetchsensoritemdata: fetchsensoritemdata
-
+    fetchsensoritemdata: fetchsensoritemdata,
+    fetchEditSensorData: fetchEditSensorData,
 }, dispatch)
 
 export default connect(

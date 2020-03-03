@@ -74,9 +74,8 @@ class IOTDevices extends Component {
     }
 
     edit_loraconfig = async (row) => {
-        let { fetch_loraconfig } = this.props;
+        let { fetch_loraconfig, IOTDevice } = this.props;
         await fetch_loraconfig(row.deviceId);
-        let { IOTDevice } = this.props.data;
         IOTDevice.loraconfigdata && this.setState({ loraconfig: IOTDevice.loraconfigdata, deviceId: row.deviceId });
         if (IOTDevice.loraconfigdata) {
             this.setState({ loraconfigmodal: true });
@@ -116,8 +115,7 @@ class IOTDevices extends Component {
     }
 
     render() {
-        const { IOTDevice } = this.props.data;
-        const { Status } = this.props.data;
+        const { IOTDevice, Status } = this.props.data;
         const columns = [
             {
                 title: 'Device Id',

@@ -46,7 +46,6 @@ class EditLocation extends Component {
     }
 
     render() {
-        const { Location } = this.props.data;
         const { Status } = this.props.data;
         return (
             <Fragment>

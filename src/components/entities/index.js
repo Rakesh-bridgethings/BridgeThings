@@ -93,8 +93,7 @@ class Entities extends Component {
         this.setState({ notitype: val });        
     };
     render() {
-        const { Entities } = this.props.data;
-        const { Status } = this.props.data;
+        const { Entities, Status } = this.props.data;
         const columns = [
             {
                 title: 'Reference',

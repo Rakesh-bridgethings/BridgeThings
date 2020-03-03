@@ -186,7 +186,7 @@ class EditLocation extends Component {
     }
 
     render() {
-        const { Location } = this.props.data;
+        const { Location, Status } = this.props.data;
         let orgnizationdata = Location.orgnizationdata.map(function (item) {
             return { value: item.id, label: item.name };
         })
@@ -223,7 +223,6 @@ class EditLocation extends Component {
                 }
             })
         }
-        const { Status } = this.props.data;
         return (
             <Fragment>
                 <ReactCSSTransitionGroup

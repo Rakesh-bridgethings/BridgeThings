@@ -94,8 +94,7 @@ class Users extends Component {
         this.setState({ notitype: val });
     };
     render() {
-        const { User } = this.props.data;
-        const { Status } = this.props.data;
+        const { User, Status } = this.props.data;
         const columns = [
             {
                 title: 'Roles',

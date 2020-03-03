@@ -110,14 +110,13 @@ class Editentitiey extends Component {
         }
     }
     render() {
-        const { Entities } = this.props.data;
+        const { Entities, Status } = this.props.data;
         let addtypeentiti = Entities.addentititypeitem && Entities.addentititypeitem.map(function (item) {
             return { value: item.id, label: item.reference };
         })
         let addsectorentiti = Entities.addentititisecitem && Entities.addentititisecitem.map(function (item) {
             return { value: item.id, label: item.value };
         })
-        const { Status } = this.props.data;
         return (
             <Fragment>
                 <ReactCSSTransitionGroup

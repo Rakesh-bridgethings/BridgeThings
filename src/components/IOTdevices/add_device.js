@@ -2,9 +2,8 @@ import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Select from 'react-select';
-import Checkbox from 'rc-checkbox';
 import 'rc-checkbox/assets/index.css';
-import { fetchlocationdata, fetchdevicetypedata, fetchdeviceprofiledata, add_iotdevices } from '../../services/IOTDevice';
+import { fetchlocationdata, fetchdevicetypedata, fetchdeviceprofiledata, add_iotdevices, fetchApplicationData } from '../../services/IOTDevice';
 import { fetchorganizationdata } from '../../services/Location';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {
@@ -46,14 +45,15 @@ class AddIOTDevice extends Component {
         this.props.isaddiotdevicemodalcancle();
     }
 
-    onChangeOrg = async(organization) => {
+    onChangeOrg = async (organization) => {
         this.setState({ organization });
-        const { fetchlocationdata } = this.props;
+        const { fetchlocationdata, fetchApplicationData } = this.props;
         await fetchlocationdata(organization.value);
-        this.setState({ location: '', application: ''})
+        await fetchApplicationData(organization.value);
+        this.setState({ location: '', application: '' })
     }
 
-    onSave = async() => {
+    onSave = async () => {
         this.validator.showMessageFor('organization');
         this.validator.showMessageFor('location');
         this.validator.showMessageFor('deviceid');
@@ -64,11 +64,11 @@ class AddIOTDevice extends Component {
         if (this.validator.allValid()) {
             let data = {
                 'deviceId': this.state.deviceid,
-                "deviceTypes":{"id":this.state.devicetype.value},
-                "application":this.state.application.value,
-                "dutyCycleMin":this.state.dutycyclemin,
-                "locations":{"id":this.state.location.value},
-                "deviceProfileType":this.state.deviceprofile.value
+                "deviceTypes": { "id": this.state.devicetype.value },
+                "application": this.state.application.value,
+                "dutyCycleMin": this.state.dutycyclemin,
+                "locations": { "id": this.state.location.value },
+                "deviceProfileType": this.state.deviceprofile.value
             }
             const { add_iotdevices } = this.props;
             await add_iotdevices(data);
@@ -77,9 +77,7 @@ class AddIOTDevice extends Component {
     }
 
     render() {
-        const { IOTDevice } = this.props.data;
-        const { Location } = this.props.data;
-        const { Status } = this.props.data;
+        const { IOTDevice, Location, Status } = this.props.data;
         let orgnizationdata = Location.orgnizationdata.map(function (item) {
             return { value: item.id, label: item.name };
         })
@@ -215,6 +213,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     fetchlocationdata: fetchlocationdata,
     fetchdeviceprofiledata: fetchdeviceprofiledata,
     fetchdevicetypedata: fetchdevicetypedata,
+    fetchApplicationData: fetchApplicationData,
     add_iotdevices: add_iotdevices,
 }, dispatch)
 

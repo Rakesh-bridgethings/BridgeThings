@@ -43,7 +43,6 @@ class LoraConfig extends Component {
     }
 
     render() {
-        // const { IOTDevice } = this.props.data;
         const { Status } = this.props.data;
         return (
             <Fragment>

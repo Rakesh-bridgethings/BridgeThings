@@ -77,11 +77,10 @@ class Appnetlora extends Component {
     }
 
     render() {
-        const { Entities } = this.props.data;
+        const { Entities, Status } = this.props.data;
         let Appentitype = Entities.loraapptypeitem && Entities.loraapptypeitem.map(function (item) {
             return { value: item.reference, label: item.value };
         })
-        const { Status } = this.props.data;
         return (
             <Fragment>
                 <ReactCSSTransitionGroup

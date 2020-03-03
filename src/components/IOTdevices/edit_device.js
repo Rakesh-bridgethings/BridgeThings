@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import Select from 'react-select';
 import Checkbox from 'rc-checkbox';
 import 'rc-checkbox/assets/index.css';
-import { fetchlocationdata, fetchdevicetypedata, fetchdeviceprofiledata, add_iotdevices, update_iotdevices } from '../../services/IOTDevice';
+import { fetchlocationdata, fetchdevicetypedata, fetchdeviceprofiledata, add_iotdevices, update_iotdevices, fetchApplicationData } from '../../services/IOTDevice';
 import { fetchorganizationdata } from '../../services/Location';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {
@@ -84,8 +84,9 @@ class EditIOTDevice extends Component {
 
     onChangeOrg = async (organization) => {
         this.setState({ organization });
-        const { fetchlocationdata } = this.props;
+        const { fetchlocationdata, fetchApplicationData } = this.props;
         await fetchlocationdata(organization.value);
+        await fetchApplicationData(organization.value);
         this.setState({ location: '', application: '' })
     }
 
@@ -124,9 +125,7 @@ class EditIOTDevice extends Component {
     }
 
     render() {
-        const { IOTDevice } = this.props.data;
-        const { Location } = this.props.data;
-        const { Status } = this.props.data;
+        const { IOTDevice, Location, Status } = this.props.data;
         let orgnizationdata = Location.orgnizationdata.map(function (item) {
             return { value: item.id, label: item.name };
         })
@@ -264,6 +263,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     fetchdeviceprofiledata: fetchdeviceprofiledata,
     fetchdevicetypedata: fetchdevicetypedata,
     add_iotdevices: add_iotdevices,
+    fetchApplicationData: fetchApplicationData,
     update_iotdevices: update_iotdevices,
 }, dispatch)
 

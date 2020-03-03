@@ -112,15 +112,13 @@ class Adduser extends Component {
     }
 
     render() {
-        const { User } = this.props.data;
-        const { Location } = this.props.data;
+        const { User, Location, Status } = this.props.data;
         let roleadduser = User.roleitem.rows && User.roleitem.rows.map(function (item) {
             return { value: item.id, label: item.name };
         })
         let oraguseritem = Location.orgnizationdata && Location.orgnizationdata.map(function (item) {
             return { value: item.id, label: item.name };
         })
-        const { Status } = this.props.data;
         return (
             <Fragment>
                 <ReactCSSTransitionGroup

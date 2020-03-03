@@ -18,6 +18,7 @@ import SimpleReactValidator from 'simple-react-validator';
 import Notification from '../../library/notification';
 import { fetchorganizationdata } from '../../services/Location';
 import { fetchIOTDeviceData, fetchManufactureData, fetchParameterData, addSensor } from '../../services/Sensors';
+import { fetchlocationdata } from '../../services/IOTDevice';
 
 class Addsensor extends Component {
     constructor(props) {
@@ -51,24 +52,19 @@ class Addsensor extends Component {
         this.props.isaddsensoemodalcancle();
     }
 
-    onorganization = async (organization) => {        
+    onorganization = async (organization) => {
         this.setState({ organization });
-        const { fetchIOTDeviceData } = this.props;
+        const { fetchIOTDeviceData, fetchlocationdata } = this.props;
         await fetchIOTDeviceData(organization.value);
+        await fetchlocationdata(organization.value);
         this.setState({ seiotdevice: '', location: '' })
     }
 
-    onsave = async() => {
-        this.validator.showMessageFor('Organization');
-        this.validator.showMessageFor('IOTDevices');
-        this.validator.showMessageFor('Location');
-        this.validator.showMessageFor('Sensortype');
-        this.validator.showMessageFor('Manufacture');
-        this.validator.showMessageFor('Modalno');
+    onsave = async () => {
         if (this.validator.allValid()) {
             let paras = [];
-            this.state.parameters && this.state.parameters.map((item, index)=>{
-                return(
+            this.state.parameters && this.state.parameters.map((item, index) => {
+                return (
                     paras.push(item.value)
                 )
             })
@@ -84,6 +80,23 @@ class Addsensor extends Component {
             let { addSensor } = this.props;
             await addSensor(data);
             this.props.isaddsensoemodal();
+            this.setState({
+                organization: '',
+                iotDevices: '',
+                channelNo: '',
+                sensorType: '',
+                locations: '',
+                modelNo: '',
+                manufacturer: '',
+                parameters: [],
+            })
+        } else {
+            this.validator.showMessageFor('organization');
+            this.validator.showMessageFor('IOTDevices');
+            this.validator.showMessageFor('Location');
+            this.validator.showMessageFor('Sensortype');
+            this.validator.showMessageFor('Manufacture');
+            this.validator.showMessageFor('Modalno');
         }
     }
 
@@ -107,17 +120,15 @@ class Addsensor extends Component {
     }
 
     render() {
-        const { Sensors } = this.props.data;
-        const { Status } = this.props.data;
-        const { Location } = this.props.data;
+        const { Sensors, IOTDevice, Location, Status } = this.props.data;
         let orgnizationdata = Location.orgnizationdata.map(function (item) {
             return { value: item.id, label: item.name };
         })
         let sensoriotdata = Sensors.iotdesenitem && Sensors.iotdesenitem.map(function (item) {
             return { value: item.id, label: item.reference }
         })
-        let sensorlocadata = Sensors.locasensitem && Sensors.locasensitem.map(function (item) {
-            return { value: item.id, label: item.value }
+        let locationdata = IOTDevice.locationdata && IOTDevice.locationdata.map(function (item) {
+            return { value: item.id, label: item.value };
         })
         let sensortypedata = Sensors.sensortypedata && Sensors.sensortypedata.map(function (item) {
             return { value: item.id, label: item.value }
@@ -156,7 +167,7 @@ class Addsensor extends Component {
                                                     onChange={(organization) => this.onorganization(organization)}
                                                     options={orgnizationdata}
                                                 />
-                                                {this.validator.message('Organization', this.state.organization, 'required')}
+                                                {this.validator.message('organization', this.state.organization, 'required')}                                   
                                             </FormGroup>
                                         </Col>
                                         <Col md='6'>
@@ -178,7 +189,7 @@ class Addsensor extends Component {
                                                 <Select
                                                     value={this.state.locations}
                                                     onChange={(locations) => this.setState({ locations })}
-                                                    options={sensorlocadata}
+                                                    options={locationdata}
                                                 />
                                                 {this.validator.message('Location', this.state.locations, 'required')}
 
@@ -257,6 +268,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     fetchIOTDeviceData: fetchIOTDeviceData,
     fetchManufactureData: fetchManufactureData,
     fetchParameterData: fetchParameterData,
+    fetchlocationdata: fetchlocationdata,
     addSensor: addSensor,
 }, dispatch)
 export default connect(

@@ -17,7 +17,8 @@ import {
 import SimpleReactValidator from 'simple-react-validator';
 import Notification from '../../library/notification';
 import { fetchorganizationdata } from '../../services/Location';
-import { fetchIOTDeviceData, fetchManufactureData, fetchParameterData, addSensor } from '../../services/Sensors';
+import { fetchIOTDeviceData, fetchManufactureData, fetchParameterData, editSensor } from '../../services/Sensors';
+import { fetchlocationdata } from '../../services/IOTDevice';
 
 class Editsensor extends Component {
     constructor(props) {
@@ -36,29 +37,52 @@ class Editsensor extends Component {
         modelNo: '',
         manufacturer: '',
         parameters: [],
-    }
-
-    componentWillReceiveProps = (props) => {
+        id: '',
     }
 
     componentDidMount = async () => {
         const { fetchorganizationdata, fetchManufactureData } = this.props;
-        fetchorganizationdata();
-        fetchManufactureData();
+        await fetchorganizationdata();
+        await fetchManufactureData();
+        let props = this.props;
+        if (props.getEditData) {
+            const { fetchIOTDeviceData, fetchlocationdata, fetchParameterData } = this.props;
+            await fetchIOTDeviceData(props.getEditData.entity.id);
+            await fetchlocationdata(props.getEditData.entity.id);
+            await fetchParameterData(props.getEditData.manufacturers.id, props.getEditData.modelNo);
+            this.setState({
+                id: props.getEditData.id,
+                organization: { value: props.getEditData.entity.id, label: props.getEditData.entity.name },
+                iotDevices: { value: props.getEditData.iotDevices.id, label: props.getEditData.iotDevices.reference },
+                locations: { value: props.getEditData.location.id, label: props.getEditData.location.label },
+                channelNo: props.getEditData.channelNo,
+                sensorType: { value: props.getEditData.sensorType.id, label: props.getEditData.sensorType.value },
+                manufacturer: { value: props.getEditData.manufacturers.id, label: props.getEditData.manufacturers.value },
+                modelNo: props.getEditData.modelNo,
+            });
+            let paras = [];
+            props.getEditData.parameters && props.getEditData.parameters.map((item, index) => {
+                if (item.value) {
+                    paras.push({ value: item.id, label: item.value });
+                }
+            })
+            this.setState({ parameters: paras });
+        }
     }
 
     toggle = () => {
         this.props.iseditsensoemodalcancle();
     }
 
-    onorganization = async (organization) => {        
+    onorganization = async (organization) => {
         this.setState({ organization });
-        const { fetchIOTDeviceData } = this.props;
+        const { fetchIOTDeviceData, fetchlocationdata } = this.props;
         await fetchIOTDeviceData(organization.value);
-        this.setState({ seiotdevice: '', location: '' })
+        await fetchlocationdata(organization.value);
+        this.setState({ iotDevices: '', locations: '' })
     }
 
-    onsave = async() => {
+    onupdate = async () => {
         this.validator.showMessageFor('Organization');
         this.validator.showMessageFor('IOTDevices');
         this.validator.showMessageFor('Location');
@@ -67,12 +91,13 @@ class Editsensor extends Component {
         this.validator.showMessageFor('Modalno');
         if (this.validator.allValid()) {
             let paras = [];
-            this.state.parameters && this.state.parameters.map((item, index)=>{
-                return(
+            this.state.parameters && this.state.parameters.map((item, index) => {
+                return (
                     paras.push(item.value)
                 )
             })
             let data = {
+                "id": this.state.id,
                 "parameters": paras,
                 "iotDevices": { id: this.state.iotDevices.value },
                 "channelNo": this.state.channelNo,
@@ -81,8 +106,8 @@ class Editsensor extends Component {
                 "modelNo": this.state.modelNo,
                 "manufacturer": { id: this.state.manufacturer.value },
             };
-            let { addSensor } = this.props;
-            await addSensor(data);
+            let { editSensor } = this.props;
+            await editSensor(data);
             this.props.iseditsensoemodal();
         }
     }
@@ -107,16 +132,14 @@ class Editsensor extends Component {
     }
 
     render() {
-        const { Sensors } = this.props.data;
-        const { Status } = this.props.data;
-        const { Location } = this.props.data;
+        const { Sensors, Status, Location, IOTDevice } = this.props.data;
         let orgnizationdata = Location.orgnizationdata.map(function (item) {
             return { value: item.id, label: item.name };
         })
         let sensoriotdata = Sensors.iotdesenitem && Sensors.iotdesenitem.map(function (item) {
             return { value: item.id, label: item.reference }
         })
-        let sensorlocadata = Sensors.locasensitem && Sensors.locasensitem.map(function (item) {
+        let locationdata = IOTDevice.locationdata && IOTDevice.locationdata.map(function (item) {
             return { value: item.id, label: item.value }
         })
         let sensortypedata = Sensors.sensortypedata && Sensors.sensortypedata.map(function (item) {
@@ -144,7 +167,7 @@ class Editsensor extends Component {
                             </Fragment>
                         }
                         <Modal isOpen={this.props.editsensormodal} toggle={() => this.toggle()} className={this.props.className} id='add_location'>
-                            <ModalHeader toggle={() => this.toggle()}>Add Sensor</ModalHeader>
+                            <ModalHeader toggle={() => this.toggle()}>Edit Sensor</ModalHeader>
                             <ModalBody>
                                 <Form>
                                     <Row>
@@ -178,7 +201,7 @@ class Editsensor extends Component {
                                                 <Select
                                                     value={this.state.locations}
                                                     onChange={(locations) => this.setState({ locations })}
-                                                    options={sensorlocadata}
+                                                    options={locationdata}
                                                 />
                                                 {this.validator.message('Location', this.state.locations, 'required')}
 
@@ -240,7 +263,7 @@ class Editsensor extends Component {
                             </ModalBody>
                             <ModalFooter>
                                 <Button color="light" onClick={() => this.toggle()} >Cancel</Button>
-                                <Button color="success" onClick={() => this.onsave()}>Save</Button>{' '}
+                                <Button color="success" onClick={() => this.onupdate()}>Update</Button>{' '}
                             </ModalFooter>
                         </Modal>
                     </div>
@@ -257,7 +280,8 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     fetchIOTDeviceData: fetchIOTDeviceData,
     fetchManufactureData: fetchManufactureData,
     fetchParameterData: fetchParameterData,
-    addSensor: addSensor,
+    fetchlocationdata: fetchlocationdata,
+    editSensor: editSensor,
 }, dispatch)
 export default connect(
     mapStateToProps,
