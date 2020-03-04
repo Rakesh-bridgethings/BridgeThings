@@ -10,7 +10,7 @@ import User from '../components/users';
 import Entities from '../components/entities';
 import IOTDevices from '../components/IOTdevices';
 import Sensors from '../components/sensors';
-// import Gateways from '../components/gateways';
+import Gateways from '../components/gateways';
 import PerformanceDashboard from '../components/dashboards/performance';
 
 import { Route, Link, Switch, BrowserRouter as Router } from 'react-router-dom';
@@ -76,7 +76,7 @@ class Main extends Component {
                                             <Route path="/entities" component={Entities}/>
                                              <Route path="/iotdevices" component={IOTDevices}/>
                                              <Route path="/sensors" component={Sensors}/>
-                                             {/* <Route path="/gateways" component={Gateways}/> */}
+                                             <Route path="/gateways" component={Gateways}/>
                                         </div>
                                     </div>
                                 </div>

@@ -1,17 +1,11 @@
 import React, { Component, Fragment } from 'react';
-import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { fetchIOTDeviceData, fetcheditdata, fetch_loraconfig } from '../../services/IOTDevice';
 import PageTitle from '../../components/includes/PageTitle';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {
-    Row, Col, Card, CardBody, CardTitle, Table, CardHeader, Button,
-    DropdownToggle, DropdownMenu,
-    Nav, NavItem, NavLink,
-    UncontrolledTooltip, UncontrolledButtonDropdown,
-    Modal, ModalHeader, ModalBody, ModalFooter,
-    Form, Label, Input, FormGroup, DropdownItem
+    Row, Col, Card, CardBody, Table, CardHeader, Button,
 } from 'reactstrap';
 import AddIOTDevice from './add_device';
 import EditIOTDevice from './edit_device';

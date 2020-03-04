@@ -7,6 +7,7 @@ import Status from './status';
 import Entities from './Entities';
 import IOTDevice from './IOTDevice';
 import Sensors from './Sensors';
+import Gateways from './Gateway';
 
 const rootReducers = combineReducers({ 
     SideNavItem,
@@ -16,7 +17,8 @@ const rootReducers = combineReducers({
     Status,
     Entities,
     IOTDevice,
-    Sensors
+    Sensors,
+    Gateways
   });
 
 export default rootReducers;
