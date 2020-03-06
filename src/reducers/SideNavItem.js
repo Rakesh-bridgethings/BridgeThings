@@ -2,8 +2,8 @@ import { FETCH_SIDENAVITEM_PENDING, FETCH_SIDENAVITEM_SUCCESS, FETCH_TOPUSERITEM
 
 const initialState = {
     pending: false,
-    sidenavitem: [],
-    topUseritem: [],
+    sidenavdata: [],
+    topuserdata: [],
     error: null
 }
 
@@ -20,14 +20,14 @@ const sidenavitem = (state = initialState, action) => {
             return {
                 ...state,
                 pending: false,
-                sidenavitem: action.sidenavitem,
+                sidenavdata: action.sidenavdata,
                 error: ''
             }
         case FETCH_TOPUSERITEM_SUCCESS:
             return {
                 ...state,
                 pending: false,
-                topUseritem: action.topUseritem,
+                topuserdata: action.topuserdata,
                 error: ''
             }        
         case FETCH_SIDENAVITEM_ERROR:

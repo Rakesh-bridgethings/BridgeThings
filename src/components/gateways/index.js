@@ -11,12 +11,10 @@ import AddGateway from './add_gateway';
 import EditGateways from './edit_gateway';
 import { DataTable } from 'react-data-components';
 import Loading from '../../library/loader';
-
 class Gateways extends Component {
     constructor(props) {
         super(props);
     }
-
     state = {
         alltabledata: [],
         showaddnoti: '',
@@ -24,7 +22,6 @@ class Gateways extends Component {
         addgatewaymodal: false,
         editdata: '',
     };
-
     componentWillReceiveProps = (props) => {
         let data = props.data.Gateways.gatewaydata;
         let alltabledata = [];
@@ -42,46 +39,37 @@ class Gateways extends Component {
         this.setState({ alltabledata });
         props.data.Gateways.editdata && this.setState({ editdata: props.data.Gateways.editdata });
     }
-
     componentDidMount = async () => {
         const { fetchGatwaysData } = this.props;
         await fetchGatwaysData();
     }
-
     shownoti = (val) => {
         this.setState({ notitype: val });
     }
-
     edit_gateways = async (row) => {
         let { fetchEditData } = this.props;
         await fetchEditData(row.id);
         this.setState({ editgatewaymodal: !this.state.editgatewaymodal });
         this.setState({ notitype: '' });
     }
-
     add_gateways = () => {
         this.setState({ addgatewaymodal: !this.state.addgatewaymodal });
         this.setState({ notitype: '' });
     }
-
     isaddgatewaymodal = () => {
         this.setState({ addgatewaymodal: !this.state.addgatewaymodal });
         this.setState({ notitype: 'addgateway' });
     }
-
     isaddgatewaymodalcancle = () => {
         this.setState({ addgatewaymodal: !this.state.addgatewaymodal });
     }
-
     iseditgatewaymodal = () => {
         this.setState({ editgatewaymodal: !this.state.editgatewaymodal });
         this.setState({ notitype: 'editgateway' });
     }
-
     iseditgatewaymodalcancle = () => {
         this.setState({ editgatewaymodal: !this.state.editgatewaymodal });
     }
-
     render() {
         const { Gateways, Status } = this.props.data;
         const columns = [

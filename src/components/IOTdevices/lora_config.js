@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Select from 'react-select';
 import 'rc-checkbox/assets/index.css';
-import { send_lora_config } from '../../services/IOTDevice';
+import { sendLoraConfig } from '../../services/IOTDevice';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {
     Row, Col, Card, CardBody, CardTitle, Table, CardHeader, Button,
@@ -37,8 +37,8 @@ class LoraConfig extends Component {
 
     send_config = async (item, index) => {
         let configData = { "deviceId": item.deviceId, "sensorReference": item.sensorReference, "sensorNo": item.sensorNo, "sensorType": item.sensorType, "paramsToRead": item.paramsToRead, "parmasToCalculate": item.parmasToCalculate, "formatString": item.formatString, "configPacket": item.configPacket, "multipliers": item.multipliers, "status": item.status }
-        let { send_lora_config } = this.props;
-        await send_lora_config(configData);
+        let { sendLoraConfig } = this.props;
+        await sendLoraConfig(configData);
         this.props.isloraconfigmodal();
     }
 
@@ -113,7 +113,7 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    send_lora_config: send_lora_config
+    sendLoraConfig: sendLoraConfig
 }, dispatch)
 
 export default connect(

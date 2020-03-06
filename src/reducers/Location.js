@@ -1,23 +1,23 @@
-import { FETCH_LOCATIONITEM_SUCCESS, FETCH_ORGANIZATIONDATA_SUCCESS, FETCH_LOCATIONTYPE_SUCCESS, FETCH_ENTITYTYPE_SUCCESS, FETCH_PROPERTYTYPE_SUCCESS, FETCH_PROPERTY_SUCCESS,  FETCH_DAYSINTERVAL_SUCCESS, EDIT_LOCATION_SUCCESS, UPDATE_LOCATION__DATA_SUCCESS, DELETE_LOCATION__DATA_SUCCESS, FETCH_REGION_SUCCESS } from '../actions/locationitem';
+import { FETFH_LOCATIONITEM_DATA, FETCH_ORGANIZATIONDATA_SUCCESS, FETCH_LOCATIONTYPE_SUCCESS, FETCH_ENTITYTYPE_SUCCESS, FETCH_PROPERTYTYPE_SUCCESS, FETCH_PROPERTY_SUCCESS,  FETCH_DAYSINTERVAL_SUCCESS, EDIT_LOCATION_SUCCESS, UPDATE_LOCATION__DATA_SUCCESS, DELETE_LOCATION__DATA_SUCCESS, FETCH_REGION_SUCCESS } from '../actions/locationitem';
 
 const initialState = {
-    locationitem: [],
+    locationdata: [],
     orgnizationdata: [],
-    locationtypes: [],
-    entitytype: [],
-    propertytype: [],
-    daysinterval: [],
-    property: [],
+    locationtypedata: [],
+    entitytypedata: [],
+    propertytypedata: [],
+    daysintervaldata: [],
+    propertydata: [],
     editdata: [],
     regiondata: [],
 }
 
 const locationitem = (state = initialState, action) => {
     switch (action.type) {      
-        case FETCH_LOCATIONITEM_SUCCESS:
+        case FETFH_LOCATIONITEM_DATA:
             return {
                 ...state,                
-                locationitem: action.locationitem,                
+                locationdata: action.locationdata,                
             }
         case FETCH_ORGANIZATIONDATA_SUCCESS:
             return {
@@ -27,27 +27,27 @@ const locationitem = (state = initialState, action) => {
         case FETCH_LOCATIONTYPE_SUCCESS:
             return {
                 ...state,                
-                locationtypes: action.locationtypes,                
+                locationtypedata: action.locationtypedata,                
             } 
         case FETCH_ENTITYTYPE_SUCCESS:
             return {
                 ...state,                
-                entitytype: action.entitytype,                
+                entitytypedata: action.entitytypedata,                
             }
         case FETCH_PROPERTYTYPE_SUCCESS:
             return {
                 ...state,                
-                propertytype: action.propertytype,                
+                propertytypedata: action.propertytypedata,                
             }
         case FETCH_PROPERTY_SUCCESS:
             return {
                 ...state,                
-                property: action.property,                
+                propertydata: action.propertydata,                
             }      
         case FETCH_DAYSINTERVAL_SUCCESS:
             return {
                 ...state,                
-                daysinterval: action.daysinterval,                
+                daysintervaldata: action.daysintervaldata,                
             }
         case EDIT_LOCATION_SUCCESS:
             return {
@@ -57,7 +57,7 @@ const locationitem = (state = initialState, action) => {
         case UPDATE_LOCATION__DATA_SUCCESS:
             return {
                 ...state,                
-                locationitem: action.updateddata,                
+                locationdata: action.updateddata,                
             } 
         case FETCH_REGION_SUCCESS:
             return {

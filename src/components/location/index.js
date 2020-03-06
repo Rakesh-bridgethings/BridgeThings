@@ -2,16 +2,11 @@ import React, { Component, Fragment } from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { fetchlocationitemdata, editLocation } from '../../services/Location';
+import { fetchLocationItemData, editLocation } from '../../services/Location';
 import PageTitle from '../../components/includes/PageTitle';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {
-    Row, Col, Card, CardBody, CardTitle, Table, CardHeader, Button,
-    DropdownToggle, DropdownMenu,
-    Nav, NavItem, NavLink,
-    UncontrolledTooltip, UncontrolledButtonDropdown,
-    Modal, ModalHeader, ModalBody, ModalFooter,
-    Form, Label, Input, FormGroup, DropdownItem
+    Row, Col, Card, CardBody, CardHeader, Button
 } from 'reactstrap';
 import AddLocation from './add_location';
 import EditLocation from './edit_location';
@@ -23,7 +18,6 @@ class Location extends Component {
     constructor(props) {
         super(props);
     }
-
     state = {
         addlocationmodal: false,
         alltabledata: [],
@@ -34,9 +28,8 @@ class Location extends Component {
         requiredMessage: 'This field is required',
         showaddnoti: '',
     };
-
     componentWillReceiveProps = (props) => {
-        let data = props.data.Location.locationitem;
+        let data = props.data.Location.locationdata;
         let alltabledata = [];
         data && data.map((item, index) => {
             alltabledata.push({
@@ -54,54 +47,40 @@ class Location extends Component {
         })
         this.setState({ alltabledata });
     }
-
     componentDidMount = async () => {
-        const { fetchlocationitemdata } = this.props;
-        await fetchlocationitemdata();
-        // await fetchorganizationdata();
+        const { fetchLocationItemData } = this.props;
+        await fetchLocationItemData();
     }
-
     isaddlocatiionmodal = () => {
         this.setState({ addlocationmodal: !this.state.addlocationmodal });
     }
-
     iseditlocatiionmodal = () => {
         this.setState({ editlocationmodal: !this.state.editlocationmodal });
     }
-
     isdeletelocationmodal = () => {
         this.setState({ deletelocationmodal: !this.state.deletelocationmodal });
     }
-
     edit_location = (item) => {
         const { editLocation } = this.props;
         editLocation(item.id);
         this.setState({ editlocationmodal: !this.state.editlocationmodal });
         this.setState({ geteditid: item.id });
     }
-
     delete_location = (item) => {
         this.setState({ deletelocationmodal: !this.state.deletelocationmodal });
         this.setState({ getdeleteid: item.id });
         this.setState ({ notitype: '' });
     }
-
     add_loc = () => {
         this.setState({ addlocationmodal: !this.state.addlocationmodal });
-        this.setState ({ notitype: 'add' });
+        this.setState ({ notitype: 'addlocation' });
     }
-
     shownoti = (val) => {
         this.setState ({ notitype: val });
     }
-
     render() {
         const { Location, Status } = this.props.data;
         const columns = [
-            // {
-            //     title: '#',
-            // render: (val, row) => <div>{row.id}</div>,
-            // },
             {
                 title: 'Organization',
                 prop: 'entityReference',
@@ -164,41 +143,12 @@ class Location extends Component {
                                         columns={columns}
                                         initialData={this.state.alltabledata}
                                         initialPageLength={10}
-                                        initialSortBy={{ prop: 'entityReference', order: 'descending' }}
+                                        initialSortBy={{ prop: 'entityReference',prop:'region',prop:'property' ,prop:
+                                        'floor', prop:'aggregateId',prop:'zone',order: 'descending' }}
                                         sortable={true}
                                     />
                                     <EditLocation shownoti={this.shownoti} notitype={this.state.notitype} requiredMessage={this.state.requiredMessage} editlocationmodal={this.state.editlocationmodal} iseditlocatiionmodal={this.iseditlocatiionmodal} geteditid={this.state.geteditid} getEditData={Location.editdata} />
                                     <DeleteLocation shownoti={this.shownoti} notitype={this.state.notitype} requiredMessage={this.state.requiredMessage} getdeleteid={this.state.getdeleteid} deletelocationmodal={this.state.deletelocationmodal} isdeletelocationmodal={this.isdeletelocationmodal} />
-                                    {/* <Table className="mb-0">
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Organization</th>
-                                            <th>Region</th>
-                                            <th>Property</th>
-                                            <th>Floor</th>
-                                            <th>Zone</th>
-                                            <th>Aggregate Id</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {Location && Location.locationitem.map((item, index) => {
-                                            return (
-                                                <tr>
-                                                    <td>{index + 1}</td>
-                                                    <td>{item.entityReference}</td>
-                                                    <td>{item.region}</td>
-                                                    <td>{item.property}</td>
-                                                    <td>{item.floor}</td>
-                                                    <td>{item.zone}</td>
-                                                    <td>{item.aggregateId}</td>
-                                                    <td className='action'><i className="lnr-pencil" onClick={() => this.edit_location(item, index)} />&nbsp;&nbsp;&nbsp;&nbsp;<i className="lnr-trash" /></td>
-                                                </tr>
-                                            )
-                                        })}
-                                    </tbody>
-                                </Table> */}
                                 </CardBody>
                             </Card>
                         </div>
@@ -208,14 +158,12 @@ class Location extends Component {
         );
     }
 }
-
 const mapStateToProps = state => ({
     data: state,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    fetchlocationitemdata: fetchlocationitemdata,
-    // fetchorganizationdata: fetchorganizationdata,
+    fetchLocationItemData: fetchLocationItemData,
     editLocation: editLocation,
 }, dispatch)
 

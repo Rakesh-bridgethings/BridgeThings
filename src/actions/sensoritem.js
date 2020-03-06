@@ -5,17 +5,17 @@ export const FETCH_SENSORTYPE_DATA = 'FETCH_SENSORTYPE_DATA';
 export const FETCH_PARAMETER_DATA = 'FETCH_PARAMETER_DATA';
 export const FETCH_EDIT_DATA = 'FETCH_EDIT_DATA';
 
-export function fetch_sensoritem_data(sensoritem_data) {
+export function fetch_sensoritem_data(sensordata) {
     return {
         type: FETCH_SENSORITM_DATA,
-        sensoritem: sensoritem_data
+        sensordata: sensordata
     }
 }
 
-export function fetch_iotdevicesensor_data(iotdesen_data) {
+export function fetch_iotdevicesensor_data(iotdevicedata) {
     return {
         type: FETCH_IOTDEVISENSOR_DATA,
-        iotdesenitem: iotdesen_data
+        iotdevicedata: iotdevicedata
     }
 }
 

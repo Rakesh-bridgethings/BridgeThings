@@ -1,16 +1,13 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { fetchlocationitemdata, fetchorganizationdata, fetchlocationtypesdata, fetchentitytypesdata, fetchdayintervalsdata } from '../../services/Location'
-import PageTitle from '../../components/includes/PageTitle';
+import { fetchLocationItemData, fetchOrganizationData, fetchLocationTypesData,
+     fetchEntityTypesData, fetchDayIntervalsData } from '../../services/Location'
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {
-    Row, Col, Card, CardBody, CardTitle, Table, CardHeader, Button,
-    DropdownToggle, DropdownMenu,
-    Nav, NavItem, NavLink,
-    UncontrolledTooltip, UncontrolledButtonDropdown,
+    Row, Col, Button,
     Modal, ModalHeader, ModalBody, ModalFooter,
-    Form, Label, Input, FormGroup, DropdownItem
+    Form, Label, FormGroup
 } from 'reactstrap';
 
 class Business_Hours extends Component {
@@ -32,12 +29,12 @@ class Business_Hours extends Component {
     };
 
     componentDidMount = async () => {
-        const { fetchlocationitemdata, fetchorganizationdata, fetchlocationtypesdata, fetchentitytypesdata, fetchdayintervalsdata } = this.props;
-        fetchlocationitemdata();
-        fetchorganizationdata();
-        fetchlocationtypesdata();
-        fetchentitytypesdata();
-        fetchdayintervalsdata();
+        const { fetchLocationItemData, fetchOrganizationData, fetchLocationTypesData, fetchEntityTypesData, fetchDayIntervalsData } = this.props;
+        fetchLocationItemData();
+        fetchOrganizationData();
+        fetchLocationTypesData();
+        fetchEntityTypesData();
+        fetchDayIntervalsData();
     }
 
 
@@ -69,7 +66,7 @@ class Business_Hours extends Component {
     }
 
     toggle = () => {
-        this.props.isaddnextmodal();
+        this.props.isaddmodacancle();
     }
 
     save = () => {
@@ -77,11 +74,11 @@ class Business_Hours extends Component {
         let busi_details = this.state.busi_details;
         const busi_hrs = busi_details.findIndex((e) => parseInt(e.businessType, 10) === 3);        
         if (busi_hrs === -1) {
-            this.props.business_hrsdata(this.state.busi_details);
+            this.props.business_hours(this.state.busi_details);
             this.props.isclosemodals();
         } else {            
             if(busi_details[busi_hrs]['opensAt'] !== null && busi_details[busi_hrs]['closesAt'] !== null) {
-                this.props.business_hrsdata(this.state.busi_details);
+                this.props.business_hours(this.state.busi_details);
                 this.props.isclosemodals();
             }
         }             
@@ -134,7 +131,7 @@ class Business_Hours extends Component {
                                                 <Row>
                                                     <Col md='4'>
                                                         <FormGroup>
-                                                            <select id={index1} className="form-control" onChange={(e) => this.business_hrs(e, index1, item1)}>
+                                                            <select id={index1} className="form-control" placeholder="Select Business Hours" onChange={(e) => this.business_hrs(e, index1, item1)}>
                                                                 <option selected value=''>Select Business Hours</option>
                                                                 {hrsOption.map((item, index) => {
                                                                     return (
@@ -151,9 +148,9 @@ class Business_Hours extends Component {
                                                                     <Col md='4' >
                                                                         <FormGroup>
                                                                             <select className={`form-control ${(item2.opensAt === null || item2.opensAt === '') && this.state.saveClicked && 'is-invalid'}`}
-                                                                            onChange={(e) => this.startend_hours(e, 'opensAt', index1, item1)}>
+                                                                           placeholder="Select Business Hours" onChange={(e) => this.startend_hours(e, 'opensAt', index1, item1)}>
                                                                                 <option selected value=''>Start Hours</option>
-                                                                                {Location.daysinterval.map((item, index) => {
+                                                                                {Location.daysintervaldata.map((item, index) => {
                                                                                     return (
                                                                                         <option key={index} value={item.minutes}>{item.value}</option>
                                                                                     )
@@ -166,9 +163,9 @@ class Business_Hours extends Component {
                                                                     <Col md='4'>
                                                                         <FormGroup>
                                                                             <select className={`form-control ${(item2.closesAt === null || item2.closesAt === '') && this.state.saveClicked && 'is-invalid'}`}
-                                                                            onChange={(e) => this.startend_hours(e, 'closesAt', index1, item1)}>
+                                                                          placeholder="Select Business Hours"  onChange={(e) => this.startend_hours(e, 'closesAt', index1, item1)}>
                                                                                 <option selected value='' >End Hours</option>
-                                                                                {Location.daysinterval.map((item, index) => {
+                                                                                {Location.daysintervaldata.map((item, index) => {
                                                                                     return (
                                                                                         <option key={index} value={item.minutes}>{item.value}</option>
                                                                                     )
@@ -209,11 +206,11 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    fetchlocationitemdata: fetchlocationitemdata,
-    fetchorganizationdata: fetchorganizationdata,
-    fetchlocationtypesdata: fetchlocationtypesdata,
-    fetchentitytypesdata: fetchentitytypesdata,
-    fetchdayintervalsdata: fetchdayintervalsdata,
+    fetchLocationItemData: fetchLocationItemData,
+    fetchOrganizationData: fetchOrganizationData,
+    fetchLocationTypesData: fetchLocationTypesData,
+    fetchEntityTypesData: fetchEntityTypesData,
+    fetchDayIntervalsData: fetchDayIntervalsData,
 }, dispatch)
 
 export default connect(

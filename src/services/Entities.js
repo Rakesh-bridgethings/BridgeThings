@@ -1,20 +1,20 @@
 import { data_post_status } from '../actions/locationitem';
 import axios from 'axios';
 import {
-   fetch_entities_types_sucess, fetch_addentitiy_types_success, fetch_sector_addentitiy_types_success,
-   Fetch_edit_entitty_data_success, fetch_lora_apptype_success
+   fetch_entitiestypes_data, fetch_addentitiytypes_data, 
+   Fetch_editentitty_data, fetch_loraapptype_data,fetch_sector_data
 } from '../actions/entitiesitem';
 import { SERVER_URL, HEADER } from '../config/config';
 import statusMessage from './status';
 
-export function fetchentitiesdata() {
+export function fetchEntitiesData() {
    return dispatch => new Promise(async (resolve, reject) => {
       await statusMessage(dispatch, 'loading', true);
       try {
          axios.get(`${SERVER_URL}entities`, { headers: HEADER }).then(async (res) => {
             statusMessage(dispatch, "loading", false);
             resolve(
-               dispatch(fetch_entities_types_sucess(res.data.rows))
+               dispatch(fetch_entitiestypes_data(res.data.rows))
             );
          });
       } catch (error) {
@@ -22,14 +22,14 @@ export function fetchentitiesdata() {
       }
    }).catch(async (err) => { await statusMessage(dispatch, 'error', err); throw err; });
 }
-export function fetchentititypedata() {
+export function fetchEntitiTypeData() {
    return dispatch => new Promise(async (resolve, reject) => {
       await statusMessage(dispatch, 'loading', true);
       try {
          axios.get(`${SERVER_URL}entity_types`, { headers: HEADER }).then(async (res) => {
             statusMessage(dispatch, "loading", false);
             resolve(
-               dispatch(fetch_addentitiy_types_success(res.data))
+               dispatch(fetch_addentitiytypes_data(res.data))
             );
          });
       } catch (error) {
@@ -37,14 +37,14 @@ export function fetchentititypedata() {
       }
    }).catch(async (err) => { await statusMessage(dispatch, 'error', err); throw err; });
 }
-export function fetchsectorentititypedata() {
+export function fetchSectorTypeData() {
    return dispatch => new Promise(async (resolve, reject) => {
       await statusMessage(dispatch, 'loading', true);
       try {
          axios.get(`${SERVER_URL}industry_sectors`, { headers: HEADER }).then(async (res) => {
             statusMessage(dispatch, "loading", false);
             resolve(
-               dispatch(fetch_sector_addentitiy_types_success(res.data))
+               dispatch(fetch_sector_data(res.data))
             );
          });
       } catch (error) {
@@ -68,7 +68,7 @@ export function addEntitiy(val) {
             axios.get(`${SERVER_URL}entities`, { headers: HEADER }).then(async (res) => {
                statusMessage(dispatch, "loading", false);
                resolve(
-                  dispatch(fetch_entities_types_sucess(res.data.rows))
+                  dispatch(fetch_entitiestypes_data(res.data.rows))
                );
             });
             resolve(
@@ -86,14 +86,14 @@ export function addEntitiy(val) {
       }
    }).catch(async (err) => { await statusMessage(dispatch, 'error', err); throw err; });
 }
-export function fetchloraapptype() {
+export function fetchLorTypeData() {
    return dispatch => new Promise(async (resolve, reject) => {
       await statusMessage(dispatch, 'loading', true);
       try {
          axios.get(`${SERVER_URL}lora_application_types`, { headers: HEADER }).then(async (res) => {
             statusMessage(dispatch, "loading", false);
             resolve(
-               dispatch(fetch_lora_apptype_success(res.data))
+               dispatch(fetch_loraapptype_data(res.data))
             );
          });
       } catch (error) {
@@ -114,7 +114,7 @@ export function editentitiey(entitiyeditid) {
                }
             })
             resolve(
-               dispatch(Fetch_edit_entitty_data_success(entitiyuserdata[0]))
+               dispatch(Fetch_editentitty_data(entitiyuserdata[0]))
             );
          });
       } catch (error) {
@@ -122,7 +122,7 @@ export function editentitiey(entitiyeditid) {
       }
    }).catch(async (err) => { await statusMessage(dispatch, 'error', err); throw err; });
 }
-export function updatedentiappnetData(entitiyuserdata) {
+export function updatedEntitieData(entitiyuserdata) {
    return dispatch => new Promise(async (resolve, reject) => {
       await statusMessage(dispatch, 'loading', true);
       try {
@@ -139,7 +139,7 @@ export function updatedentiappnetData(entitiyuserdata) {
             axios.get(`${SERVER_URL}entities`, { headers: HEADER }).then(async (res) => {
                statusMessage(dispatch, "loading", false);
                resolve(
-                  dispatch(fetch_entities_types_sucess(res.data.rows))
+                  dispatch(fetch_entitiestypes_data(res.data.rows))
    
                );
             });
@@ -174,7 +174,7 @@ export function updatEntityData(entitiyuserdata) {
             axios.get(`${SERVER_URL}entities`, { headers: HEADER }).then(async (res) => {
                statusMessage(dispatch, "loading", false);
                resolve(
-                  dispatch(fetch_entities_types_sucess(res.data.rows))
+                  dispatch(fetch_entitiestypes_data(res.data.rows))
                );
             });
             resolve(

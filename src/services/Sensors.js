@@ -5,7 +5,7 @@ import { SERVER_URL, HEADER } from '../config/config';
 import statusMessage from './status';
 import { data_post_status } from '../actions/locationitem';
 
-export function fetchsensoritemdata() {
+export function fetchSensorData() {
    return dispatch => new Promise(async (resolve, reject) => {
       await statusMessage(dispatch, 'loading', true);
       try {

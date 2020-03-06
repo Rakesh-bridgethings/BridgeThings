@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import Select from 'react-select';
 import Checkbox from 'rc-checkbox';
 import 'rc-checkbox/assets/index.css';
-// import { fetchsectorentititypedata, fetchentititypedata, addEntitiy } from '../../services/Entities';
+// import { fetchSectorTypeData, fetchEntitiTypeData, addEntitiy } from '../../services/Entities';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {
     Row, Col, Card, CardBody, CardTitle, Table, CardHeader, Button,
@@ -16,9 +16,9 @@ import {
 } from 'reactstrap';
 import SimpleReactValidator from 'simple-react-validator';
 import Notification from '../../library/notification';
-import { fetchorganizationdata } from '../../services/Location';
+import { fetchOrganizationData } from '../../services/Location';
 import { fetchIOTDeviceData, fetchManufactureData, fetchParameterData, addSensor } from '../../services/Sensors';
-import { fetchlocationdata } from '../../services/IOTDevice';
+import { fetchLocationData } from '../../services/IOTDevice';
 
 class Addsensor extends Component {
     constructor(props) {
@@ -26,12 +26,12 @@ class Addsensor extends Component {
         this.toggle = this.toggle.bind(this);
         this.validator = new SimpleReactValidator({
             element: (message, className) => <div className='required_message'>{message}</div>
-        })
+        }, {autoForceUpdate: this})
     }
     state = {
         organization: '',
-        iotDevices: '',
-        channelNo: '',
+        iotdevices: '',
+        channelno: '',
         sensorType: '',
         locations: '',
         modelNo: '',
@@ -43,20 +43,30 @@ class Addsensor extends Component {
     }
 
     componentDidMount = async () => {
-        const { fetchorganizationdata, fetchManufactureData } = this.props;
-        fetchorganizationdata();
+        const { fetchOrganizationData, fetchManufactureData } = this.props;
+        fetchOrganizationData();
         fetchManufactureData();
     }
 
     toggle = () => {
         this.props.isaddsensoemodalcancle();
+        this.setState({
+            organization: '',
+            iotdevices: '',
+            channelno: '',
+            sensorType: '',
+            locations: '',
+            modelNo: '',
+            manufacturer: '',
+            parameters: [],
+        })
     }
 
     onorganization = async (organization) => {
         this.setState({ organization });
-        const { fetchIOTDeviceData, fetchlocationdata } = this.props;
+        const { fetchIOTDeviceData, fetchLocationData } = this.props;
         await fetchIOTDeviceData(organization.value);
-        await fetchlocationdata(organization.value);
+        await fetchLocationData(organization.value);
         this.setState({ seiotdevice: '', location: '' })
     }
 
@@ -70,8 +80,8 @@ class Addsensor extends Component {
             })
             let data = {
                 "parameters": paras,
-                "iotDevices": { id: this.state.iotDevices.value },
-                "channelNo": this.state.channelNo,
+                "iotDevices": { id: this.state.iotdevices.value },
+                "channelNo": this.state.channelno,
                 "sensorType": { id: this.state.sensorType.value },
                 "locations": { id: this.state.locations.value },
                 "modelNo": this.state.modelNo,
@@ -82,8 +92,8 @@ class Addsensor extends Component {
             this.props.isaddsensoemodal();
             this.setState({
                 organization: '',
-                iotDevices: '',
-                channelNo: '',
+                iotdevices: '',
+                channelno: '',
                 sensorType: '',
                 locations: '',
                 modelNo: '',
@@ -91,12 +101,8 @@ class Addsensor extends Component {
                 parameters: [],
             })
         } else {
-            this.validator.showMessageFor('organization');
-            this.validator.showMessageFor('IOTDevices');
-            this.validator.showMessageFor('Location');
-            this.validator.showMessageFor('Sensortype');
-            this.validator.showMessageFor('Manufacture');
-            this.validator.showMessageFor('Modalno');
+            this.validator.showMessages();
+            this.forceUpdate();
         }
     }
 
@@ -124,7 +130,7 @@ class Addsensor extends Component {
         let orgnizationdata = Location.orgnizationdata.map(function (item) {
             return { value: item.id, label: item.name };
         })
-        let sensoriotdata = Sensors.iotdesenitem && Sensors.iotdesenitem.map(function (item) {
+        let sensoriotdata = Sensors.iotdevicedata && Sensors.iotdevicedata.map(function (item) {
             return { value: item.id, label: item.reference }
         })
         let locationdata = IOTDevice.locationdata && IOTDevice.locationdata.map(function (item) {
@@ -161,35 +167,38 @@ class Addsensor extends Component {
                                     <Row>
                                         <Col md='6'>
                                             <FormGroup>
-                                                <Label for="type" placeholder="Select Organization">Organization *</Label>
+                                                <Label for="type">Organization *</Label>
                                                 <Select
                                                     value={this.state.organization}
                                                     onChange={(organization) => this.onorganization(organization)}
                                                     options={orgnizationdata}
+                                                    placeholder="Select Organization"
                                                 />
                                                 {this.validator.message('organization', this.state.organization, 'required')}                                   
                                             </FormGroup>
                                         </Col>
                                         <Col md='6'>
                                             <FormGroup>
-                                                <Label for="type" placeholder="Select IOT Device">IOT Devices*</Label>
+                                                <Label for="type" >IOT Devices*</Label>
                                                 <Select
-                                                    value={this.state.iotDevices}
-                                                    onChange={(iotDevices) => this.setState({ iotDevices })}
+                                                    value={this.state.iotdevices}
+                                                    onChange={(iotdevices) => this.setState({ iotdevices })}
                                                     options={sensoriotdata}
+                                                    placeholder="Select IOT Device"
                                                 />
-                                                {this.validator.message('IOTDevices', this.state.iotDevices, 'required')}
+                                                {this.validator.message('IOTDevices', this.state.iotdevices, 'required')}
                                             </FormGroup>
                                         </Col>
                                     </Row>
                                     <Row>
                                         <Col md='12'>
                                             <FormGroup>
-                                                <Label for="location" placeholder='Select Location'>Locations*</Label>
+                                                <Label for="location" >Locations*</Label>
                                                 <Select
                                                     value={this.state.locations}
                                                     onChange={(locations) => this.setState({ locations })}
                                                     options={locationdata}
+                                                    placeholder='Select Location'
                                                 />
                                                 {this.validator.message('Location', this.state.locations, 'required')}
 
@@ -201,16 +210,17 @@ class Addsensor extends Component {
                                             <FormGroup>
                                                 <Label for="name">Channel No</Label>
                                                 <Input type='number' id="Channel No" placeholder="Channel No"
-                                                    onChange={(e) => this.setState({ channelNo: e.target.value })} value={this.state.channelNo}
+                                                    onChange={(e) => this.setState({ channelno: e.target.value })} value={this.state.channelno}
                                                 />
                                             </FormGroup>
                                         </Col>
                                         <Col md='6'>
-                                            <Label for="sensor" placeholder=' Select Sensor'>Sensor Types*</Label>
+                                            <Label for="sensor">Sensor Types*</Label>
                                             <Select
                                                 value={this.state.sensorType}
                                                 onChange={(sensorType) => this.setState({ sensorType })}
                                                 options={sensortypedata}
+                                                placeholder='Select Sensor'
                                             />
                                             {this.validator.message('Sensortype', this.state.sensorType, 'required')}
 
@@ -218,11 +228,12 @@ class Addsensor extends Component {
                                     </Row>
                                     <Row>
                                         <Col md='6'>
-                                            <Label for="manufacture" placeholder='Select Manufacture'>Manufactures*</Label>
+                                            <Label for="manufacture" >Manufactures*</Label>
                                             <Select
                                                 value={this.state.manufacturer}
                                                 onChange={(manufacturer) => this.onChangeManufacture(manufacturer)}
                                                 options={manufacturerdata}
+                                                placeholder='Select Manufacture'
                                             />
                                             {this.validator.message('Manufacture', this.state.manufacturer, 'required')}
 
@@ -238,12 +249,14 @@ class Addsensor extends Component {
                                     </Row>
                                     <Row>
                                         <Col md='12'>
-                                            <Label for="parameter" placeholder='Choose Parameters'>Parameters</Label>
+                                            <Label for="parameter" >Parameters</Label>
                                             <Select
                                                 value={this.state.parameters}
                                                 onChange={(parameters) => this.setState({ parameters })}
                                                 options={parameterdata}
                                                 isMulti
+                                                placeholder='Choose Parameters'
+
                                             />
                                         </Col>
                                     </Row>
@@ -264,11 +277,11 @@ const mapStateToProps = state => ({
     data: state,
 })
 const mapDispatchToProps = dispatch => bindActionCreators({
-    fetchorganizationdata: fetchorganizationdata,
+    fetchOrganizationData: fetchOrganizationData,
     fetchIOTDeviceData: fetchIOTDeviceData,
     fetchManufactureData: fetchManufactureData,
     fetchParameterData: fetchParameterData,
-    fetchlocationdata: fetchlocationdata,
+    fetchLocationData: fetchLocationData,
     addSensor: addSensor,
 }, dispatch)
 export default connect(

@@ -137,8 +137,9 @@ class Editprimarylocation extends Component {
     }
 
     toggle = () => {
-        this.props.iseditprilocmodaluser();
+        this.props.iseditprilocmodalusercancle();
     }
+
 
     onSave = async () => {
         await this.props.locationData(this.state.selectedLocation);
@@ -313,7 +314,7 @@ class Editprimarylocation extends Component {
                             </ModalBody>
                             <ModalFooter>
                                 <Button color="light" onClick={() => this.backedit()}>Back</Button>
-                                <Button color="success" onClick={() => this.onSave()}>Save</Button>{' '}
+                                <Button color="success" onClick={() => this.onSave()}>Update</Button>{' '}
                             </ModalFooter>
                         </Modal>
                     </div>

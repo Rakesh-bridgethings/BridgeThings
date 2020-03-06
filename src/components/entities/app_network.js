@@ -2,21 +2,16 @@ import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Select from 'react-select';
-import Checkbox from 'rc-checkbox';
 import 'rc-checkbox/assets/index.css';
-import PageTitle from '../includes/PageTitle';
-import { fetchloraapptype, updatedentiappnetData } from '../../services/Entities';
+import { fetchLorTypeData, updatedEntitieData } from '../../services/Entities';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {
-    Row, Col, Card, CardBody, CardTitle, Table, CardHeader, Button,
-    DropdownToggle, DropdownMenu,
-    Nav, NavItem, NavLink,
-    UncontrolledTooltip, UncontrolledButtonDropdown,
+    Row, Col, Button,
     Modal, ModalHeader, ModalBody, ModalFooter,
     Form, Label, Input, FormGroup, DropdownItem
 } from 'reactstrap';
-import SimpleReactValidator from 'simple-react-validator';
 import Notification from '../../library/notification';
+
 class Appnetlora extends Component {
     constructor(props) {
         super(props);
@@ -29,21 +24,20 @@ class Appnetlora extends Component {
         editloraid: '',
     }
     componentDidMount = async () => {
-        const { fetchloraapptype } = this.props;
-        await fetchloraapptype();
+        const { fetchLorTypeData } = this.props;
+        await fetchLorTypeData();
     }
     componentWillReceiveProps = async (props) => {
         const { Entities } = props.data;
-        Entities.editentititisecitem !== undefined && Entities.editentititisecitem.applications && await this.setState({ defaultapplication: Entities.editentititisecitem.applications, editloraid: Entities.editentititisecitem.id });
+        Entities.entitiyuserdata !== undefined && Entities.entitiyuserdata.applications && await this.setState({ defaultapplication: Entities.entitiyuserdata.applications, editloraid: Entities.entitiyuserdata.id });
     }
     onsave = () => {
-        // {"id":45,"applications":[{"reference":"LORA_APP_EnergyMonitoring"}]}
         let data = {
             id: this.state.editloraid,
             applications: this.state.applicationtypes
         }
-        let { updatedentiappnetData } = this.props;
-        updatedentiappnetData(data);
+        let { updatedEntitieData } = this.props;
+        updatedEntitieData(data);
         this.props.isloranetworkmodal();
         this.setState({ notitype: 'appnetlora' });
         this.setState({applicationtypes: [{ reference: "" }], application: []});
@@ -59,7 +53,6 @@ class Appnetlora extends Component {
             if (idx !== sidx) return applicationtype;
             return { ...applicationtype, reference: evt.value };
         });
-        // { value: item.reference, label: item.value }
         this.setState({ applicationtypes: newApplicationTypes });
     };
     handleRemoveApplicationType = idx => () => {
@@ -78,7 +71,7 @@ class Appnetlora extends Component {
 
     render() {
         const { Entities, Status } = this.props.data;
-        let Appentitype = Entities.loraapptypeitem && Entities.loraapptypeitem.map(function (item) {
+        let Appentitype = Entities.loraappdata && Entities.loraappdata.map(function (item) {
             return { value: item.reference, label: item.value };
         })
         return (
@@ -119,7 +112,7 @@ class Appnetlora extends Component {
                                             <Row>
                                                 <Col md='6'>
                                                     <FormGroup>
-                                                        <Input type="text" disabled type="text" maxLength="50" class="form-control" value={item.value} />
+                                                        <Input type="text" disabled type="text" placeholder="Select Application Type"maxLength="50" class="form-control" value={item.value} />
                                                     </FormGroup>
                                                 </Col>
                                             </Row>
@@ -133,7 +126,6 @@ class Appnetlora extends Component {
                                                 <FormGroup>
                                                     <Select
                                                         placeholder={" Select Application Type"}
-                                                        // onChange={(application) => this.onChangeAppType(application)}
                                                         options={Appentitype}
                                                         value={this.state.application[idx]}
                                                         onChange={this.handleApplicationTypeChange(idx)}
@@ -165,8 +157,8 @@ const mapStateToProps = state => ({
     data: state,
 })
 const mapDispatchToProps = dispatch => bindActionCreators({
-    fetchloraapptype: fetchloraapptype,
-    updatedentiappnetData: updatedentiappnetData,
+    fetchLorTypeData: fetchLorTypeData,
+    updatedEntitieData: updatedEntitieData,
 
 }, dispatch)
 export default connect(

@@ -3,8 +3,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Select from 'react-select';
 import 'rc-checkbox/assets/index.css';
-import { fetchlocationdata } from '../../services/IOTDevice';
-import { fetchorganizationdata } from '../../services/Location';
+import { fetchLocationData } from '../../services/IOTDevice';
+import { fetchOrganizationData } from '../../services/Location';
 import { fetchGatwayTypeData, addGateway, editGateway } from '../../services/Gateway';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {
@@ -23,7 +23,7 @@ class EditGateway extends Component {
         super(props);
         this.validator = new SimpleReactValidator({
             element: (message, className) => <div className='required_message'>{message}</div>
-        })
+        }, { autoForceUpdate: this })
     }
 
     state = {
@@ -36,14 +36,13 @@ class EditGateway extends Component {
     }
 
     componentDidMount = async () => {
-        this.getData();
-
+        await this.getData();
     }
 
     getData = async () => {
         setTimeout(async () => {
-            const { fetchorganizationdata } = this.props;
-            await fetchorganizationdata();
+            const { fetchOrganizationData } = this.props;
+            await fetchOrganizationData();
             let props = this.props;
             if (props.getEditData) {
                 let { Location } = this.props.data;
@@ -55,8 +54,8 @@ class EditGateway extends Component {
                         entityId = item.id;
                     }
                 })
-                const { fetchlocationdata } = this.props;
-                await fetchlocationdata(entityId);
+                const { fetchLocationData } = this.props;
+                await fetchLocationData(entityId);
                 this.setState({
                     id: props.getEditData.id,
                     organization: entity,
@@ -75,8 +74,9 @@ class EditGateway extends Component {
                 this.setState({ location: { value: item.id, label: item.value } });
             }
         })
+
         if (this.props.getEditData.id !== props.getEditData.id) {
-            this.getData();
+            await this.getData();
         }
     }
 
@@ -86,19 +86,12 @@ class EditGateway extends Component {
 
     onChangeOrg = async (organization) => {
         this.setState({ organization });
-        const { fetchlocationdata } = this.props;
-        await fetchlocationdata(organization.value);
+        const { fetchLocationData } = this.props;
+        await fetchLocationData(organization.value);
         this.setState({ location: '' })
     }
 
     onUpdate = async () => {
-        this.validator.showMessageFor('organization');
-        this.validator.showMessageFor('location');
-        this.validator.showMessageFor('deviceid');
-        this.validator.showMessageFor('devicetype');
-        this.validator.showMessageFor('application');
-        this.validator.showMessageFor('dutycyclemin');
-        this.validator.showMessageFor('deviceprofile');
         if (this.validator.allValid()) {
             let data = {
                 "id": this.state.id,
@@ -111,6 +104,9 @@ class EditGateway extends Component {
             const { editGateway } = this.props;
             await editGateway(data);
             this.props.iseditgatewaymodal();
+        } else {
+            this.validator.showMessages();
+            this.forceUpdate();
         }
     }
 
@@ -143,66 +139,66 @@ class EditGateway extends Component {
                         <Modal isOpen={this.props.editgatewaymodal} toggle={() => this.toggle()} className={this.props.className} id='add_location'>
                             <ModalHeader toggle={() => this.toggle()}>Add Gateway</ModalHeader>
                             <ModalBody>
-                                <Form>
-                                    <Row>
-                                        <Col md='6'>
-                                            <FormGroup>
-                                                <Label for="Firstname">Organization*</Label>
-                                                <Select
-                                                    value={this.state.organization}
-                                                    onChange={(organization) => this.onChangeOrg(organization)}
-                                                    options={orgnizationdata}
-                                                    placeholder='Select Organization'
-                                                />
-                                                {this.validator.message('organization', this.state.organization, 'required')}
-                                            </FormGroup>
-                                        </Col>
-                                        <Col md='6'>
-                                            <FormGroup>
-                                                <Label for="lastname">Locations*</Label>
-                                                <Select
-                                                    value={this.state.location}
-                                                    onChange={(location) => this.setState({ location })}
-                                                    options={locationdata}
-                                                    placeholder='Select Location'
-                                                />
-                                                {this.validator.message('location', this.state.location, 'required')}
-                                            </FormGroup>
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col md='12'>
-                                            <FormGroup>
-                                                <Label for="Firstname">GatewayType *</Label>
-                                                <Select
-                                                    value={this.state.gatewaytype}
-                                                    onChange={(gatewaytype) => this.setState({ gatewaytype })}
-                                                    options={gatewaytypedata}
-                                                    placeholder='Select Gateways Type'
-                                                />
-                                                {this.validator.message('gatewaytype', this.state.gatewaytype, 'required')}
-                                            </FormGroup>
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col md='6'>
-                                            <FormGroup>
-                                                <Label for="label">Label *</Label>
-                                                <Input type='text' id="label"
-                                                    onChange={(e) => this.setState({ label: e.target.value })} value={this.state.label} placeholder='Label' />
-                                                {this.validator.message('label', this.state.label, 'required')}
-                                            </FormGroup>
-                                        </Col>
-                                        <Col md='6'>
-                                            <FormGroup>
-                                                <Label for="gatewayId">GateWayId *</Label>
-                                                <Input type='text' id="gatewayId"
-                                                    onChange={(e) => this.setState({ gatewayId: e.target.value })} value={this.state.gatewayId} placeholder='GateWayId' />
-                                                {this.validator.message('gatewayId', this.state.gatewayId, 'required')}
-                                            </FormGroup>
-                                        </Col>
-                                    </Row>
-                                </Form>
+                                    <Form>
+                                        <Row>
+                                            <Col md='6'>
+                                                <FormGroup>
+                                                    <Label for="Firstname">Organization*</Label>
+                                                    <Select
+                                                        value={this.state.organization}
+                                                        onChange={(organization) => this.onChangeOrg(organization)}
+                                                        options={orgnizationdata}
+                                                        placeholder='Select Organization'
+                                                    />
+                                                    {this.validator.message('organization', this.state.organization, 'required')}
+                                                </FormGroup>
+                                            </Col>
+                                            <Col md='6'>
+                                                <FormGroup>
+                                                    <Label for="lastname">Locations*</Label>
+                                                    <Select
+                                                        value={this.state.location}
+                                                        onChange={(location) => this.setState({ location })}
+                                                        options={locationdata}
+                                                        placeholder='Select Location'
+                                                    />
+                                                    {this.validator.message('location', this.state.location, 'required')}
+                                                </FormGroup>
+                                            </Col>
+                                        </Row>
+                                        <Row>
+                                            <Col md='12'>
+                                                <FormGroup>
+                                                    <Label for="Firstname">GatewayType *</Label>
+                                                    <Select
+                                                        value={this.state.gatewaytype}
+                                                        onChange={(gatewaytype) => this.setState({ gatewaytype })}
+                                                        options={gatewaytypedata}
+                                                        placeholder='Select Gateways Type'
+                                                    />
+                                                    {this.validator.message('gatewaytype', this.state.gatewaytype, 'required')}
+                                                </FormGroup>
+                                            </Col>
+                                        </Row>
+                                        <Row>
+                                            <Col md='6'>
+                                                <FormGroup>
+                                                    <Label for="label">Label *</Label>
+                                                    <Input type='text' id="label"
+                                                        onChange={(e) => this.setState({ label: e.target.value })} value={this.state.label} placeholder='Label' />
+                                                    {this.validator.message('label', this.state.label, 'required')}
+                                                </FormGroup>
+                                            </Col>
+                                            <Col md='6'>
+                                                <FormGroup>
+                                                    <Label for="gatewayId">GateWayId *</Label>
+                                                    <Input type='text' id="gatewayId"
+                                                        onChange={(e) => this.setState({ gatewayId: e.target.value })} value={this.state.gatewayId} placeholder='GateWayId' />
+                                                    {this.validator.message('gatewayId', this.state.gatewayId, 'required')}
+                                                </FormGroup>
+                                            </Col>
+                                        </Row>
+                                    </Form>
                             </ModalBody>
                             <ModalFooter>
                                 <Button color="light" onClick={() => this.toggle()}>Cancel</Button>
@@ -220,8 +216,8 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    fetchorganizationdata: fetchorganizationdata,
-    fetchlocationdata: fetchlocationdata,
+    fetchOrganizationData: fetchOrganizationData,
+    fetchLocationData: fetchLocationData,
     fetchGatwayTypeData: fetchGatwayTypeData,
     addGateway: addGateway,
     editGateway: editGateway,

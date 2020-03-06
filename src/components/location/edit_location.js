@@ -1,24 +1,18 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { fetchlocationitemdata, fetchorganizationdata, fetchlocationtypesdata, fetchpropertydata, updatedLocationData } from '../../services/Location'
-import PageTitle from '../includes/PageTitle';
+import { fetchLocationItemData, fetchOrganizationData, fetchLocationTypesData, fetchPropertyData, updatedLocationData } from '../../services/Location'
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {
-    Row, Col, Card, CardBody, CardTitle, Table, CardHeader, Button,
-    DropdownToggle, DropdownMenu,
-    Nav, NavItem, NavLink,
-    UncontrolledTooltip, UncontrolledButtonDropdown,
+    Row, Col, Button,
     Modal, ModalHeader, ModalBody, ModalFooter,
-    Form, Label, Input, FormGroup, DropdownItem
+    Form, Label, Input, FormGroup
 } from 'reactstrap';
-// import EditOrganization from './edit_organization';
 import AddProperty from './add_property';
 import EditBusinessHours from './edit_business_hours';
 import Select from 'react-select';
 import SimpleReactValidator from 'simple-react-validator';
 import Notification from '../../library/notification';
-// import Getdiff from '../library/deepDiffMapper';
 var diff = require('deep-diff').diff;
 
 class EditLocation extends Component {
@@ -54,7 +48,6 @@ class EditLocation extends Component {
         getEdittedData: {},
         propertydatalist: [],
     }
-
     componentWillReceiveProps = async (props) => {
         await this.setState({
             getEditBusiness: props.getEditData,
@@ -86,35 +79,32 @@ class EditLocation extends Component {
     }
 
     componentDidMount = async () => {
-        const { fetchlocationitemdata, fetchorganizationdata, fetchlocationtypesdata, fetchpropertydata } = this.props;
-        fetchlocationitemdata();
-        fetchorganizationdata();
-        fetchlocationtypesdata();
+        const { fetchLocationItemData, fetchOrganizationData, fetchLocationTypesData, fetchPropertyData } = this.props;
+        fetchLocationItemData();
+        fetchOrganizationData();
+        fetchLocationTypesData();
     }
-
     toggle = () => {
         this.props.iseditlocatiionmodal();
     }
-
     iseditpropertymodal = (val) => {
         this.setState({ editpropertymodal: val });
     }
-
     iseditorgmodal = (val) => {
         this.setState({ editorgmodal: val });
     }
-
     iseditnextmodal = () => {
         this.setState({ editnextmodal: !this.state.editnextmodal });
         this.setState({ nextmodal: !this.state.nextmodal });
         this.props.iseditlocatiionmodal();
     }
-
+    iseditnextmodalcancle=()=>{
+        this.setState({ editnextmodal: !this.state.editnextmodal });
+    }
     isclosemodals = () => {
         this.setState({ editnextmodal: !this.state.editnextmodal });
         this.setState({ nextmodal: !this.state.nextmodal });
     }
-
     next = () => {
         this.validator.showMessageFor('organization');
         this.validator.showMessageFor('property')
@@ -143,7 +133,6 @@ class EditLocation extends Component {
         this.validator.showMessageFor('AggregationId');
         this.setState({ nextclick: true });
     }
-
     business_hrsdata = (val) => {
         this.setState({ business_hours: val });
         let getEdittedData = this.state.getEdittedData;
@@ -160,19 +149,16 @@ class EditLocation extends Component {
         dif.locationBusinessHoursList = val;
         const { updatedLocationData } = this.props;
         updatedLocationData(this.state.editid, dif);
-        this.props.shownoti('update');
+        this.props.shownoti('updatelocation');
     }
-
     onZone = (e) => {
         this.setState({ zone: e.target.value })
         this.validator.showMessageFor('Zone');
     }
-
     onAggregateId = (e) => {
         this.setState({ aggregationid: e.target.value });
         this.validator.showMessageFor('AggregationId');
     }
-
     onChngproperty = (property) => {
         this.setState({ property });
     }
@@ -184,7 +170,6 @@ class EditLocation extends Component {
     onchnglabel = (e) => {
         this.setState({ label: e.target.value });
     }
-
     render() {
         const { Location, Status } = this.props.data;
         let orgnizationdata = Location.orgnizationdata.map(function (item) {
@@ -193,7 +178,7 @@ class EditLocation extends Component {
         let propertydata = this.props.getEditData.propertydatalist && this.props.getEditData.propertydatalist.map(function (item) {
             return { value: item.id, label: item.value };
         })
-        let locationdata = Location.locationtypes.map(function (item) {
+        let locationdata = Location.locationtypedata.map(function (item) {
             return { value: item.id, label: item.value };
         })
         const orgStyles = {
@@ -246,14 +231,14 @@ class EditLocation extends Component {
                                         <Col md='6'>
                                             <FormGroup>
                                                 <Label for="zone">Zone</Label>
-                                                <Input type='text' id="zone" onChange={(e) => this.onZone(e)} value={this.state.zone} />
+                                                <Input type='text' id="zone"  placeholder="zone"onChange={(e) => this.onZone(e)} value={this.state.zone} />
                                                 {this.validator.message('Zone', this.state.zone, 'alpha_num')}
                                             </FormGroup>
                                         </Col>
                                         <Col md='6'>
                                             <FormGroup>
                                                 <Label for="aggregation_id">Aggregation ID</Label>
-                                                <Input type='text' id="aggregation_id" onChange={(e) => this.onAggregateId(e)} value={this.state.aggregationid} />
+                                                <Input type='text' id="aggregation_id"  placeholder="Aggregation Id" onChange={(e) => this.onAggregateId(e)} value={this.state.aggregationid} />
                                                 {this.validator.message('AggregationId', this.state.aggregationid, 'alpha_num')}
                                             </FormGroup>
                                         </Col>
@@ -264,10 +249,11 @@ class EditLocation extends Component {
                                                 <Label for="organization">Organization *</Label>
                                                 <Select
                                                     value={this.state.organization}
-                                                    styles={orgStyles}
+                                                    styles={orgStyles}                                  
                                                     onChange={(organization) => this.onChngOrg(organization)}
                                                     options={orgnizationdata}
                                                     isDisabled
+                                                    placeholder="Organization"
                                                 />
                                                 <a style={{ cursor: 'pointer' }} ><i className="pe-7s-plus"> </i> Add New Organization</a>
                                                 {this.validator.message('organization', this.state.organization, 'required')}
@@ -284,6 +270,7 @@ class EditLocation extends Component {
                                                     styles={propertyStyles}
                                                     onChange={(property) => this.onChngproperty(property)}
                                                     options={propertydata}
+                                                    placeholder="Add Property"
                                                 />
                                                 <a style={{ cursor: 'pointer' }} onClick={() => this.setState({ editpropertymodal: !this.state.editpropertymodal })} ><i className="pe-7s-plus"> </i> Add New Property</a>
                                                 {this.validator.message('property', this.state.property, 'required')}
@@ -303,6 +290,7 @@ class EditLocation extends Component {
                                                     styles={loctypeStyles}
                                                     onChange={(locationtype) => this.onChngloctype(locationtype)}
                                                     options={locationdata}
+                                                    placeholder="Location Type"
                                                 />
                                                 {this.validator.message('locationtype', this.state.locationtype, 'required')}
                                             </FormGroup>
@@ -310,7 +298,7 @@ class EditLocation extends Component {
                                         <Col md='6'>
                                             <FormGroup>
                                                 <Label for="label">Label *</Label>
-                                                <Input type='text' id='label' value={this.state.label}
+                                                <Input type='text' id='label' placeholder="label" value={this.state.label}
                                                     className={`form-control ${this.state.nextclick && this.state.label === '' && this.state.errorClass}`}
                                                     onChange={(e) => this.onchnglabel(e)} />
                                                 {this.validator.message('label', this.state.label, 'required')}
@@ -324,7 +312,7 @@ class EditLocation extends Component {
                                 <Button color="success" onClick={() => this.next()}>Next</Button>{' '}
                             </ModalFooter>
                         </Modal>
-                        {this.state.nextmodal && <EditBusinessHours requiredMessage={this.props.requiredMessage} getEditBusiness={this.state.getEditBusiness} editnextmodal={this.state.editnextmodal} iseditnextmodal={this.iseditnextmodal} isclosemodals={this.isclosemodals} business_hrsdata={this.business_hrsdata} />}
+                        {this.state.nextmodal && <EditBusinessHours requiredMessage={this.props.requiredMessage} getEditBusiness={this.state.getEditBusiness} editnextmodal={this.state.editnextmodal} iseditnextmodal={this.iseditnextmodal} isclosemodals={this.isclosemodals} business_hrsdata={this.business_hrsdata}  iseditnextmodalcancle={this.iseditnextmodalcancle}/>}
                     </div>
                 </ReactCSSTransitionGroup>
             </Fragment>
@@ -332,21 +320,16 @@ class EditLocation extends Component {
         );
     }
 }
-
-
-
 const mapStateToProps = state => ({
     data: state,
 })
-
 const mapDispatchToProps = dispatch => bindActionCreators({
-    fetchlocationitemdata: fetchlocationitemdata,
-    fetchorganizationdata: fetchorganizationdata,
-    fetchlocationtypesdata: fetchlocationtypesdata,
-    fetchpropertydata: fetchpropertydata,
+    fetchLocationItemData: fetchLocationItemData,
+    fetchOrganizationData: fetchOrganizationData,
+    fetchLocationTypesData: fetchLocationTypesData,
+    fetchPropertyData: fetchPropertyData,
     updatedLocationData: updatedLocationData,
 }, dispatch)
-
 export default connect(
     mapStateToProps,
     mapDispatchToProps

@@ -6,7 +6,7 @@ export const FETCH_PRIMARY_LOCATION='FETCH_PRIMARY_LOCATION';
 export const FETCH_EDIT_USER_DATA_SUCESS='FETCH_EDIT_USER_DATA_SUCESS';
 export const EDIT_PRIMARY_LOCATION_DATA='EDIT_PRIMARY_LOCATION_DATA';
 
-export function fetch_useritemdata_sucess(useritem_data) {
+export function fetch_useritemdata_data(useritem_data) {
     return {
         type: FETCH_USERITEMDATA_SUCESS,
         useritem: useritem_data
@@ -20,16 +20,16 @@ export function data_post_status(status, msg, page) {
         page: page,
     }
 }
-export function fetch_role_types_success(roleitem_data) {
+export function fetch_roletypes_data(roledata) {
     return {
         type: FETCH_ROLE_TYPES_SUCESS,
-        roleitem: roleitem_data,
+        roledata: roledata,
     }
 }
-export function primary_location(primary_loc_data) {
+export function primary_location_data(primarylocdata) {
     return {
         type: FETCH_PRIMARY_LOCATION,
-        primary_loc_data: primary_loc_data
+        primarylocdata: primarylocdata
     }
 }
 
@@ -47,10 +47,10 @@ export function edit_primary_location_data(editlocationdata){
     }
 }
 
-export function Fetch_edit_user_data_success(edituserdata){
+export function Fetch_edituser_data(edituserdata){
     return{
        type:FETCH_EDIT_USER_DATA_SUCESS,
-       edituseritem:edituserdata
+       edituserdata:edituserdata
     }
 
 }

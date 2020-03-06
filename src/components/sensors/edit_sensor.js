@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import Select from 'react-select';
 import Checkbox from 'rc-checkbox';
 import 'rc-checkbox/assets/index.css';
-// import { fetchsectorentititypedata, fetchentititypedata, addEntitiy } from '../../services/Entities';
+// import { fetchSectorentititypeData, fetchEntitiTypeData, addEntitiy } from '../../services/Entities';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {
     Row, Col, Card, CardBody, CardTitle, Table, CardHeader, Button,
@@ -16,9 +16,9 @@ import {
 } from 'reactstrap';
 import SimpleReactValidator from 'simple-react-validator';
 import Notification from '../../library/notification';
-import { fetchorganizationdata } from '../../services/Location';
+import { fetchOrganizationData } from '../../services/Location';
 import { fetchIOTDeviceData, fetchManufactureData, fetchParameterData, editSensor } from '../../services/Sensors';
-import { fetchlocationdata } from '../../services/IOTDevice';
+import { fetchLocationData } from '../../services/IOTDevice';
 
 class Editsensor extends Component {
     constructor(props) {
@@ -26,7 +26,7 @@ class Editsensor extends Component {
         this.toggle = this.toggle.bind(this);
         this.validator = new SimpleReactValidator({
             element: (message, className) => <div className='required_message'>{message}</div>
-        })
+        }, {autoForceUpdate: this})
     }
     state = {
         organization: '',
@@ -41,32 +41,45 @@ class Editsensor extends Component {
     }
 
     componentDidMount = async () => {
-        const { fetchorganizationdata, fetchManufactureData } = this.props;
-        await fetchorganizationdata();
-        await fetchManufactureData();
-        let props = this.props;
-        if (props.getEditData) {
-            const { fetchIOTDeviceData, fetchlocationdata, fetchParameterData } = this.props;
-            await fetchIOTDeviceData(props.getEditData.entity.id);
-            await fetchlocationdata(props.getEditData.entity.id);
-            await fetchParameterData(props.getEditData.manufacturers.id, props.getEditData.modelNo);
-            this.setState({
-                id: props.getEditData.id,
-                organization: { value: props.getEditData.entity.id, label: props.getEditData.entity.name },
-                iotDevices: { value: props.getEditData.iotDevices.id, label: props.getEditData.iotDevices.reference },
-                locations: { value: props.getEditData.location.id, label: props.getEditData.location.label },
-                channelNo: props.getEditData.channelNo,
-                sensorType: { value: props.getEditData.sensorType.id, label: props.getEditData.sensorType.value },
-                manufacturer: { value: props.getEditData.manufacturers.id, label: props.getEditData.manufacturers.value },
-                modelNo: props.getEditData.modelNo,
-            });
-            let paras = [];
-            props.getEditData.parameters && props.getEditData.parameters.map((item, index) => {
-                if (item.value) {
-                    paras.push({ value: item.id, label: item.value });
-                }
-            })
-            this.setState({ parameters: paras });
+        this.getData();
+    }
+
+    getData = async () => {
+        setTimeout(async () => {
+            const { fetchOrganizationData, fetchManufactureData } = this.props;
+            await fetchOrganizationData();
+            await fetchManufactureData();
+            let props = this.props;
+            if (props.getEditData) {
+                console.log("KKKK::::",props.getEditData)
+                const { fetchIOTDeviceData, fetchLocationData, fetchParameterData } = this.props;
+                await fetchIOTDeviceData(props.getEditData.entity.id);
+                await fetchLocationData(props.getEditData.entity.id);
+                await fetchParameterData(props.getEditData.manufacturers.id, props.getEditData.modelNo);
+                this.setState({
+                    id: props.getEditData.id,
+                    organization: { value: props.getEditData.entity.id, label: props.getEditData.entity.name },
+                    iotDevices: { value: props.getEditData.iotDevices.id, label: props.getEditData.iotDevices.reference },
+                    locations: { value: props.getEditData.location.id, label: props.getEditData.location.label },
+                    channelNo: props.getEditData.channelNo,
+                    sensorType: { value: props.getEditData.sensorType.id, label: props.getEditData.sensorType.value },
+                    manufacturer: { value: props.getEditData.manufacturers.id, label: props.getEditData.manufacturers.value },
+                    modelNo: props.getEditData.modelNo,
+                });
+                let paras = [];
+                props.getEditData.parameters && props.getEditData.parameters.map((item, index) => {
+                    if (item.value) {
+                        paras.push({ value: item.id, label: item.value });
+                    }
+                })
+                this.setState({ parameters: paras });
+            }
+        }, 1000);
+    }
+
+    componentWillReceiveProps = async (props) => {
+        if (this.props.getEditData.id !== props.getEditData.id) {
+            this.getData();
         }
     }
 
@@ -76,19 +89,13 @@ class Editsensor extends Component {
 
     onorganization = async (organization) => {
         this.setState({ organization });
-        const { fetchIOTDeviceData, fetchlocationdata } = this.props;
+        const { fetchIOTDeviceData, fetchLocationData } = this.props;
         await fetchIOTDeviceData(organization.value);
-        await fetchlocationdata(organization.value);
+        await fetchLocationData(organization.value);
         this.setState({ iotDevices: '', locations: '' })
     }
 
     onupdate = async () => {
-        this.validator.showMessageFor('Organization');
-        this.validator.showMessageFor('IOTDevices');
-        this.validator.showMessageFor('Location');
-        this.validator.showMessageFor('Sensortype');
-        this.validator.showMessageFor('Manufacture');
-        this.validator.showMessageFor('Modalno');
         if (this.validator.allValid()) {
             let paras = [];
             this.state.parameters && this.state.parameters.map((item, index) => {
@@ -109,6 +116,9 @@ class Editsensor extends Component {
             let { editSensor } = this.props;
             await editSensor(data);
             this.props.iseditsensoemodal();
+        } else {
+            this.validator.showMessages();
+            this.forceUpdate();
         }
     }
 
@@ -136,7 +146,7 @@ class Editsensor extends Component {
         let orgnizationdata = Location.orgnizationdata.map(function (item) {
             return { value: item.id, label: item.name };
         })
-        let sensoriotdata = Sensors.iotdesenitem && Sensors.iotdesenitem.map(function (item) {
+        let sensoriotdata = Sensors.iotdevicedata && Sensors.iotdevicedata.map(function (item) {
             return { value: item.id, label: item.reference }
         })
         let locationdata = IOTDevice.locationdata && IOTDevice.locationdata.map(function (item) {
@@ -173,22 +183,25 @@ class Editsensor extends Component {
                                     <Row>
                                         <Col md='6'>
                                             <FormGroup>
-                                                <Label for="type" placeholder="Select Organization">Organization *</Label>
+                                                <Label for="type" >Organization *</Label>
                                                 <Select
                                                     value={this.state.organization}
                                                     onChange={(organization) => this.onorganization(organization)}
                                                     options={orgnizationdata}
+                                                    placeholder="Select Organization"
                                                 />
                                                 {this.validator.message('Organization', this.state.organization, 'required')}
                                             </FormGroup>
                                         </Col>
                                         <Col md='6'>
                                             <FormGroup>
-                                                <Label for="type" placeholder="Select IOT Device">IOT Devices*</Label>
+                                                <Label for="type" >IOT Devices*</Label>
                                                 <Select
                                                     value={this.state.iotDevices}
                                                     onChange={(iotDevices) => this.setState({ iotDevices })}
                                                     options={sensoriotdata}
+                                                    placeholder="Select IOT Device"
+
                                                 />
                                                 {this.validator.message('IOTDevices', this.state.iotDevices, 'required')}
                                             </FormGroup>
@@ -197,11 +210,13 @@ class Editsensor extends Component {
                                     <Row>
                                         <Col md='12'>
                                             <FormGroup>
-                                                <Label for="location" placeholder='Select Location'>Locations*</Label>
+                                                <Label for="location" >Locations*</Label>
                                                 <Select
                                                     value={this.state.locations}
                                                     onChange={(locations) => this.setState({ locations })}
                                                     options={locationdata}
+                                                    placeholder='Select Location'
+
                                                 />
                                                 {this.validator.message('Location', this.state.locations, 'required')}
 
@@ -213,16 +228,19 @@ class Editsensor extends Component {
                                             <FormGroup>
                                                 <Label for="name">Channel No</Label>
                                                 <Input type='number' id="Channel No" placeholder="Channel No"
-                                                    onChange={(e) => this.setState({ channelNo: e.target.value })} value={this.state.channelNo}
+                                                   placeholder="Channel No"
+                                                   onChange={(e) => this.setState({ channelNo: e.target.value })} value={this.state.channelNo}
                                                 />
                                             </FormGroup>
                                         </Col>
                                         <Col md='6'>
-                                            <Label for="sensor" placeholder=' Select Sensor'>Sensor Types*</Label>
+                                            <Label for="sensor" >Sensor Types*</Label>
                                             <Select
                                                 value={this.state.sensorType}
                                                 onChange={(sensorType) => this.setState({ sensorType })}
                                                 options={sensortypedata}
+                                                placeholder='Select Sensor'
+
                                             />
                                             {this.validator.message('Sensortype', this.state.sensorType, 'required')}
 
@@ -230,11 +248,13 @@ class Editsensor extends Component {
                                     </Row>
                                     <Row>
                                         <Col md='6'>
-                                            <Label for="manufacture" placeholder='Select Manufacture'>Manufactures*</Label>
+                                            <Label for="manufacture" >Manufactures*</Label>
                                             <Select
                                                 value={this.state.manufacturer}
                                                 onChange={(manufacturer) => this.onChangeManufacture(manufacturer)}
                                                 options={manufacturerdata}
+                                                placeholder='Select Manufacture'
+
                                             />
                                             {this.validator.message('Manufacture', this.state.manufacturer, 'required')}
 
@@ -250,12 +270,13 @@ class Editsensor extends Component {
                                     </Row>
                                     <Row>
                                         <Col md='12'>
-                                            <Label for="parameter" placeholder='Choose Parameters'>Parameters</Label>
+                                            <Label for="parameter" >Parameters</Label>
                                             <Select
                                                 value={this.state.parameters}
                                                 onChange={(parameters) => this.setState({ parameters })}
                                                 options={parameterdata}
                                                 isMulti
+                                                placeholder='Choose Parameters'
                                             />
                                         </Col>
                                     </Row>
@@ -276,11 +297,11 @@ const mapStateToProps = state => ({
     data: state,
 })
 const mapDispatchToProps = dispatch => bindActionCreators({
-    fetchorganizationdata: fetchorganizationdata,
+    fetchOrganizationData: fetchOrganizationData,
     fetchIOTDeviceData: fetchIOTDeviceData,
     fetchManufactureData: fetchManufactureData,
     fetchParameterData: fetchParameterData,
-    fetchlocationdata: fetchlocationdata,
+    fetchLocationData: fetchLocationData,
     editSensor: editSensor,
 }, dispatch)
 export default connect(

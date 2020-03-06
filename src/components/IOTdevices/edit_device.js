@@ -4,8 +4,8 @@ import { bindActionCreators } from 'redux';
 import Select from 'react-select';
 import Checkbox from 'rc-checkbox';
 import 'rc-checkbox/assets/index.css';
-import { fetchlocationdata, fetchdevicetypedata, fetchdeviceprofiledata, add_iotdevices, update_iotdevices, fetchApplicationData } from '../../services/IOTDevice';
-import { fetchorganizationdata } from '../../services/Location';
+import { fetchLocationData, fetchDeviceTypeData, fetchProfileData ,addIotdevicesData, updateIotdevicesData, fetchApplicationData } from '../../services/IOTDevice';
+import { fetchOrganizationData } from '../../services/Location';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {
     Row, Col, Card, CardBody, CardTitle, Table, CardHeader, Button,
@@ -24,7 +24,7 @@ class EditIOTDevice extends Component {
         super(props);
         this.validator = new SimpleReactValidator({
             element: (message, className) => <div className='required_message'>{message}</div>
-        })
+        }, {autoForceUpdate: this})
     }
     state = {
         organization: '',
@@ -39,14 +39,19 @@ class EditIOTDevice extends Component {
     }
 
     componentDidMount = async () => {
-        const { fetchorganizationdata, fetchdevicetypedata, fetchdeviceprofiledata } = this.props;
-        await fetchorganizationdata();
-        await fetchdevicetypedata();
-        await fetchdeviceprofiledata();
+        this.getData();
+    }
+    getData = async () => {
+        setTimeout(async () => {
+        const { fetchOrganizationData, fetchDeviceTypeData, fetchProfileData } = this.props;
+        await fetchOrganizationData();
+        await fetchDeviceTypeData();
+        await fetchProfileData();
         let props = this.props;
         if (props.getEditData) {
-            const { fetchlocationdata } = this.props;
-            await fetchlocationdata(props.getEditData.entity.id);
+            const { fetchLocationData, fetchApplicationData } = this.props;
+            await fetchLocationData(props.getEditData.entity.id);
+            await fetchApplicationData(props.getEditData.entity.id);
             this.setState({
                 id: props.getEditData.id,
                 organization: { value: props.getEditData.entity.id, label: props.getEditData.entity.name },
@@ -57,6 +62,7 @@ class EditIOTDevice extends Component {
                 deviceprofile: {}
             })
         }
+    }, 1000);
     }
 
     componentWillReceiveProps = async (props) => {
@@ -66,7 +72,9 @@ class EditIOTDevice extends Component {
                 this.setState({ application: { value: item.reference, label: item.value } });
             }
         })
-
+        if (this.props.getEditData.id !== props.getEditData.id) {
+            this.getData();
+        }
         const getEditData = {
             locations: { "id": props.getEditData.location.id },
             deviceId: props.getEditData.deviceId,
@@ -82,22 +90,15 @@ class EditIOTDevice extends Component {
         this.props.iseditdevicemodalcancle();
     }
 
-    onChangeOrg = async (organization) => {
+    onChangeorg = async (organization) => {
         this.setState({ organization });
-        const { fetchlocationdata, fetchApplicationData } = this.props;
-        await fetchlocationdata(organization.value);
+        const { fetchLocationData, fetchApplicationData } = this.props;
+        await fetchLocationData(organization.value);
         await fetchApplicationData(organization.value);
         this.setState({ location: '', application: '' })
     }
 
     onSave = async () => {
-        this.validator.showMessageFor('organization');
-        this.validator.showMessageFor('location');
-        this.validator.showMessageFor('deviceid');
-        this.validator.showMessageFor('devicetype');
-        this.validator.showMessageFor('application');
-        this.validator.showMessageFor('dutycyclemin');
-        this.validator.showMessageFor('deviceprofile');
         if (this.validator.allValid()) {
             let data = {
                 'deviceId': this.state.deviceid,
@@ -113,17 +114,17 @@ class EditIOTDevice extends Component {
             if (differences) {
                 differences.map((item, index) => {
                     dif = item.rhs;
-                    // console.log("item::", item);
-                    // dif[item.path[0]] = value;
                 })
             }
             dif.id = this.state.id;         
-            const { update_iotdevices } = this.props;
-            await update_iotdevices(dif);
+            const { updateIotdevicesData } = this.props;
+            await updateIotdevicesData(dif);
             this.props.iseditdevicemodal();
+        } else {
+            this.validator.showMessages();
+            this.forceUpdate();
         }
     }
-
     render() {
         const { IOTDevice, Location, Status } = this.props.data;
         let orgnizationdata = Location.orgnizationdata.map(function (item) {
@@ -167,8 +168,9 @@ class EditIOTDevice extends Component {
                                                 <Label for="Firstname">Organization*</Label>
                                                 <Select
                                                     value={this.state.organization}
-                                                    onChange={(organization) => this.onChangeOrg(organization)}
+                                                    onChange={(organization) => this.onChangeorg(organization)}
                                                     options={orgnizationdata}
+                                                    placeholder="Select Organization"
                                                 />
                                                 {this.validator.message('organization', this.state.organization, 'required')}
                                             </FormGroup>
@@ -180,6 +182,7 @@ class EditIOTDevice extends Component {
                                                     value={this.state.location}
                                                     onChange={(location) => this.setState({ location })}
                                                     options={locationdata}
+                                                    placeholder="Select Locations"
                                                 />
                                                 {this.validator.message('location', this.state.location, 'required')}
                                             </FormGroup>
@@ -189,7 +192,7 @@ class EditIOTDevice extends Component {
                                         <Col md='6'>
                                             <FormGroup>
                                                 <Label for="Firstname">DeviceId *</Label>
-                                                <Input type='text' id="deviceid"
+                                                <Input type='text' id="deviceid"  placeholder="Device Id"
                                                     onChange={(e) => this.setState({ deviceid: e.target.value })} value={this.state.deviceid} />
                                                 {this.validator.message('deviceid', this.state.deviceid, 'required')}
                                             </FormGroup>
@@ -201,6 +204,7 @@ class EditIOTDevice extends Component {
                                                     value={this.state.devicetype}
                                                     onChange={(devicetype) => this.setState({ devicetype })}
                                                     options={devicetypedata}
+                                                    placeholder="Select Device Type"
                                                 />
                                                 {this.validator.message('devicetype', this.state.devicetype, 'required')}
                                             </FormGroup>
@@ -214,6 +218,7 @@ class EditIOTDevice extends Component {
                                                     value={this.state.application}
                                                     onChange={(application) => this.setState({ application })}
                                                     options={applicationdata}
+                                                    placeholder="Select Application"
                                                 />
                                                 {this.validator.message('application', this.state.application, 'required')}
                                             </FormGroup>
@@ -222,6 +227,7 @@ class EditIOTDevice extends Component {
                                             <FormGroup>
                                                 <Label for="lastname">Duty Cycle Min*</Label>
                                                 <Input type='number' id="dutycyclemin"
+                                                 placeholder="Duty Cycle Min"
                                                     onChange={(e) => this.setState({ dutycyclemin: e.target.value })} value={this.state.dutycyclemin} />
                                                 {this.validator.message('dutycyclemin', this.state.dutycyclemin, 'required|numeric')}
                                             </FormGroup>
@@ -232,9 +238,10 @@ class EditIOTDevice extends Component {
                                             <FormGroup>
                                                 <Label for="lastname">Device Profile*</Label>
                                                 <Select
+                                                  placeholder={"Select Device Profile"}
                                                     value={this.state.deviceprofile}
                                                     onChange={(deviceprofile) => this.setState({ deviceprofile })}
-                                                    options={deviceprofiledata}
+                                                    options={deviceprofiledata}                                                 
                                                 />
                                                 {this.validator.message('deviceprofile', this.state.deviceprofile, 'required')}
                                             </FormGroup>
@@ -258,13 +265,13 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    fetchorganizationdata: fetchorganizationdata,
-    fetchlocationdata: fetchlocationdata,
-    fetchdeviceprofiledata: fetchdeviceprofiledata,
-    fetchdevicetypedata: fetchdevicetypedata,
-    add_iotdevices: add_iotdevices,
+    fetchOrganizationData: fetchOrganizationData,
+    fetchLocationData: fetchLocationData,
+    fetchProfileData: fetchProfileData,
+    fetchDeviceTypeData: fetchDeviceTypeData,
+    addIotdevicesData: addIotdevicesData,
     fetchApplicationData: fetchApplicationData,
-    update_iotdevices: update_iotdevices,
+    updateIotdevicesData: updateIotdevicesData,
 }, dispatch)
 
 export default connect(

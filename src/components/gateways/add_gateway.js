@@ -3,27 +3,19 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Select from 'react-select';
 import 'rc-checkbox/assets/index.css';
-import { fetchlocationdata } from '../../services/IOTDevice';
-import { fetchorganizationdata } from '../../services/Location';
+import { fetchLocationData } from '../../services/IOTDevice';
+import { fetchOrganizationData } from '../../services/Location';
 import { fetchGatwayTypeData, addGateway } from '../../services/Gateway';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
-import {
-    Row, Col, Card, CardBody, CardTitle, Table, CardHeader, Button,
-    DropdownToggle, DropdownMenu,
-    Nav, NavItem, NavLink,
-    UncontrolledTooltip, UncontrolledButtonDropdown,
-    Modal, ModalHeader, ModalBody, ModalFooter,
-    Form, Label, Input, FormGroup, DropdownItem
-} from 'reactstrap';
+import { Row, Col, Button, Modal, ModalHeader, ModalBody, ModalFooter, Form, Label, Input, FormGroup } from 'reactstrap';
 import SimpleReactValidator from 'simple-react-validator';
 import Notification from '../../library/notification';
-
 class AddGateway extends Component {
     constructor(props) {
         super(props);
         this.validator = new SimpleReactValidator({
-            element: (message, className) => <div className='required_message'>{message}</div>
-        })
+            element: (message, className) => <div className='required_message'>{message}</div>,
+        }, {autoForceUpdate: this})
     }
     state = {
         organization: '',
@@ -32,40 +24,45 @@ class AddGateway extends Component {
         label: '',
         gatewayId: '',
     }
-
     componentDidMount = async () => {
-        const { fetchorganizationdata, fetchGatwayTypeData } = this.props;
-        await fetchorganizationdata();
+        const { fetchOrganizationData, fetchGatwayTypeData } = this.props;
+        await fetchOrganizationData();
         await fetchGatwayTypeData();
     }
-
     toggle = () => {
         this.props.isaddgatewaymodalcancle();
+        this.setState({
+        organization: '',
+        location: '',
+        gatewaytype: '',
+        label: '',
+        gatewayId: '',
+        })
     }
-
     onChangeOrg = async (organization) => {
         this.setState({ organization });
-        const { fetchlocationdata } = this.props;
-        await fetchlocationdata(organization.value);
+        const { fetchLocationData } = this.props;
+        await fetchLocationData(organization.value);
         this.setState({ location: '' })
     }
-
     onSave = async () => {
-        this.validator.showMessageFor('organization');
-        this.validator.showMessageFor('location');
-        this.validator.showMessageFor('deviceid');
-        this.validator.showMessageFor('devicetype');
-        this.validator.showMessageFor('application');
-        this.validator.showMessageFor('dutycyclemin');
-        this.validator.showMessageFor('deviceprofile');
         if (this.validator.allValid()) {
             let data = { "label": this.state.label, "gatewayId": this.state.gatewayId, "gatewayType": { "id": this.state.gatewaytype.value }, "locations": { "id": this.state.location.value }, "entities": { "id": this.state.organization.value } };
             const { addGateway } = this.props;
             await addGateway(data);
             this.props.isaddgatewaymodal();
+            this.setState({
+                organization: '',
+                location: '',
+                gatewaytype: '',
+                label: '',
+                gatewayId: '',
+                })
+        } else {
+            this.validator.showMessages();
+            this.forceUpdate();
         }
     }
-
     render() {
         const { IOTDevice, Location, Status, Gateways } = this.props.data;
         let orgnizationdata = Location.orgnizationdata.map(function (item) {
@@ -106,7 +103,7 @@ class AddGateway extends Component {
                                                     options={orgnizationdata}
                                                     placeholder='Select Organization'
                                                 />
-                                                {this.validator.message('organization', this.state.organization, 'required')}
+                                                {this.validator.message('Organization', this.state.organization, 'required')}
                                             </FormGroup>
                                         </Col>
                                         <Col md='6'>
@@ -118,7 +115,7 @@ class AddGateway extends Component {
                                                     options={locationdata}
                                                     placeholder='Select Location'
                                                 />
-                                                {this.validator.message('location', this.state.location, 'required')}
+                                                {this.validator.message('Location', this.state.location, 'required')}
                                             </FormGroup>
                                         </Col>
                                     </Row>
@@ -132,7 +129,7 @@ class AddGateway extends Component {
                                                     options={gatewaytypedata}
                                                     placeholder='Select Gateways Type'
                                                 />
-                                                {this.validator.message('gatewaytype', this.state.gatewaytype, 'required')}
+                                                {this.validator.message('Gateway Type', this.state.gatewaytype, 'required')}
                                             </FormGroup>
                                         </Col>
                                     </Row>
@@ -142,7 +139,7 @@ class AddGateway extends Component {
                                                 <Label for="label">Label *</Label>
                                                 <Input type='text' id="label"
                                                     onChange={(e) => this.setState({ label: e.target.value })} value={this.state.label} placeholder='Label' />
-                                                {this.validator.message('label', this.state.label, 'required')}
+                                                {this.validator.message('Label', this.state.label, 'required')}
                                             </FormGroup>
                                         </Col>
                                         <Col md='6'>
@@ -150,7 +147,7 @@ class AddGateway extends Component {
                                                 <Label for="gatewayId">GateWayId *</Label>
                                                 <Input type='text' id="gatewayId"
                                                     onChange={(e) => this.setState({ gatewayId: e.target.value })} value={this.state.gatewayId} placeholder='GateWayId' />
-                                                {this.validator.message('gatewayId', this.state.gatewayId, 'required')}
+                                                {this.validator.message('Gateway Id', this.state.gatewayId, 'required')}
                                             </FormGroup>
                                         </Col>
                                     </Row>
@@ -172,8 +169,8 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    fetchorganizationdata: fetchorganizationdata,
-    fetchlocationdata: fetchlocationdata,
+    fetchOrganizationData: fetchOrganizationData,
+    fetchLocationData: fetchLocationData,
     fetchGatwayTypeData: fetchGatwayTypeData,
     addGateway: addGateway,
 }, dispatch)

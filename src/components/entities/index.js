@@ -3,20 +3,14 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PageTitle from '../../components/includes/PageTitle';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
-import { fetchentitiesdata, editentitiey } from '../../services/Entities';
+import { fetchEntitiesData, editentitiey } from '../../services/Entities';
 import Editentitiey from './edit_entitie';
 import Appnetwork from './app_network';
 import {
-    Row, Col, Card, CardBody, CardTitle, Table, CardHeader, Button,
-    DropdownToggle, DropdownMenu,
-    Nav, NavItem, NavLink,
-    UncontrolledTooltip, UncontrolledButtonDropdown,
-    Modal, ModalHeader, ModalBody, ModalFooter,
-    Form, Label, Input, FormGroup, DropdownItem
+    Row, Col, Card, CardBody, CardHeader, Button,
 } from 'reactstrap';
 import { DataTable } from 'react-data-components';
 import Loading from '../../library/loader';
-import Notification from '../../library/notification';
 import Addentitie from './add_entitie';
 class Entities extends Component {
     constructor(props) {
@@ -34,7 +28,7 @@ class Entities extends Component {
 
     }
     componentWillReceiveProps = (props) => {
-        let data1 = props.data.Entities.entitiyitem;
+        let data1 = props.data.Entities.entitiydata;
         let allentitidata = [];
         data1 && data1.map((item, index) => {
             allentitidata.push({
@@ -50,30 +44,32 @@ class Entities extends Component {
     }
 
     componentDidMount = async () => {
-        const { fetchentitiesdata, editentitiey } = this.props;
-        await fetchentitiesdata();
+        const { fetchEntitiesData, editentitiey } = this.props;
+        await fetchEntitiesData();
         await editentitiey();
     }
     isaddentitimodal = () => {
         this.setState({ addentitiemodal: !this.state.addentitiemodal });
         this.setState({ notitype: 'addentitie' });
     }
-    add_entitie = () => {
+    addEntitie = () => {
         this.setState({ addentitiemodal: !this.state.addentitiemodal });
         this.setState({ notitype: 'addentitie' });
         this.setState({ notitype: '' });
     }
-    edit_entitiey = (item) => {
+    editEntitiey = (item) => {
         const { editentitiey } = this.props;
         editentitiey(item.id);
         this.setState({ editentitieymodal: !this.state.editentitieymodal });
         this.setState({ notitype: 'editentitiey' });
         this.setState({ notitype: '' });
     }
-
     iseditentitieymodal = () => {
         this.setState({ editentitieymodal: !this.state.editentitieymodal });
         this.setState({ notitype: 'editentitiey' })
+    }
+    iseditentitieymodalcancle=()=>{
+        this.setState({ editentitieymodal: !this.state.editentitieymodal });
     }
     onlora_network = (item, checked) => {
         if(item.enableLora == true) {
@@ -122,7 +118,7 @@ class Entities extends Component {
             {
                 title: 'Actions',
                 render: (val, row) => <div><i className="lnr-pencil"
-                    style={{ cursor: 'pointer' }} onClick={() => this.edit_entitiey(row)} /></div>,
+                    style={{ cursor: 'pointer' }} onClick={() => this.editEntitiey(row)} /></div>,
             }
         ];
         return (
@@ -141,9 +137,6 @@ class Entities extends Component {
                                 heading="Entities"
                                 icon="pe-7s-users icon-gradient bg-mean-fruit"
                             />
-                            <Fragment>
-                                {/* <Notification msg={Status.notificationMsg} status={Status.status} show={this.props.addlocationmodal} /> */}
-                            </Fragment>
                             <Card className="main-card mb-3">
                                 <CardHeader>
                                     <Row style={{ width: '100%' }}>
@@ -151,10 +144,12 @@ class Entities extends Component {
                                         </Col>
                                         <Col md="6" style={{ textAlign: 'right' }} >
                                             <Button color="success"
-                                                onClick={() => this.add_entitie()}
+                                                onClick={() => this.addEntitie()}
                                             >Add Entity
                                             </Button>
-                                            <Addentitie shownoti={this.shownoti} notitype={this.state.notitype} requiredMessage={this.state.requiredMessage} addentitiemodal={this.state.addentitiemodal} isaddentitimodal={this.isaddentitimodal} />
+                                            <Addentitie shownoti={this.shownoti} notitype={this.state.notitype}
+                        
+                                             addentitiemodal={this.state.addentitiemodal} isaddentitimodal={this.isaddentitimodal} />
                                         </Col>
                                     </Row>
                                 </CardHeader>
@@ -164,17 +159,17 @@ class Entities extends Component {
                                         initialData={this.state.allentitidata}
                                         initialPageLength={10}
                                         initialSortBy={{
-                                            prop: 'industrySector', order: 'descending', prop: 'name', order: 'descending'
-                                            , prop: 'type', order: 'descending', prop: 'reference', order: 'descending', prop: 'enableLora', order: 'descending',
+                                            prop: 'industrySector', prop: 'name', 
+                                             prop: 'type',  prop: 'reference',  order: 'descending',
                                         }}
                                         sortable={true}
                                     />
                                     <Editentitiey shownoti={this.shownoti} notitype={this.state.notitype}
-                                        requiredMessage={this.state.requiredMessage}
+                                       
                                         editentitieymodal={this.state.editentitieymodal} iseditentitieymodal={this.iseditentitieymodal} entitiyeditid={this.state.entitiyeditid}
-                                        entitiyeditid={this.state.id} />
+                                        entitiyeditid={this.state.id} iseditentitieymodalcancle={this.iseditentitieymodalcancle}/>
                                     <Appnetwork shownoti={this.shownoti} notitype={this.state.notitype}
-                                        requiredMessage={this.state.requiredMessage} loranetworkmodal={this.state.loranetworkmodal}
+                                        loranetworkmodal={this.state.loranetworkmodal}
                                         isloranetworkmodal={this.isloranetworkmodal} />
                                 </CardBody>
                             </Card>
@@ -189,7 +184,7 @@ const mapStateToProps = state => ({
     data: state,
 })
 const mapDispatchToProps = dispatch => bindActionCreators({
-    fetchentitiesdata: fetchentitiesdata,
+    fetchEntitiesData: fetchEntitiesData,
     editentitiey: editentitiey
 
 }, dispatch)

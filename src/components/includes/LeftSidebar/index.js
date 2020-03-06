@@ -47,7 +47,7 @@ class LeftSidebar extends Component {
                     <HeaderLogo />
                     <PerfectScrollbar>
                         <div className="app-sidebar__inner">
-                            {!SideNavItem.pending && SideNavItem.sidenavitem.map((item, index) => {
+                            {!SideNavItem.pending && SideNavItem.sidenavdata.map((item, index) => {
                                 const sidebarMenu = [
                                     {
                                         icon: item.icon,

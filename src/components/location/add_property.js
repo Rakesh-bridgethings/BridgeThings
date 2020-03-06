@@ -1,16 +1,12 @@
 import React, { Component, Fragment, createRef } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { fetchlocationitemdata, fetchorganizationdata, fetchlocationtypesdata, fetchpropertytypesdata, add_property, fetchcityregion } from '../../services/Location'
-import PageTitle from '../../components/includes/PageTitle';
+import { fetchOrganizationData, fetchPropertyTypesData, addPropertyData, fetchCityRegionData } from '../../services/Location'
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {
-    Row, Col, Card, CardBody, CardTitle, Table, CardHeader, Button,
-    DropdownToggle, DropdownMenu,
-    Nav, NavItem, NavLink,
-    UncontrolledTooltip, UncontrolledButtonDropdown,
+    Row, Col, Button,
     Modal, ModalHeader, ModalBody, ModalFooter,
-    Form, Label, Input, FormGroup, DropdownItem
+    Form, Label, Input, FormGroup
 } from 'reactstrap';
 import Select from 'react-select';
 import SimpleReactValidator from 'simple-react-validator';
@@ -35,7 +31,7 @@ class AddProperty extends Component {
         addorganizationmodal: false,
         addpropertymodal: false,
         orgnization: '',
-        propertytype: '',
+        propertytypedata: '',
         selectedPlace: {},
         label: '',
         country: {},
@@ -51,9 +47,9 @@ class AddProperty extends Component {
     };
 
     componentDidMount = async () => {
-        const { fetchorganizationdata, fetchpropertytypesdata } = this.props;
-        fetchorganizationdata();
-        fetchpropertytypesdata();
+        const { fetchOrganizationData, fetchPropertyTypesData } = this.props;
+        fetchOrganizationData();
+        fetchPropertyTypesData();
         Geocode.fromLatLng(this.state.mapPosition.lat, this.state.mapPosition.lng).then(
             response => {
                 const address = response.results[0].formatted_address,
@@ -95,10 +91,10 @@ class AddProperty extends Component {
             let selectedPlace = this.state.selectedPlace;
             selectedPlace.cityId = this.state.cityId;
             selectedPlace.entityId = this.state.orgnization.value;
-            selectedPlace.propertyType = this.state.propertytype.value;
+            selectedPlace.propertyType = this.state.propertytypedata.value;
             selectedPlace.label = this.state.label;
-            const { add_property } = this.props;
-            add_property(selectedPlace);
+            const { addPropertyData } = this.props;
+            addPropertyData(selectedPlace);
             this.props.isaddpropertymodal(!this.props.addpropertymodal);
         }
     }
@@ -109,8 +105,8 @@ class AddProperty extends Component {
 
     ChngCountry = (country) => {
         this.setState({ country: country });
-        const { fetchcityregion } = this.props;
-        fetchcityregion(country.value);
+        const { fetchCityRegionData } = this.props;
+        fetchCityRegionData(country.value);
     }
 
     ChngCity = (city) => {
@@ -313,7 +309,7 @@ class AddProperty extends Component {
         let orgnizationdata = Location.orgnizationdata.map(function (item) {
             return { value: item.id, label: item.name };
         })
-        let propertytypedata = Location.propertytype.map(function (item) {
+        let propertytypedata = Location.propertytypedata.map(function (item) {
             return { value: item.id, label: item.value };
         })
         let citydata = Location.regiondata.length > 0 ? Location.regiondata.map(function (item) {
@@ -372,11 +368,12 @@ class AddProperty extends Component {
                                     <Row>
                                         <Col md='6'>
                                             <FormGroup>
-                                                <Label for="organization">Organization *</Label>
+                                                <Label for="organization">Organization*</Label>
                                                 <Select
                                                     value={this.state.orgnization}
                                                     onChange={(orgnization) => this.setState({ orgnization })}
                                                     options={orgnizationdata}
+                                                    placeholder="Select organization"
                                                 />
                                                 {this.validator.message('orgnization', this.state.orgnization, 'required')}
                                             </FormGroup>
@@ -384,7 +381,7 @@ class AddProperty extends Component {
                                         <Col md='6'>
                                             <FormGroup>
                                                 <Label for="label">Label*</Label>
-                                                <Input type="text" id='label' onChange={(e) => this.setState({ label: e.target.value })} />
+                                                <Input type="text" id='label' placeholder="label" onChange={(e) => this.setState({ label: e.target.value })} />
                                                 {this.validator.message('label', this.state.label, 'required')}
                                             </FormGroup>
                                         </Col>
@@ -392,11 +389,12 @@ class AddProperty extends Component {
                                     <Row>
                                         <Col md='6'>
                                             <FormGroup>
-                                                <Label for="type">Type</Label>
+                                                <Label for="type">Type*</Label>
                                                 <Select
-                                                    value={this.state.propertytype}
-                                                    onChange={(propertytype) => this.setState({ propertytype })}
+                                                    value={this.state.propertytypedata}
+                                                    onChange={(propertytypedata) => this.setState({ propertytypedata })}
                                                     options={propertytypedata}
+                                                    placeholder="Select Type"
                                                 />
                                             </FormGroup>
                                         </Col>
@@ -407,6 +405,7 @@ class AddProperty extends Component {
                                                     value={this.state.country}
                                                     onChange={(country) => this.ChngCountry(country)}
                                                     options={countrydata}
+                                                    placeholder="country"
                                                 />
                                             </FormGroup>
                                         </Col>
@@ -414,11 +413,12 @@ class AddProperty extends Component {
                                     <Row>
                                         <Col md='6'>
                                             <FormGroup>
-                                                <Label for="city">City</Label>
+                                                <Label for="city">City*</Label>
                                                 <Select
                                                     value={this.state.city}
                                                     onChange={(city) => this.ChngCity(city)}
                                                     options={citydata}
+                                                    placeholder="Select City"
                                                 />
                                             </FormGroup>
                                         </Col>
@@ -435,6 +435,7 @@ class AddProperty extends Component {
                                                     className="form-control"
                                                     onPlaceSelected={this.onPlaceSelected}
                                                     types={['(regions)']}
+                                                    placeholder="Enter a Location For Property"
                                                     componentRestrictions={{ country: this.state.country.code !== undefined && this.state.country.code }}
                                                 />
                                             </FormGroup>
@@ -444,16 +445,16 @@ class AddProperty extends Component {
                                         <Col md={6}>
                                             <FormGroup>
                                                 <Label for="type">Area</Label>
-                                                <Input type="text" name="area" className="form-control" onChange={(e) => this.setState({ area: e.target.value })} value={this.state.area} />
+                                                <Input type="text" name="area" placeholder="area" className="form-control" onChange={(e) => this.setState({ area: e.target.value })} value={this.state.area} />
                                             </FormGroup>
                                             <FormGroup>
                                                 <Label for="type">Address</Label>
-                                                <Input type="text" name="address" className="form-control" onChange={this.onChange} readOnly="readOnly" value={this.state.address} />
+                                                <Input type="text" name="address" placeholder="address" className="form-control" onChange={this.onChange} readOnly="readOnly" value={this.state.address} />
                                             </FormGroup>
 
                                             <FormGroup>
                                                 <Label for="type">Postal Code</Label>
-                                                <Input type="text" name="postalCode" className="form-control" onChange={this.onChange} readOnly="readOnly" value={this.state.postalCode} />
+                                                <Input type="text" name="postalCode" placeholder="postal code"className="form-control" onChange={this.onChange} readOnly="readOnly" value={this.state.postalCode} />
                                             </FormGroup>
                                         </Col>
                                         <Col md={6}>
@@ -493,10 +494,10 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    fetchorganizationdata: fetchorganizationdata,
-    fetchpropertytypesdata: fetchpropertytypesdata,
-    add_property: add_property,
-    fetchcityregion: fetchcityregion,
+    fetchOrganizationData: fetchOrganizationData,
+    fetchPropertyTypesData: fetchPropertyTypesData,
+    addPropertyData: addPropertyData,
+    fetchCityRegionData: fetchCityRegionData,
 }, dispatch)
 
 export default connect(

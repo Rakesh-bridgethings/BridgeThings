@@ -1,16 +1,13 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { fetchlocationitemdata, fetchorganizationdata, fetchlocationtypesdata, fetchentitytypesdata, fetchdayintervalsdata } from '../../services/Location'
-import PageTitle from '../../components/includes/PageTitle';
+import { fetchLocationItemData, fetchOrganizationData, fetchLocationTypesData,
+     fetchEntityTypesData, fetchDayIntervalsData } from '../../services/Location'
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {
-    Row, Col, Card, CardBody, CardTitle, Table, CardHeader, Button,
-    DropdownToggle, DropdownMenu,
-    Nav, NavItem, NavLink,
-    UncontrolledTooltip, UncontrolledButtonDropdown,
+    Row, Col, Button,
     Modal, ModalHeader, ModalBody, ModalFooter,
-    Form, Label, Input, FormGroup, DropdownItem
+    Form, Label, FormGroup
 } from 'reactstrap';
 
 class Business_Hours extends Component {
@@ -38,12 +35,13 @@ class Business_Hours extends Component {
     }
 
     componentDidMount = async () => {
-        const { fetchlocationitemdata, fetchorganizationdata, fetchlocationtypesdata, fetchentitytypesdata, fetchdayintervalsdata } = this.props;
-        fetchlocationitemdata();
-        fetchorganizationdata();
-        fetchlocationtypesdata();
-        fetchentitytypesdata();
-        fetchdayintervalsdata();
+        const { fetchLocationItemData, fetchOrganizationData, fetchLocationTypesData, 
+            fetchEntityTypesData, fetchDayIntervalsData } = this.props;
+        fetchLocationItemData();
+        fetchOrganizationData();
+        fetchLocationTypesData();
+        fetchEntityTypesData();
+        fetchDayIntervalsData();
     }
 
     business_hrs = (e, index, item) => {
@@ -74,7 +72,7 @@ class Business_Hours extends Component {
     }
 
     toggle = () => {
-        this.props.iseditnextmodal();
+        this.props.iseditnextmodalcancle();
     }
 
     save = () => {
@@ -91,7 +89,6 @@ class Business_Hours extends Component {
             }
         }
     }
-
     back = () => {
         this.props.iseditnextmodal();
     }
@@ -139,7 +136,7 @@ class Business_Hours extends Component {
                                                 <Row>
                                                     <Col md='4'>
                                                         <FormGroup>
-                                                            <select id={index1} className="form-control" onChange={(e) => this.business_hrs(e, index1, item1)}
+                                                            <select id={index1} className="form-control"  onChange={(e) => this.business_hrs(e, index1, item1)}
                                                                 value={select_indx !== -1 ? this.state.busi_details[select_indx].businessType : ''} >
                                                                 <option selected value=''>Select Business Hours</option>
                                                                 {hrsOption.map((item, index) => {
@@ -157,10 +154,10 @@ class Business_Hours extends Component {
                                                                     <Col md='4' >
                                                                         <FormGroup>
                                                                             <select className={`form-control ${(item2.opensAt === null || item2.opensAt === '') && this.state.saveClicked && 'is-invalid'}`}
-                                                                                value={item2.opensAt}
+                                                                              value={item2.opensAt}
                                                                                 onChange={(e) => this.startend_hours(e, 'opensAt', index1, item1)}>
                                                                                 <option selected value=''>Start Hours</option>
-                                                                                {Location.daysinterval.map((item, index) => {
+                                                                                {Location.daysintervaldata.map((item, index) => {
                                                                                     return (
                                                                                         <option key={index} value={item.minutes}>{item.value}</option>
                                                                                     )
@@ -173,10 +170,10 @@ class Business_Hours extends Component {
                                                                     <Col md='4'>
                                                                         <FormGroup>
                                                                             <select className={`form-control ${(item2.closesAt === null || item2.closesAt === '') && this.state.saveClicked && 'is-invalid'}`}
-                                                                                value={item2.closesAt}
+                                                                             value={item2.closesAt}
                                                                                 onChange={(e) => this.startend_hours(e, 'closesAt', index1, item1)}>
                                                                                 <option selected value='' >End Hours</option>
-                                                                                {Location.daysinterval.map((item, index) => {
+                                                                                {Location.daysintervaldata.map((item, index) => {
                                                                                     return (
                                                                                         <option key={index} value={item.minutes}>{item.value}</option>
                                                                                     )
@@ -199,7 +196,7 @@ class Business_Hours extends Component {
                             </ModalBody>
                             <ModalFooter>
                                 <Button color="light" onClick={() => this.back()}>Back</Button>
-                                <Button color="dark" onClick={() => this.save()}>Save</Button>{' '}
+                                <Button color="success" onClick={() => this.save()}>Update</Button>{' '}
                             </ModalFooter>
                         </Modal>
 
@@ -217,11 +214,11 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    fetchlocationitemdata: fetchlocationitemdata,
-    fetchorganizationdata: fetchorganizationdata,
-    fetchlocationtypesdata: fetchlocationtypesdata,
-    fetchentitytypesdata: fetchentitytypesdata,
-    fetchdayintervalsdata: fetchdayintervalsdata,
+    fetchLocationItemData: fetchLocationItemData,
+    fetchOrganizationData: fetchOrganizationData,
+    fetchLocationTypesData: fetchLocationTypesData,
+    fetchEntityTypesData: fetchEntityTypesData,
+    fetchDayIntervalsData: fetchDayIntervalsData,
 }, dispatch)
 
 export default connect(

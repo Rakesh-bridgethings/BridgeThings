@@ -1,4 +1,4 @@
-export const FETCH_LOCATIONITEM_SUCCESS = 'FETCH_LOCATIONITEM_SUCCESS';
+export const FETFH_LOCATIONITEM_DATA = 'FETFH_LOCATIONITEM_DATA';
 // orgnization
 export const FETCH_ORGANIZATIONDATA_SUCCESS = 'FETCH_ORGANIZATIONDATA_SUCCESS';
 // location types
@@ -30,23 +30,23 @@ export function data_post_status(status, msg, page) {
     }
 }
 
-export function fetch_locationitem_success(locationitem_data) {
+export function fetch_locationitem_data(locationdata) {
     return {
-        type: FETCH_LOCATIONITEM_SUCCESS,
-        locationitem: locationitem_data
+        type: FETFH_LOCATIONITEM_DATA,
+        locationdata: locationdata
     }
 }
 
-export function fetch_region_success(region_data) {
+export function fetch_region_data(regiondata) {
     return {
         type: FETCH_REGION_SUCCESS,
-        regiondata: region_data
+        regiondata: regiondata
     }
 }
 
 // organization
 
-export function fetch_organizationdata_success(orgnizationdata) {
+export function fetch_organizationdata_data(orgnizationdata) {
     return {
         type: FETCH_ORGANIZATIONDATA_SUCCESS,
         orgnizationdata: orgnizationdata
@@ -55,20 +55,20 @@ export function fetch_organizationdata_success(orgnizationdata) {
 
 //location types
 
-export function fetch_location_types_success(location_types) {
+export function fetch_locationtypes_data(locationtypedata) {
     return {
         type: FETCH_LOCATIONTYPE_SUCCESS,
-        locationtypes: location_types
+        locationtypedata: locationtypedata
     }
 }
 
 
 
 // ENTITY TYPES 
-export function fetch_entity_types_success(entity_types) {
+export function fetch_entitytypes_data(entitytypedata) {
     return {
         type: FETCH_ENTITYTYPE_SUCCESS,
-        entitytype: entity_types
+        entitytypedata: entitytypedata
     }
 }
 
@@ -76,33 +76,33 @@ export function fetch_entity_types_success(entity_types) {
 
 // property type
 
-export function fetch_property_types_success(property_types) {
+export function fetch_propertytypes_data(propertytypedata) {
     return {
         type: FETCH_PROPERTYTYPE_SUCCESS,
-        propertytype: property_types
+        propertytypedata: propertytypedata
     }
 }
 
 // property
 
-export function fetch_property_success(property) {
+export function fetch_property_data(propertydata) {
     return {
         type: FETCH_PROPERTY_SUCCESS,
-        property: property
+        propertydata: propertydata
     }
 }
 
 // DAYS INTERVAL
-export function fetch_day_intervals_success(days_interval) {
+export function fetch_dayintervals_data(daysintervaldata) {
     return {
         type: FETCH_DAYSINTERVAL_SUCCESS,
-        daysinterval: days_interval
+        daysintervaldata: daysintervaldata
     }
 }
 
 // edit location
 
-export function edit_location_data_success(editdata) {
+export function fetch_editlocation_data(editdata) {
     return {
         type: EDIT_LOCATION_SUCCESS,
         editdata: editdata

@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PageTitle from '../../components/includes/PageTitle';
-import { fetchuseritemdata, fetchUpdateUserStatus, edituser } from '../../services/User';
+import { fetchUserData, fetchUpdateUserStatus, editUser } from '../../services/User';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import Adduser from './add_user';
 import Switch from "react-switch";
@@ -32,7 +32,6 @@ class Users extends Component {
         checked: false,
         editusermodal: false,
         notitype: '',
-
     }
     componentWillReceiveProps = (props) => {
         let data = props.data.User.useritem;
@@ -58,9 +57,9 @@ class Users extends Component {
         this.setState({ alluserdata });
     }
     componentDidMount = async () => {
-        const { fetchuseritemdata,edituser } = this.props;
-        await fetchuseritemdata();
-        await edituser();
+        const { fetchUserData,editUser } = this.props;
+        await fetchUserData();
+        await editUser();
     }
     handleChange(row, checked) {
         this.setState({ notitype: '' });
@@ -71,7 +70,6 @@ class Users extends Component {
             this.setState({ notitype: 'userstatus' });
         // }
     }
-
     isaddusermodal = () => {
         this.setState({ addusermodal: !this.state.addusermodal });
         this.setState({ notitype: 'adduser' });
@@ -81,8 +79,8 @@ class Users extends Component {
         this.setState({ notitype: '' });
     };
     edit_user = (item) => {
-        const {edituser} = this.props;
-        edituser(item.id);
+        const {editUser} = this.props;
+        editUser(item.id);
         this.setState({ editusermodal: !this.state.editusermodal });
         this.setState({ notitype: '' });
     }
@@ -195,7 +193,8 @@ class Users extends Component {
                                             <Button color="success"
                                                 onClick={() => this.add_user()}
                                             >Add User</Button>
-                                            <Adduser shownoti={this.shownoti} notitype={this.state.notitype} requiredMessage={this.state.requiredMessage} addusermodal={this.state.addusermodal} isaddusermodal={this.isaddusermodal} />
+                                            <Adduser shownoti={this.shownoti} notitype={this.state.notitype}
+                                            addusermodal={this.state.addusermodal} isaddusermodal={this.isaddusermodal} />
                                         </Col>
                                     </Row>
                                 </CardHeader>
@@ -204,10 +203,10 @@ class Users extends Component {
                                         columns={columns}
                                         initialData={this.state.alluserdata}
                                         initialPageLength={10}
-                                        initialSortBy={{ prop: 'firstName', order: 'descending', prop: 'lastName,,', order: 'descending', prop: 'email', order: 'descending', prop: 'entityName', order: 'descending', prop: 'lastLoginOn', order: 'descending', prop: 'loginCount', order: 'descending', prop: 'activatedAt', order: 'descending', }}
+                                         initialSortBy={{ prop: 'firstName', prop: 'lastName,,', prop: 'email',  prop: 'entityName',  prop:'lastLoginOn', prop: 'loginCount', prop: 'activatedAt', order: 'descending' }}
                                         sortable={true}
                                     />
-                                    <Edituser shownoti={this.shownoti} notitype={this.state.notitype} requiredMessage={this.state.requiredMessage} editusermodal={this.state.editusermodal} iseditusermodal={this.iseditusermodal} />
+                                    <Edituser shownoti={this.shownoti} notitype={this.state.notitype} editusermodal={this.state.editusermodal} iseditusermodal={this.iseditusermodal}  />
                                 </CardBody>
                             </Card>
                         </div>
@@ -222,9 +221,9 @@ const mapStateToProps = state => ({
     data: state,
 })
 const mapDispatchToProps = dispatch => bindActionCreators({
-    fetchuseritemdata: fetchuseritemdata,
+    fetchUserData: fetchUserData,
     fetchUpdateUserStatus: fetchUpdateUserStatus,
-    edituser: edituser,
+    editUser: editUser,
 }, dispatch)
 export default connect(
     mapStateToProps,

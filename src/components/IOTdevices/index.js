@@ -1,11 +1,11 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { fetchIOTDeviceData, fetcheditdata, fetch_loraconfig } from '../../services/IOTDevice';
+import { fetchIOTDeviceData, fetchEditData, fetchLoraConfig } from '../../services/IOTDevice';
 import PageTitle from '../../components/includes/PageTitle';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {
-    Row, Col, Card, CardBody, Table, CardHeader, Button,
+    Row, Col, Card, CardBody, CardHeader, Button,
 } from 'reactstrap';
 import AddIOTDevice from './add_device';
 import EditIOTDevice from './edit_device';
@@ -61,24 +61,25 @@ class IOTDevices extends Component {
     }
 
     edit_device = async (row) => {
-        let { fetcheditdata } = this.props;
-        await fetcheditdata(row.id);
+        let { fetchEditData } = this.props;
+        await fetchEditData(row.id);
         this.setState({ editdevicemodal: !this.state.editdevicemodal });
         this.setState({ notitype: '' });
     }
 
     edit_loraconfig = async (row) => {
-        let { fetch_loraconfig, IOTDevice } = this.props;
-        await fetch_loraconfig(row.deviceId);
+        let { fetchLoraConfig } = this.props;
+        await fetchLoraConfig(row.deviceId);
+        let {IOTDevice} = this.props.data;
         IOTDevice.loraconfigdata && this.setState({ loraconfig: IOTDevice.loraconfigdata, deviceId: row.deviceId });
         if (IOTDevice.loraconfigdata) {
             this.setState({ loraconfigmodal: true });
         }
     }
 
-    add_device = () => {
+    addDevice = () => {
         this.setState({ adddevicemodal: !this.state.adddevicemodal });
-        this.setState({ notitype: '' });
+        this.setState({ notitype: 'adddevice' });
     }
 
     isaddiotdevicemodal = () => {
@@ -100,7 +101,6 @@ class IOTDevices extends Component {
     }
 
     isloraconfigmodal = () => {
-        // this.setState({ loraconfigmodal: !this.state.loraconfigmodal });
         this.setState({ notitype: 'loraconfig' });
     }
 
@@ -200,7 +200,7 @@ class IOTDevices extends Component {
 
                                         </Col>
                                         <Col md="6" style={{ textAlign: 'right' }} >
-                                            <Button color="success" onClick={() => this.add_device()}>Add IOT Device</Button>
+                                            <Button color="success" onClick={() => this.addDevice()}>Add IOT Device</Button>
                                             <AddIOTDevice shownoti={this.shownoti} notitype={this.state.notitype} adddevicemodal={this.state.adddevicemodal} isaddiotdevicemodal={this.isaddiotdevicemodal} isaddiotdevicemodalcancle={this.isaddiotdevicemodalcancle} />
                                         </Col>
                                     </Row>
@@ -233,8 +233,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => bindActionCreators({
     fetchIOTDeviceData: fetchIOTDeviceData,
-    fetcheditdata: fetcheditdata,
-    fetch_loraconfig: fetch_loraconfig,
+    fetchEditData: fetchEditData,
+    fetchLoraConfig: fetchLoraConfig,
 }, dispatch)
 
 export default connect(

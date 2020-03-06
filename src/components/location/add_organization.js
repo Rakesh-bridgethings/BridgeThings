@@ -1,16 +1,12 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { fetchlocationitemdata, fetchorganizationdata, fetchlocationtypesdata, fetchentitytypesdata, add_organization } from '../../services/Location'
-import PageTitle from '../../components/includes/PageTitle';
+import { fetchEntityTypesData, addOrganizationData } from '../../services/Location'
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {
-    Row, Col, Card, CardBody, CardTitle, Table, CardHeader, Button,
-    DropdownToggle, DropdownMenu,
-    Nav, NavItem, NavLink,
-    UncontrolledTooltip, UncontrolledButtonDropdown,
+    Row, Col, Button,
     Modal, ModalHeader, ModalBody, ModalFooter,
-    Form, Label, Input, FormGroup, DropdownItem
+    Form, Label, Input, FormGroup,
 } from 'reactstrap';
 import Select from 'react-select';
 import SimpleReactValidator from 'simple-react-validator';
@@ -37,9 +33,9 @@ class AddOrganization extends Component {
     };
 
     componentDidMount = async () => {
-        const { fetchentitytypesdata } = this.props;
+        const { fetchEntityTypesData } = this.props;
     
-        fetchentitytypesdata();
+        fetchEntityTypesData();
     }
 
     toggle = () => {
@@ -55,15 +51,15 @@ class AddOrganization extends Component {
                 name: this.state.name,
                 entityType: { id: this.state.type.value }
             }
-            const { add_organization } = this.props;
-            add_organization(alldata);
+            const { addOrganizationData } = this.props;
+            addOrganizationData(alldata);
         }
         this.setState({ nextclick: true });
     }
 
     render() {
         const { Location } = this.props.data;
-        const typedata = Location.entitytype.map(function (item) {
+        const typedata = Location.entitytypedata.map(function (item) {
             return { value: item.id, label: item.reference };
         })
         const orgStyles = {
@@ -94,7 +90,7 @@ class AddOrganization extends Component {
                                         <Col md='6'>
                                             <FormGroup>
                                                 <Label for="name">Name *</Label>
-                                                <Input type="text" id='name' onChange={(e) => this.setState({ name: e.target.value })}
+                                                <Input type="text" id='name' placeholder="name" onChange={(e) => this.setState({ name: e.target.value })}
                                                     onBlur={() => this.validator.showMessageFor('name')}
                                                     className={`${this.state.nextclick && this.state.name === '' && this.state.errorClass}`} />
                                                 {this.validator.message('name', this.state.name, 'required|alpha_num')}
@@ -108,6 +104,7 @@ class AddOrganization extends Component {
                                                     styles={orgStyles}
                                                     onChange={(type) => this.setState({ type })}
                                                     options={typedata}
+                                                    placeholder="Select Organization Type"
                                                 />
                                                 {this.validator.message('type', this.state.type, 'required')}
                                             </FormGroup>
@@ -135,8 +132,8 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    fetchentitytypesdata: fetchentitytypesdata,
-    add_organization: add_organization,
+    fetchEntityTypesData: fetchEntityTypesData,
+    addOrganizationData: addOrganizationData,
 }, dispatch)
 
 export default connect(

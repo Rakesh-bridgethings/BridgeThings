@@ -3,13 +3,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { deleteLocationData } from '../../services/Location'
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
-import {
-    Row, Col, Card, CardBody, CardTitle, Table, CardHeader, Button,
-    DropdownToggle, DropdownMenu,
-    Nav, NavItem, NavLink,
-    UncontrolledTooltip, UncontrolledButtonDropdown,
-    Modal, ModalHeader, ModalBody, ModalFooter,
-    Form, Label, Input, FormGroup, DropdownItem
+import { Button,
+    Modal, ModalHeader, ModalBody, ModalFooter
 } from 'reactstrap';
 import Notification from '../../library/notification';
 
@@ -42,7 +37,7 @@ class EditLocation extends Component {
         let { deleteLocationData } = this.props;
         deleteLocationData(this.state.getdeleteid);
         this.props.isdeletelocationmodal();
-        this.props.shownoti('delete');
+        this.props.shownoti('deletelocation');
     }
 
     render() {
@@ -57,7 +52,7 @@ class EditLocation extends Component {
                     transitionEnter={false}
                     transitionLeave={false}>
                     <div>
-                        {Status.status !== '' && Status.page === 'delete' &&  this.props.notitype === 'delete' &&             
+                        {Status.status !== '' && Status.page === 'deletelocation' &&  this.props.notitype === 'deletelocation' &&             
                             <Notification msg={Status.notificationMsg} status={Status.status} />
                         }
                         <Modal isOpen={this.props.deletelocationmodal} toggle={() => this.toggle()} className={this.props.className} id='delete_location'>

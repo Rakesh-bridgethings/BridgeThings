@@ -5,46 +5,44 @@ export const FETCH_EDIT_ENTITTY_DATA_SUCESS='FETCH_EDIT_ENTITTY_DATA_SUCESS';
 export const FETCH_LORA_APPTYPE_SUCESS='FETCH_LORA_APPTYPE_SUCESS';
 export const FETCH_LORANETAPPUP_SUCESS='FETCH_LORANETAPPUP_SUCESS';
 
-export function fetch_entities_types_sucess(entitiyitem_data) {
+export function fetch_entitiestypes_data(entitiydata) {
  
     return {
         type: FETCH_ENTITIES_SUCESS,
-        entitiyitem: entitiyitem_data
+        entitiydata: entitiydata
     }
 }
-
-export function fetch_addentitiy_types_success(addentititype_data){
-   
+export function fetch_addentitiytypes_data(addentititiydata){
     return{
         type:FETCH_ADDENTITIY_TYPES_SUCESS,
-        addentititypeitem:addentititype_data
+        addentititiydata:addentititiydata
     }
 }
-export function fetch_sector_addentitiy_types_success(addentititisecitem_data){
+export function fetch_sector_data(sectordata){
   
     return{
         type:FETCH_SEC_ADDENTITIY_TYPES_SUCESS,
-        addentititisecitem:addentititisecitem_data
+        sectordata:sectordata
     }
 }
-export function Fetch_edit_entitty_data_success(entitiyuserdata){
+export function Fetch_editentitty_data(entitiyuserdata){
     
     return{
       type:FETCH_EDIT_ENTITTY_DATA_SUCESS,
-      editentititisecitem:entitiyuserdata
+      entitiyuserdata:entitiyuserdata
     }
 }
-export function fetch_lora_apptype_success(loraapptypedata){
+export function fetch_loraapptype_data(loraappdata){
    
     return{
         type:FETCH_LORA_APPTYPE_SUCESS,
-        loraapptypeitem:loraapptypedata
+        loraappdata:loraappdata
     }
 }
-export function fetch_loranetappupadate_success(upadateappnetdata){
+export function fetch_loranetappupadate_success(upadateappdata){
     return{
         type:FETCH_LORANETAPPUP_SUCESS,
-        upadateappnetdata:upadateappnetdata
+        upadateappdata:upadateappdata
         
     }
 }

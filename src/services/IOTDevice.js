@@ -22,7 +22,7 @@ export function fetchIOTDeviceData() {
    }).catch(async (err) => { await statusMessage(dispatch, 'error', err); throw err; });
 }
 
-export function fetchlocationdata(entityid) {
+export function fetchLocationData(entityid) {
    return dispatch => new Promise(async (resolve, reject) => {
       await statusMessage(dispatch, 'loading', true);
       try {
@@ -54,7 +54,7 @@ export function fetchApplicationData(entityid) {
    }).catch(async (err) => { await statusMessage(dispatch, 'error', err); throw err; });
 }
 
-export function fetchdevicetypedata() {
+export function fetchDeviceTypeData() {
    return dispatch => new Promise(async (resolve, reject) => {
       await statusMessage(dispatch, 'loading', true);
       try {
@@ -70,7 +70,7 @@ export function fetchdevicetypedata() {
    }).catch(async (err) => { await statusMessage(dispatch, 'error', err); throw err; });
 }
 
-export function fetchdeviceprofiledata() {
+export function fetchProfileData() {
    return dispatch => new Promise(async (resolve, reject) => {
       await statusMessage(dispatch, 'loading', true);
       try {
@@ -86,7 +86,7 @@ export function fetchdeviceprofiledata() {
    }).catch(async (err) => { await statusMessage(dispatch, 'error', err); throw err; });
 }
 
-export function add_iotdevices(value) {
+export function addIotdevicesData(value) {
    return dispatch => new Promise(async (resolve, reject) => {
       await statusMessage(dispatch, 'loading', true);
       try {
@@ -121,7 +121,7 @@ export function add_iotdevices(value) {
    }).catch(async (err) => { await statusMessage(dispatch, 'error', err); throw err; });
 }
 
-export function fetcheditdata(editid) {
+export function fetchEditData(editid) {
    let editdata = [];
    return dispatch => new Promise(async (resolve, reject) => {
       await statusMessage(dispatch, 'loading', true);
@@ -145,7 +145,7 @@ export function fetcheditdata(editid) {
    }).catch(async (err) => { await statusMessage(dispatch, 'error', err); throw err; });
 }
 
-export function update_iotdevices(value) {
+export function updateIotdevicesData(value) {
    return dispatch => new Promise(async (resolve, reject) => {
       await statusMessage(dispatch, 'loading', true);
       try {
@@ -180,7 +180,7 @@ export function update_iotdevices(value) {
    }).catch(async (err) => { await statusMessage(dispatch, 'error', err); throw err; });
 }
 
-export function fetch_loraconfig(deviceid) {
+export function fetchLoraConfig(deviceid) {
    return dispatch => new Promise(async (resolve, reject) => {
       await statusMessage(dispatch, 'loading', true);
       try {
@@ -196,7 +196,7 @@ export function fetch_loraconfig(deviceid) {
    }).catch(async (err) => { await statusMessage(dispatch, 'error', err); throw err; });
 }
 
-export function send_lora_config(value) {
+export function sendLoraConfig(value) {
    return dispatch => new Promise(async (resolve, reject) => {
       await statusMessage(dispatch, 'loading', true);
       try {

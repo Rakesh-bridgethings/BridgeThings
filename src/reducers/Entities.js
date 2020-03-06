@@ -1,13 +1,13 @@
 import {
     FETCH_ENTITIES_SUCESS,
     FETCH_ADDENTITIY_TYPES_SUCESS, FETCH_SEC_ADDENTITIY_TYPES_SUCESS, FETCH_EDIT_ENTITTY_DATA_SUCESS,
-    FETCH_LORA_APPTYPE_SUCESS, FETCH_LORANETAPPUP_SUCESS
+    FETCH_LORA_APPTYPE_SUCESS, FETCH_LORANETAPPUP_SUCESS,
 }
     from '../actions/entitiesitem';
 const initialState = {
-    entitiyitem: [],
-    editentititisecitem: [],
-    loraapptypeitem: [],
+    entitiydata: [],
+    entitiyuserdata: [],
+    loraappdata: [],
 }
 
 const entitiyitem = (state = initialState, action) => {
@@ -15,34 +15,34 @@ const entitiyitem = (state = initialState, action) => {
         case FETCH_ENTITIES_SUCESS:
             return {
                 ...state,
-                entitiyitem: action.entitiyitem,
+                entitiydata: action.entitiydata,
             }
         case FETCH_SEC_ADDENTITIY_TYPES_SUCESS:
             return {
                 ...state,
-                addentititisecitem: action.addentititisecitem,
+                sectordata: action.sectordata,
             }
         case FETCH_ADDENTITIY_TYPES_SUCESS:
             return {
                 ...state,
-                addentititypeitem: action.addentititypeitem,
+                addentititiydata: action.addentititiydata,
             }
         case FETCH_EDIT_ENTITTY_DATA_SUCESS:
             return {
                 ...state,
-                editentititisecitem: action.editentititisecitem,
+                entitiyuserdata: action.entitiyuserdata,
             }
         case FETCH_LORA_APPTYPE_SUCESS:
 
             return {
                 ...state,
-                loraapptypeitem: action.loraapptypeitem,
+                loraappdata: action.loraappdata,
             }
         case FETCH_LORANETAPPUP_SUCESS:
 
             return {
                 ...state,
-                upadateappnetdata: action.upadateappnetdata,
+                upadateappdata: action.upadateappdata,
             }
         default:
             return state

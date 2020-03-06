@@ -1,4 +1,7 @@
-import { fetch_locationitem_success, fetch_organizationdata_success, fetch_location_types_success, fetch_entity_types_success, fetch_property_types_success,  fetch_day_intervals_success,  fetch_property_success, edit_location_data_success, data_post_status, fetch_region_success } from '../actions/locationitem';
+import { fetch_locationitem_data, fetch_organizationdata_data,
+    fetch_locationtypes_data, fetch_entitytypes_data, fetch_propertytypes_data, 
+    fetch_dayintervals_data,  fetch_property_data, fetch_editlocation_data, 
+    data_post_status, fetch_region_data } from '../actions/locationitem';
 import axios from 'axios';
 import { SERVER_URL, HEADER } from '../config/config';
 import statusMessage from './status';
@@ -7,7 +10,7 @@ let locations = { "locations": [{ 'location': "BIPL-PDI-MBG" }, { 'location': "C
 
 // axios.get(`${SERVER_URL}region/list?country=US`).then(function (res) {
 
-export function fetchlocationitemdata() {
+export function fetchLocationItemData() {
    return dispatch => new Promise(async (resolve, reject) => {
       await statusMessage(dispatch, 'loading', true);
       var instance = axios.create({ baseURL: SERVER_URL, timeout: 2000, });
@@ -16,7 +19,7 @@ export function fetchlocationitemdata() {
             .then(async (res) => {
                statusMessage(dispatch, "loading", false);
                resolve(
-                  dispatch(fetch_locationitem_success(res.data.rows))
+                  dispatch(fetch_locationitem_data(res.data.rows))
                );
             });
       } catch (error) {
@@ -25,14 +28,14 @@ export function fetchlocationitemdata() {
    }).catch(async (err) => { await statusMessage(dispatch, 'error', err); throw err; });
 }
 
-export function fetchorganizationdata() {
+export function fetchOrganizationData() {
    return dispatch => new Promise(async (resolve, reject) => {
       await statusMessage(dispatch, 'loading', true);
       try {
          axios.get(`${SERVER_URL}entities`, { headers: HEADER }).then(async (res) => {
             statusMessage(dispatch, "loading", false);
             resolve(
-               dispatch(fetch_organizationdata_success(res.data.rows))
+               dispatch(fetch_organizationdata_data(res.data.rows))
             );
          });
       } catch (error) {
@@ -41,14 +44,14 @@ export function fetchorganizationdata() {
    }).catch(async (err) => { await statusMessage(dispatch, 'error', err); throw err; });
 }
 
-export function fetchlocationtypesdata() {
+export function fetchLocationTypesData() {
    return dispatch => new Promise(async (resolve, reject) => {
       await statusMessage(dispatch, 'loading', true);
       try {
          axios.get(`${SERVER_URL}location_types`, { headers: HEADER }).then(async (res) => {
             statusMessage(dispatch, "loading", false);
             resolve(
-               dispatch(fetch_location_types_success(res.data))
+               dispatch(fetch_locationtypes_data(res.data))
             );
          });
       } catch (error) {
@@ -57,14 +60,14 @@ export function fetchlocationtypesdata() {
    }).catch(async (err) => { await statusMessage(dispatch, 'error', err); throw err; });
 }
 
-export function fetchentitytypesdata() {
+export function fetchEntityTypesData() {
    return dispatch => new Promise(async (resolve, reject) => {
       await statusMessage(dispatch, 'loading', true);
       try {
          axios.get(`${SERVER_URL}entity_types`, { headers: HEADER }).then(async (res) => {
             statusMessage(dispatch, "loading", false);
             resolve(
-               dispatch(fetch_entity_types_success(res.data))
+               dispatch(fetch_entitytypes_data(res.data))
             );
          });
       } catch (error) {
@@ -73,14 +76,14 @@ export function fetchentitytypesdata() {
    }).catch(async (err) => { await statusMessage(dispatch, 'error', err); throw err; });
 }
 
-export function fetchpropertytypesdata() {
+export function fetchPropertyTypesData() {
    return dispatch => new Promise(async (resolve, reject) => {
       await statusMessage(dispatch, 'loading', true);
       try {
          axios.get(`${SERVER_URL}property_types`, { headers: HEADER }).then(async (res) => {
             statusMessage(dispatch, "loading", false);
             resolve(
-               dispatch(fetch_property_types_success(res.data))
+               dispatch(fetch_propertytypes_data(res.data))
             );
          });
       } catch (error) {
@@ -89,14 +92,14 @@ export function fetchpropertytypesdata() {
    }).catch(async (err) => { await statusMessage(dispatch, 'error', err); throw err; });
 }
 
-export function fetchpropertydata(id) {
+export function fetchPropertyData(id) {
    return dispatch => new Promise(async (resolve, reject) => {
       await statusMessage(dispatch, 'loading', true);
       try {
          axios.get(`${SERVER_URL}property/list?entity=${id}`, { headers: HEADER }).then(async (res) => {
             statusMessage(dispatch, "loading", false);
             resolve(
-               dispatch(fetch_property_success(res.data.list))
+               dispatch(fetch_property_data(res.data.list))
             );
          });
       } catch (error) {
@@ -105,14 +108,14 @@ export function fetchpropertydata(id) {
    }).catch(async (err) => { await statusMessage(dispatch, 'error', err); throw err; });
 }
 
-export function fetchcityregion(country) {
+export function fetchCityRegionData(country) {
    return dispatch => new Promise(async (resolve, reject) => {
       await statusMessage(dispatch, 'loading', true);
       try {
          axios.get(`${SERVER_URL}region/list?country=${country}`, { headers: HEADER }).then(async (res) => {
             statusMessage(dispatch, "loading", false);
             resolve(
-               dispatch(fetch_region_success(res.data.list))
+               dispatch(fetch_region_data(res.data.list))
             );
          });
       } catch (error) {
@@ -121,14 +124,14 @@ export function fetchcityregion(country) {
    }).catch(async (err) => { await statusMessage(dispatch, 'error', err); throw err; });
 }
 
-export function fetchdayintervalsdata() {
+export function fetchDayIntervalsData() {
    return dispatch => new Promise(async (resolve, reject) => {
       await statusMessage(dispatch, 'loading', true);
       try {
          axios.get(`${SERVER_URL}day_intervals`, { headers: HEADER }).then(async (res) => {
             statusMessage(dispatch, "loading", false);
             resolve(
-               dispatch(fetch_day_intervals_success(res.data))
+               dispatch(fetch_dayintervals_data(res.data))
             );
          });
       } catch (error) {
@@ -137,7 +140,7 @@ export function fetchdayintervalsdata() {
    }).catch(async (err) => { await statusMessage(dispatch, 'error', err); throw err; });
 }
 
-export function business_hours(value) {
+export function addLocation(value) {
    return dispatch => new Promise(async (resolve, reject) => {
       await statusMessage(dispatch, 'loading', true);
       try {
@@ -151,13 +154,13 @@ export function business_hours(value) {
                status = 'error';
             }
             resolve(
-               dispatch(data_post_status(status, res.data, 'add'))
+               dispatch(data_post_status(status, res.data, 'addlocation'))
             );
          }).catch(error => {
             statusMessage(dispatch, 'error', error);
             reject(error);
             resolve(
-               dispatch(data_post_status('error', error, 'add'))
+               dispatch(data_post_status('error', error, 'addlocation'))
             );
          });
 
@@ -165,7 +168,7 @@ export function business_hours(value) {
             .then(async (res) => {
                statusMessage(dispatch, "loading", false);
                resolve(
-                  dispatch(fetch_locationitem_success(res.data.rows))
+                  dispatch(fetch_locationitem_data(res.data.rows))
                );
             });
       } catch (error) {
@@ -193,7 +196,7 @@ export function editLocation(editid) {
                editdata[0].propertydatalist = res1.data.list;
             })
             resolve(
-               dispatch(edit_location_data_success(editdata[0]))
+               dispatch(fetch_editlocation_data(editdata[0]))
             );
          });
       } catch (error) {
@@ -216,20 +219,20 @@ export function deleteLocationData(id) {
                status = 'error';
             }
             resolve(
-               dispatch(data_post_status(status, res.data, 'delete'))
+               dispatch(data_post_status(status, res.data, 'deletelocation'))
             );
          }).catch(error => {
             statusMessage(dispatch, 'error', error);
             reject(error);
             resolve(
-               dispatch(data_post_status('error', error, 'delete'))
+               dispatch(data_post_status('error', error, 'deletelocation'))
             );
          });
          axios.post(`${SERVER_URL}locations`, locations, { headers: HEADER })
             .then(async (res) => {
                statusMessage(dispatch, "loading", false);
                resolve(
-                  dispatch(fetch_locationitem_success(res.data.rows))
+                  dispatch(fetch_locationitem_data(res.data.rows))
                );
             });
       } catch (error) {
@@ -253,13 +256,13 @@ export function updatedLocationData(id, editdata) {
                status = 'error';
             }
             resolve(
-               dispatch(data_post_status(status, res.data, 'update'))
+               dispatch(data_post_status(status, res.data, 'updatelocation'))
             );
          }).catch(error => {
             statusMessage(dispatch, 'error', error);
             reject(error);
             resolve(
-               dispatch(data_post_status('error', error, 'update'))
+               dispatch(data_post_status('error', error, 'updatelocation'))
             );
          });
 
@@ -267,7 +270,7 @@ export function updatedLocationData(id, editdata) {
             .then(async (res) => {
                statusMessage(dispatch, "loading", false);
                resolve(
-                  dispatch(fetch_locationitem_success(res.data.rows))
+                  dispatch(fetch_locationitem_data(res.data.rows))
                );
             });
       } catch (error) {
@@ -276,7 +279,7 @@ export function updatedLocationData(id, editdata) {
    }).catch(async (err) => { await statusMessage(dispatch, 'error', err); throw err; });
 }
 
-export function add_organization(value) {
+export function addOrganizationData(value) {
    return dispatch => new Promise(async (resolve, reject) => {
       await statusMessage(dispatch, 'loading', true);
       try {
@@ -290,13 +293,13 @@ export function add_organization(value) {
                status = 'error';
             }
             resolve(
-               dispatch(data_post_status(status, res.data, 'add'))
+               dispatch(data_post_status(status, res.data, 'addoraganization'))
             );
          }).catch(error => {
             statusMessage(dispatch, 'error', error);
             reject(error);
             resolve(
-               dispatch(data_post_status('error', error, 'add'))
+               dispatch(data_post_status('error', error, 'addoraganization'))
             );
          });
       } catch (error) {
@@ -306,7 +309,7 @@ export function add_organization(value) {
 }
 
 
-export function add_property(value) {
+export function addPropertyData(value) {
    return dispatch => new Promise(async (resolve, reject) => {
       await statusMessage(dispatch, 'loading', true);
       try {
@@ -320,13 +323,13 @@ export function add_property(value) {
                status = 'error';
             }
             resolve(
-               dispatch(data_post_status(status, res.data, 'add'))
+               dispatch(data_post_status(status, res.data, 'addproperty'))
             );
          }).catch(error => {
             statusMessage(dispatch, 'error', error);
             reject(error);
             resolve(
-               dispatch(data_post_status('error', error, 'add'))
+               dispatch(data_post_status('error', error, 'addproperty'))
             );
          });
       } catch (error) {

@@ -4,16 +4,12 @@ import { bindActionCreators } from 'redux';
 import Select from 'react-select';
 import Checkbox from 'rc-checkbox';
 import 'rc-checkbox/assets/index.css';
-import { fetchsectorentititypedata, fetchentititypedata, addEntitiy, updatEntityData } from '../../services/Entities';
-import PageTitle from '../includes/PageTitle';
+import { fetchSectorTypeData, fetchEntitiTypeData, addEntitiy, updatEntityData } from '../../services/Entities';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {
-    Row, Col, Card, CardBody, CardTitle, Table, CardHeader, Button,
-    DropdownToggle, DropdownMenu,
-    Nav, NavItem, NavLink,
-    UncontrolledTooltip, UncontrolledButtonDropdown,
+    Row, Col, Button,
     Modal, ModalHeader, ModalBody, ModalFooter,
-    Form, Label, Input, FormGroup, DropdownItem
+    Form, Label, Input, FormGroup
 } from 'reactstrap';
 import SimpleReactValidator from 'simple-react-validator';
 import Notification from '../../library/notification';
@@ -25,48 +21,44 @@ class Editentitiey extends Component {
         this.toggle = this.toggle.bind(this);
         this.validator = new SimpleReactValidator({
             element: (message, className) => <div className='required_message'>{message}</div>
-        })
+        }, {autoForceUpdate: this})
     }
     state = {
-        type: '',
         name: '',
-        loraNetWork: false,
+        loranetwork: false,
         sector: '',
         entitistepdata: [],
         reference: '',
         id: '',
         entityType: '',
         editentystepdata: {},
-        industrySector: '',
-        getappnetEntiData: {},
+        industrysector: '',
+        getappnetentidata: {},
         enableLora:false,
         
     }
     componentDidMount = async () => {
-        const { fetchsectorentititypedata, fetchentititypedata } = this.props;
-        await fetchsectorentititypedata();
-        await fetchentititypedata();
-    }
-    
+        const { fetchSectorTypeData, fetchEntitiTypeData } = this.props;
+        await fetchSectorTypeData();
+        await fetchEntitiTypeData();
+    }   
     componentWillReceiveProps = async (props) => {
         let { Entities } = props.data;  
-        Entities.editentititisecitem && Entities.editentititisecitem !== undefined && await this.setState({
-            id: Entities.editentititisecitem.id,
-            name: Entities.editentititisecitem.name,
-            enableLora: Entities.editentititisecitem.enableLora,
-            type: Entities.editentititisecitem.type,
-            entityType: { value: Entities.editentititisecitem.entityType && Entities.editentititisecitem.entityType.id, label: Entities.editentititisecitem.type },
-            sector: { value: Entities.editentititisecitem.sector && Entities.editentititisecitem.sector.id, label: Entities.editentititisecitem.industrySector },
+        Entities.entitiyuserdata && Entities.entitiyuserdata !== undefined && await this.setState({
+            id: Entities.entitiyuserdata.id,
+            name: Entities.entitiyuserdata.name,
+            enableLora: Entities.entitiyuserdata.enableLora,
+            entityType: { value: Entities.entitiyuserdata.entityType && Entities.entitiyuserdata.entityType.id, label: Entities.entitiyuserdata.type },
+            sector: { value: Entities.entitiyuserdata.sector && Entities.entitiyuserdata.sector.id, label: Entities.entitiyuserdata.industrySector },
         });
-            if (this.props.data.Entities && this.props.data.Entities.editentititisecitem!== undefined) {
-                const getappnetEntiData = {
-                    name: this.props.data.Entities.editentititisecitem.name,
-                    enableLora: this.props.data.Entities.editentititisecitem.enableLora,
-                    type: this.props.data.Entities.editentititisecitem.type,
-                    entityType: {id:this.props.data.Entities.editentititisecitem.entityType && this.props.data.Entities.editentititisecitem.entityType.id},
-                    sector: {id:this.props.data.Entities.editentititisecitem.sector && this.props.data.Entities.editentititisecitem.sector.id}
+            if (this.props.data.Entities && this.props.data.Entities.entitiyuserdata!== undefined) {          
+                const getappnetentidata = {
+                    name: this.props.data.Entities.entitiyuserdata.name,
+                    enableLora: this.props.data.Entities.entitiyuserdata.enableLora,
+                    entityType: {id:this.props.data.Entities.entitiyuserdata.entityType && this.props.data.Entities.entitiyuserdata.entityType.id},
+                    sector: {id:this.props.data.Entities.entitiyuserdata.sector && this.props.data.Entities.entitiyuserdata.sector.id}
                 }
-                this.setState({getappnetEntiData});
+                this.setState({getappnetentidata});
             }
     }
     addnameentitiy = (e) => {
@@ -74,27 +66,24 @@ class Editentitiey extends Component {
         this.validator.showMessageFor('Name');
     }
     isloranetapp = () => {
-        this.setState({ loraNetWork: !this.state.loraNetWork })
+        this.setState({ loranetwork: !this.state.loranetwork })
     }
     onCheckedloranetwork = (e) => {
-        this.setState({ enableLora: e.target.checked });
+        this.setState({ enablelora: e.target.checked });
     }
     toggle = () => {
-        this.props.iseditentitieymodal();
+        this.props.iseditentitieymodalcancle();
     }
     onupadate = async() => {
-        this.validator.showMessageFor('Type');
-        this.validator.showMessageFor('Name');
-        this.validator.showMessageFor('Sector');
         if (this.validator.allValid()) {   
             let data = {
                 "id": this.state.id,
                 "name": this.state.name,
-                'enableLora': this.state.enableLora,
+                'enableLora': this.state.enablelora,
                 "entityType": { id: this.state.entityType.value },
                 "sector": { id: this.state.sector.value }
             };
-            var differences = diff(this.state.getappnetEntiData, data);
+            var differences = diff(this.state.getappnetentidata, data);
             var dif = { ...dif };
             if (differences) {
                 differences.map((item, index) => {
@@ -107,14 +96,18 @@ class Editentitiey extends Component {
             updatEntityData(dif);
             this.props.iseditentitieymodal();
             this.props.shownoti('editentitiey');
+        } else {
+            this.validator.showMessages();
+            this.forceUpdate();
         }
     }
     render() {
         const { Entities, Status } = this.props.data;
-        let addtypeentiti = Entities.addentititypeitem && Entities.addentititypeitem.map(function (item) {
+        console.log(":::",this.state.enablelora)
+        let addtypeentiti = Entities.addentititiydata && Entities.addentititiydata.map(function (item) {
             return { value: item.id, label: item.reference };
         })
-        let addsectorentiti = Entities.addentititisecitem && Entities.addentititisecitem.map(function (item) {
+        let addsectorentiti = Entities.sectordata && Entities.sectordata.map(function (item) {
             return { value: item.id, label: item.value };
         })
         return (
@@ -140,32 +133,32 @@ class Editentitiey extends Component {
                                         <Col md='6'>
                                             <FormGroup>
                                                 <Label for="name">Name*</Label>
-                                                <Input type='text' id="name" onChange={(e) => this.addnameentitiy(e)} value={this.state.name} />
+                                                <Input type='text' id="name" placeholder="Enter Name"onChange={(e) => this.addnameentitiy(e)} value={this.state.name} />
                                                 {this.validator.message('Name', this.state.name, 'required')}
                                             </FormGroup>
                                         </Col>
                                         <Col md='6'>
                                             <FormGroup>
-                                                <Label for="type" placeholder="Select Entity Type">Entity Type*</Label>
+                                                <Label for="type">Entity Type*</Label>
                                                 <Select
                                                     value={this.state.entityType}
-                                                    onChange={(type) => this.setState({ entityType:type })}
+                                                    onChange={(entityType) => this.setState({ entityType })}
                                                     options={addtypeentiti}
+                                                    placeholder="Select Entity Type"
                                                 />
-                                                {this.validator.message('Type', this.state.type, 'required')}
-
+                                                {this.validator.message('Entity Type', this.state.entityType, 'required')}
                                             </FormGroup>
-
                                         </Col>
                                     </Row>
                                     <Row>
                                         <Col md='12'>
                                             <FormGroup>
-                                                <Label for="role" placeholder='Select Sector'>Sector</Label>
+                                                <Label for="role" >Sector</Label>
                                                 <Select
                                                     value={this.state.sector}
                                                     onChange={(sector) => this.setState({ sector })}
                                                     options={addsectorentiti}
+                                                    placeholder='Select Sector'
                                                 />
                                                 {this.validator.message('Sector', this.state.sector, 'required')}
                                             </FormGroup>
@@ -178,7 +171,7 @@ class Editentitiey extends Component {
                                                 <br />
                                                 <label style={{ cursor: 'pointer' }}>
                                                     <Checkbox
-                                                        checked={this.state.enableLora === true ? true : false}
+                                                        checked={this.state.enableLora}
                                                         onChange={(e) => this.onCheckedloranetwork(e)}
                                                     /> &nbsp;LoraNetWork
                                                 </label>
@@ -202,8 +195,8 @@ const mapStateToProps = state => ({
     data: state,
 })
 const mapDispatchToProps = dispatch => bindActionCreators({
-    fetchsectorentititypedata: fetchsectorentititypedata,
-    fetchentititypedata: fetchentititypedata,
+    fetchSectorTypeData: fetchSectorTypeData,
+    fetchEntitiTypeData: fetchEntitiTypeData,
     updatEntityData: updatEntityData,
     addEntitiy: addEntitiy,
 }, dispatch)

@@ -1,17 +1,11 @@
 import React, { Component, Fragment } from 'react';
-import ReactDOM from 'react-dom';
-import { fetchsensoritemdata, fetchEditSensorData } from '../../services/Sensors';
+import { fetchSensorData, fetchEditSensorData } from '../../services/Sensors';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PageTitle from '../../components/includes/PageTitle';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {
-    Row, Col, Card, CardBody, CardTitle, Table, CardHeader, Button,
-    DropdownToggle, DropdownMenu,
-    Nav, NavItem, NavLink,
-    UncontrolledTooltip, UncontrolledButtonDropdown,
-    Modal, ModalHeader, ModalBody, ModalFooter,
-    Form, Label, Input, FormGroup, DropdownItem
+    Row, Col, Card, CardBody, CardHeader, Button,
 } from 'reactstrap';
 import { DataTable } from 'react-data-components';
 import Loading from '../../library/loader';
@@ -28,7 +22,7 @@ class Sensors extends Component {
     }
 
     componentWillReceiveProps = (props) => {
-        let data = props.data.Sensors.sensoritem;
+        let data = props.data.Sensors.sensordata;
         let alltablesensdata = [];
         data && data.map((item, index) => {
             alltablesensdata.push({
@@ -47,8 +41,8 @@ class Sensors extends Component {
     }
 
     componentDidMount = async () => {
-        const { fetchsensoritemdata } = this.props;
-        await fetchsensoritemdata();
+        const { fetchSensorData } = this.props;
+        await fetchSensorData();
     }
 
     isaddsensoemodal = () => {
@@ -160,7 +154,7 @@ class Sensors extends Component {
                                         sortable={true}
                                         initialData={this.state.alltablesensdata}
                                         initialPageLength={10}
-                                        initialSortBy={{ prop: 'channelNo', prop: 'sensorStatus', order: 'descending' }}
+                                        initialSortBy={{ prop: 'channelNo', prop: 'sensorStatus', prop:'reference',prop:'sensorType',prop:'manufacturers',prop:'modelNo',prop:'lastDataAt',order: 'descending' }}
                                     />
                                     {Sensors.editdata && <EditSensor shownoti={this.shownoti} notitype={this.state.notitype} editsensormodal={this.state.editsensormodal} iseditsensoemodal={this.iseditsensoemodal} iseditsensoemodalcancle={this.iseditsensoemodalcancle} getEditData={Sensors.editdata} />}
                                 </CardBody>
@@ -177,7 +171,7 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    fetchsensoritemdata: fetchsensoritemdata,
+    fetchSensorData: fetchSensorData,
     fetchEditSensorData: fetchEditSensorData,
 }, dispatch)
 

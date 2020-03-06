@@ -4,15 +4,12 @@ import { bindActionCreators } from 'redux';
 import Select from 'react-select';
 import Checkbox from 'rc-checkbox';
 import 'rc-checkbox/assets/index.css';
-import { fetchsectorentititypedata, fetchentititypedata, addEntitiy } from '../../services/Entities';
+import { fetchSectorTypeData, fetchEntitiTypeData, addEntitiy } from '../../services/Entities';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {
-    Row, Col, Card, CardBody, CardTitle, Table, CardHeader, Button,
-    DropdownToggle, DropdownMenu,
-    Nav, NavItem, NavLink,
-    UncontrolledTooltip, UncontrolledButtonDropdown,
+    Row, Col, Button,
     Modal, ModalHeader, ModalBody, ModalFooter,
-    Form, Label, Input, FormGroup, DropdownItem
+    Form, Label, Input, FormGroup
 } from 'reactstrap';
 import SimpleReactValidator from 'simple-react-validator';
 import Notification from '../../library/notification';
@@ -22,56 +19,66 @@ class Addentitie extends Component {
         this.toggle = this.toggle.bind(this);
         this.validator = new SimpleReactValidator({
             element: (message, className) => <div className='required_message'>{message}</div>
-        })
+        }, {autoForceUpdate: this})
     }
     state = {
         type: '',
         name: '',
-        loraNetWork: false,
         sector: '',
-        entitistepdata: []
-
+        entitistepdata: [],
+        loranetwork: false,      
     }
     componentDidMount = async () => {
-        const { fetchsectorentititypedata, fetchentititypedata } = this.props;
-        await fetchsectorentititypedata();
-        await fetchentititypedata();
+        const { fetchSectorTypeData, fetchEntitiTypeData } = this.props;
+        await fetchSectorTypeData();
+        await fetchEntitiTypeData();
     }
     componentWillReceiveProps = (props) => {
-
     }
     addnameentitiy = (e) => {
         this.setState({ name: e.target.value });
     }
     onCheckedloranetwork = (e) => {
-        this.setState({ loraNetWork: e.target.checked });
+        this.setState({ loranetwork: e.target.checked });
     }
     toggle = () => {
         this.props.isaddentitimodal();
+        this.setState({
+            type: '',
+            name: '',
+            sector: '',
+            loranetwork: false,    
+        })
     }
     onsave = () => {
-        this.validator.showMessageFor('Type');
-        this.validator.showMessageFor('Name');
-        this.validator.showMessageFor('Sector');
         if (this.validator.allValid()) {
             this.props.isaddentitimodal();
             let data = {
                 "name": this.state.name,
-                'enableLora': this.state.loraNetWork,
+                'enableLora': this.state.loranetwork,
                 "entityType": { id: this.state.type.value },
                 "sector": { id: this.state.sector.value }
             };
             let { addEntitiy } = this.props;
             addEntitiy(data);
             this.props.shownoti('addentitie');
+            this.setState({
+                type: '',
+                name: '',
+                sector: '',
+                loranetwork: false,    
+            })
+        } else {
+            this.validator.showMessages();
+            this.forceUpdate();
         }
     }
     render() {
         const { Entities, Status } = this.props.data;
-        let addtypeentiti = Entities.addentititypeitem && Entities.addentititypeitem.map(function (item) {
+        let addtypeentiti = Entities.addentititiydata && Entities.addentititiydata.map(function (item) {
             return { value: item.id, label: item.reference };
         })
-        let addsectorentiti = Entities.addentititisecitem && Entities.addentititisecitem.map(function (item) {
+        let addsectorentiti = Entities.sectordata && Entities.sectordata.map(function (item) {
             return { value: item.id, label: item.value };
         })
         return (
@@ -97,17 +104,19 @@ class Addentitie extends Component {
                                         <Col md='6'>
                                             <FormGroup>
                                                 <Label for="name">Name*</Label>
-                                                <Input type='text' id="name" onChange={(e) => this.setState({ name: e.target.value })} value={this.state.name} />
+                                                <Input type='text' id="name" placeholder="Enter Name" onChange={(e) => this.setState({ name: e.target.value })} value={this.state.name} />
                                                 {this.validator.message('Name', this.state.name, 'required')}
                                             </FormGroup>
                                         </Col>
                                         <Col md='6'>
                                             <FormGroup>
-                                                <Label for="type" placeholder="Select Entity Type">Entity Type*</Label>
+                                                <Label for="type" >Type*</Label>
                                                 <Select
                                                     value={this.state.type}
                                                     onChange={(type) => this.setState({ type })}
                                                     options={addtypeentiti}
+                                                    placeholder="Select Entity Type"
+                                                  
                                                 />
                                                 {this.validator.message('Type', this.state.type, 'required')}
 
@@ -117,14 +126,14 @@ class Addentitie extends Component {
                                     <Row>
                                         <Col md='12'>
                                             <FormGroup>
-                                                <Label for="role" placeholder='Select Sector'>Sector</Label>
+                                                <Label for="role" >Sector</Label>
                                                 <Select
                                                     value={this.state.sector}
                                                     onChange={(sector) => this.setState({ sector })}
                                                     options={addsectorentiti}
+                                                    placeholder='Select Sector'
                                                 />
                                                 {this.validator.message('Sector', this.state.sector, 'required')}
-
                                             </FormGroup>
                                         </Col>
                                     </Row>
@@ -135,9 +144,8 @@ class Addentitie extends Component {
                                                 <br />
                                                 <label style={{ cursor: 'pointer' }}>
                                                     <Checkbox
-                                                        checked={this.state.loraNetWork}
+                                                        checked={this.state.loranetwork}
                                                         onChange={(e) => this.onCheckedloranetwork(e)}
-
                                                     /> &nbsp;LoraNetWork
                                                 </label>
                                             </FormGroup>
@@ -160,8 +168,8 @@ const mapStateToProps = state => ({
     data: state,
 })
 const mapDispatchToProps = dispatch => bindActionCreators({
-    fetchsectorentititypedata: fetchsectorentititypedata,
-    fetchentititypedata: fetchentititypedata,
+    fetchSectorTypeData: fetchSectorTypeData,
+    fetchEntitiTypeData: fetchEntitiTypeData,
     addEntitiy: addEntitiy
 }, dispatch)
 export default connect(

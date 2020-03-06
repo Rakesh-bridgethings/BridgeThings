@@ -3,10 +3,10 @@ import { FETCH_USERITEMDATA_SUCESS, FETCH_ROLE_TYPES_SUCESS, DATA_USER_STATUS, F
 const initialState = {   
     error: null,
     useritem: [],
-    roleitem: [],
+    roledata: [],
     oraganizationuseritem:[],
     userstatus:[],
-    primary_loc_data: [],
+    primarylocdata: [],
     editlocationdata: [],
 }
 const useritem = (state = initialState, action) => {
@@ -19,7 +19,7 @@ const useritem = (state = initialState, action) => {
         case FETCH_ROLE_TYPES_SUCESS:
             return {
                 ...state,               
-                roleitem: action.roleitem,                
+                roledata: action.roledata,                
             }
         case DATA_USER_STATUS:
             return {
@@ -29,12 +29,12 @@ const useritem = (state = initialState, action) => {
         case FETCH_PRIMARY_LOCATION:
             return {
                 ...state,               
-                primary_loc_data:action.primary_loc_data,                
+                primarylocdata:action.primarylocdata,                
             }
             case FETCH_EDIT_USER_DATA_SUCESS:
                 return {
                     ...state,                   
-                    edituseritem: action.edituseritem,                    
+                    edituserdata: action.edituserdata,                    
                 }
 
             case EDIT_PRIMARY_LOCATION_DATA:

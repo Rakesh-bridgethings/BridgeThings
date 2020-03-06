@@ -1,8 +1,8 @@
 import { FETCH_SENSORITM_DATA, FETCH_IOTDEVISENSOR_DATA, FETCH_MANUFACTURE_DATA, FETCH_SENSORTYPE_DATA, FETCH_PARAMETER_DATA, FETCH_EDIT_DATA } from '../actions/sensoritem';
 const initialState = {
-    // sensoritem:[],
+    // sensordata:[],
     // locasensitem:[],
-    // iotdesenitem:[]
+    // iotdevicedata:[]
 }
 
 const sensoritem = (state = initialState, action) => {
@@ -10,12 +10,12 @@ const sensoritem = (state = initialState, action) => {
         case FETCH_SENSORITM_DATA:
             return {
                 ...state,
-                sensoritem: action.sensoritem,
+                sensordata: action.sensordata,
             }
         case FETCH_IOTDEVISENSOR_DATA:
             return {
                 ...state,
-                iotdesenitem: action.iotdesenitem,
+                iotdevicedata: action.iotdevicedata,
             }
         case FETCH_MANUFACTURE_DATA:
             return {

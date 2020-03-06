@@ -4,8 +4,8 @@ import { bindActionCreators } from 'redux';
 import Select from 'react-select';
 import Checkbox from 'rc-checkbox';
 import 'rc-checkbox/assets/index.css';
-import { fetchroleitemdata, updatedUserData, fetchEditPrimaryLocation } from '../../services/User';
-import { fetchorganizationdata } from '../../services/Location';
+import { fetchRoleData, updatedUserData, fetchEditPrimaryLocation } from '../../services/User';
+import { fetchOrganizationData } from '../../services/Location';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {
     Row, Col, Card, CardBody, CardTitle, Table, CardHeader, Button,
@@ -26,7 +26,7 @@ class Edituser extends Component {
         this.toggle = this.toggle.bind(this);
         this.validator = new SimpleReactValidator({
             element: (message, className) => <div className='required_message'>{message}</div>
-        })
+        }, {autoForceUpdate: this})
     }
     state = {
         nextedituser: false,
@@ -52,32 +52,32 @@ class Edituser extends Component {
         locationdata: [],
     }
     componentDidMount = async () => {
-        const { fetchroleitemdata, fetchorganizationdata } = this.props;
-        await fetchroleitemdata();
-        await fetchorganizationdata();
+        const { fetchRoleData, fetchOrganizationData } = this.props;
+        await fetchRoleData();
+        await fetchOrganizationData();
     }
     componentWillReceiveProps = async (props) => {
         let { User } = props.data;
-        User.edituseritem && await this.setState({
-            id: User.edituseritem.id,
-            firstname: User.edituseritem.firstName,
-            lastname: User.edituseritem.lastName,
-            email: User.edituseritem.email,
-            phonenumber: User.edituseritem.mobileNo,
-            role: { value: User.edituseritem.role, label: User.edituseritem.roleName },
-            oraganization: { value: User.edituseritem.entityId, label: User.edituseritem.entityName },
-            activeStatus: User.edituseritem.status
+        User.edituserdata && await this.setState({
+            id: User.edituserdata.id,
+            firstname: User.edituserdata.firstName,
+            lastname: User.edituserdata.lastName,
+            email: User.edituserdata.email,
+            phonenumber: User.edituserdata.mobileNo,
+            role: { value: User.edituserdata.role, label: User.edituserdata.roleName },
+            oraganization: { value: User.edituserdata.entityId, label: User.edituserdata.entityName },
+            activeStatus: User.edituserdata.status
         });
-        if (User.edituseritem) {
-            User.edituseritem.notificationMode === 'Email' ? await this.setState({ emailNotification: true }) : User.edituseritem.notificationMode === 'Phone' ? await this.setState({ smsNotification: true }) : User.edituseritem.notificationMode === null ? await this.setState({ emailNotification: false, smsNotification: false }) : await this.setState({ emailNotification: true, smsNotification: true });
+        if (User.edituserdata) {
+            User.edituserdata.notificationMode === 'Email' ? await this.setState({ emailNotification: true,smsNotification: false  }) : User.edituserdata.notificationMode === 'Phone' ? await this.setState({ smsNotification: true ,emailNotification:false}) : User.edituserdata.notificationMode === null ? await this.setState({ emailNotification: false, smsNotification: false }) : await this.setState({ emailNotification: true, smsNotification: true });
             const getEditData = {
-                id: this.props.data.User.edituseritem.id,
-                firstname: this.props.data.User.edituseritem.firstName,
-                lastname: this.props.data.User.edituseritem.lastName,
-                email: this.props.data.User.edituseritem.email,
-                phonenumber: this.props.data.User.edituseritem.mobileNo,
-                role: this.props.data.User.edituseritem.role,
-                oraganization: this.props.data.User.edituseritem.entityId,
+                id: this.props.data.User.edituserdata.id,
+                firstname: this.props.data.User.edituserdata.firstName,
+                lastname: this.props.data.User.edituserdata.lastName,
+                email: this.props.data.User.edituserdata.email,
+                phonenumber: this.props.data.User.edituserdata.mobileNo,
+                role: this.props.data.User.edituserdata.role,
+                oraganization: this.props.data.User.edituserdata.entityId,
             };
             this.setState({ getEditData });
         }
@@ -130,17 +130,13 @@ class Edituser extends Component {
     iseditprilocmodaluser = () => {
         this.setState({ editprilocmodal: !this.state.editprilocmodal });        
     }
+    iseditprilocmodalusercancle=()=>{
+        this.setState({ editprilocmodal: !this.state.editprilocmodal });       
+    }
     toggle = () => {
         this.props.iseditusermodal();
     }
     nextuser = async() => {
-        this.validator.showMessageFor('FirstName');
-        this.validator.showMessageFor('Lastname')
-        this.validator.showMessageFor('oraganizations')
-        this.validator.showMessageFor('label');
-        this.validator.showMessageFor('role');
-        this.validator.showMessageFor('Email');
-        this.validator.showMessageFor('Phonenumber');
         if (this.validator.allValid()) {
             let { fetchEditPrimaryLocation } = this.props;
             await fetchEditPrimaryLocation(this.state.oraganization.value, this.state.id);
@@ -160,6 +156,9 @@ class Edituser extends Component {
             this.setState({ nextmodaluser: !this.state.nextmodaluser });
             this.setState({ addnextmodaluser: !this.state.addnextmodaluser });
             this.props.iseditusermodal();
+        } else {
+            this.validator.showMessages();
+            this.forceUpdate();
         }
         this.props.shownoti('');
         this.setState({ notitype: 'editprimarylocation' });
@@ -185,7 +184,7 @@ class Edituser extends Component {
 
     render() {
         const { User, Location, Status } = this.props.data;
-        let roleadduser = User.roleitem.rows && User.roleitem.rows.map(function (item) {
+        let roleadduser = User.roledata.rows && User.roledata.rows.map(function (item) {
             return { value: item.id, label: item.name };
         })
         let oraguseritem = Location.orgnizationdata && Location.orgnizationdata.map(function (item) {
@@ -214,7 +213,7 @@ class Edituser extends Component {
                                         <Col md='6'>
                                             <FormGroup>
                                                 <Label for="Firstname">First Name*</Label>
-                                                <Input type='text' id="Firstname"
+                                                <Input type='text' id="Firstname"    placeholder="Enter Firstname"
                                                     onChange={(e) => this.onFirstname(e)} value={this.state.firstname} />
                                                 {this.validator.message('FirstName', this.state.firstname, 'required|alpha')}
                                             </FormGroup>
@@ -222,7 +221,7 @@ class Edituser extends Component {
                                         <Col md='6'>
                                             <FormGroup>
                                                 <Label for="lastname">Last Name*</Label>
-                                                <Input type='text' id="lastname" onChange={(e) => this.onLastname(e)} value={this.state.lastname} />
+                                                <Input type='text'    placeholder="Enter Lastname"id="lastname" onChange={(e) => this.onLastname(e)} value={this.state.lastname} />
                                                 {this.validator.message('Lastname', this.state.lastname, 'required|alpha')}
                                             </FormGroup>
                                         </Col>
@@ -235,6 +234,7 @@ class Edituser extends Component {
                                                     value={this.state.role}
                                                     onChange={(role) => this.setState({ role })}
                                                     options={roleadduser}
+                                                    placeholder="Select Roles"
                                                 />
                                                 {this.validator.message('role', this.state.role, 'required')}
 
@@ -244,7 +244,7 @@ class Edituser extends Component {
                                         <Col md='6'>
                                             <FormGroup>
                                                 <Label for="email">Email*</Label>
-                                                <Input type='text' id="email" onChange={(e) => this.onEmail(e)} value={this.state.email} />
+                                                <Input type='text' id="email" placeholder="Enter Email" onChange={(e) => this.onEmail(e)} value={this.state.email} />
                                                 {this.validator.message('Email', this.state.email, 'email|required')}
                                             </FormGroup>
                                         </Col>
@@ -257,6 +257,7 @@ class Edituser extends Component {
                                                     value={this.state.oraganization}
                                                     onChange={(oraganization) => this.setState({ oraganization })}
                                                     options={oraguseritem}
+                                                    placeholder="Select Organization"
                                                 />
                                                 {this.validator.message('oraganizations', this.state.oraganization, 'required')}
 
@@ -267,7 +268,7 @@ class Edituser extends Component {
                                         <Col md='12'>
                                             <FormGroup>
                                                 <Label for="phonenumber">Phone Number</Label>
-                                                <Input type='text' id="phonenumber" onChange={(e) => this.onPhonenumber(e)} value={this.state.phonenumber} />
+                                                <Input type='text' placeholder="Enter Phone Number" id="phonenumber" onChange={(e) => this.onPhonenumber(e)} value={this.state.phonenumber} />
                                                 {this.validator.message('Phonenumber', this.state.phonenumber, 'phone')}
                                             </FormGroup>
                                         </Col>
@@ -301,7 +302,8 @@ class Edituser extends Component {
                                 <Button color="success" onClick={() => this.nextuser()}>Next</Button>{' '}
                             </ModalFooter>
                         </Modal>
-                        {this.state.editprilocmodal && <Editprimarylocation shownoti={this.shownoti} notitype={this.state.notitype} requiredMessage={this.state.requiredMessage} editprilocmodal={this.state.editprilocmodal} iseditnextprilocmodaluser={this.iseditnextprilocmodaluser} iscloseeditmodalprilocsuser={this.iscloseeditmodalprilocsuser} iseditprilocmodaluser={this.iseditprilocmodaluser} entityId={this.state.userstepdata.entityId} editid={this.state.id} locationData={this.locationData} />}
+                        {this.state.editprilocmodal && <Editprimarylocation shownoti={this.shownoti} notitype={this.state.notitype}
+                         editprilocmodal={this.state.editprilocmodal} iseditnextprilocmodaluser={this.iseditnextprilocmodaluser} iscloseeditmodalprilocsuser={this.iscloseeditmodalprilocsuser} iseditprilocmodaluser={this.iseditprilocmodaluser} entityId={this.state.userstepdata.entityId} editid={this.state.id} locationData={this.locationData} iseditprilocmodalusercancle={this.iseditprilocmodalusercancle} />}
                     </div>
                 </ReactCSSTransitionGroup>
             </Fragment>
@@ -313,8 +315,8 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    fetchroleitemdata: fetchroleitemdata,
-    fetchorganizationdata: fetchorganizationdata,
+    fetchRoleData: fetchRoleData,
+    fetchOrganizationData: fetchOrganizationData,
     updatedUserData: updatedUserData,
     fetchEditPrimaryLocation: fetchEditPrimaryLocation,
 

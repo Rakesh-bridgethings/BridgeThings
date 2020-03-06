@@ -7,9 +7,6 @@ import CheckboxTree from 'react-checkbox-tree';
 import { fetchPrimaryLocation } from '../../services/User';
 import {
     Row, Col, Card, CardBody, CardTitle, Table, CardHeader, Button,
-    DropdownToggle, DropdownMenu,
-    Nav, NavItem, NavLink,
-    UncontrolledTooltip, UncontrolledButtonDropdown,
     Modal, ModalHeader, ModalBody, ModalFooter,
     Form, Label, FormGroup, DropdownItem
 } from 'reactstrap';
@@ -34,8 +31,8 @@ class Primarylocation extends Component {
 
     componentWillMount = async () => {
         this.setState({ alluserdata: this.props.addUserData });
-        if (this.props.data.User.primary_loc_data && this.props.data.User.primary_loc_data.length > 0) {
-            let treeData = this.props.data.User.primary_loc_data && this.props.data.User.primary_loc_data.map((item, index) => {
+        if (this.props.data.User.primarylocdata && this.props.data.User.primarylocdata.length > 0) {
+            let treeData = this.props.data.User.primarylocdata && this.props.data.User.primarylocdata.map((item, index) => {
                 return (
                     {
                         value: item.key,
@@ -83,8 +80,8 @@ class Primarylocation extends Component {
     }
 
     componentWillReceiveProps = async (props) => {
-        if (props.data.User.primary_loc_data && props.data.User.primary_loc_data.length > 0) {
-            let treeData = props.data.User.primary_loc_data && props.data.User.primary_loc_data.map((item, index) => {
+        if (props.data.User.primarylocdata && props.data.User.primarylocdata.length > 0) {
+            let treeData = props.data.User.primarylocdata && props.data.User.primarylocdata.map((item, index) => {
                 return (
                     {
                         value: item.key,

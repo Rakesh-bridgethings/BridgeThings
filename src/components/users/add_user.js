@@ -4,8 +4,8 @@ import { bindActionCreators } from 'redux';
 import Select from 'react-select';
 import Checkbox from 'rc-checkbox';
 import 'rc-checkbox/assets/index.css';
-import { fetchroleitemdata, addUser, fetchPrimaryLocation } from '../../services/User';
-import { fetchorganizationdata } from '../../services/Location';
+import { fetchRoleData, addUser, fetchPrimaryLocation } from '../../services/User';
+import { fetchOrganizationData } from '../../services/Location';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {
     Row, Col, Card, CardBody, CardTitle, Table, CardHeader, Button,
@@ -26,7 +26,7 @@ class Adduser extends Component {
         this.toggle = this.toggle.bind(this);
         this.validator = new SimpleReactValidator({
             element: (message, className) => <div className='required_message'>{message}</div>
-        })
+        }, {autoForceUpdate: this})
     }
     state = {
         firstname: '',
@@ -43,9 +43,9 @@ class Adduser extends Component {
         notificationSMS: false,
     }
     componentDidMount = async () => {
-        const { fetchroleitemdata, fetchorganizationdata } = this.props;
-        await fetchroleitemdata();
-        await fetchorganizationdata();
+        const { fetchRoleData, fetchOrganizationData } = this.props;
+        await fetchRoleData();
+        await fetchOrganizationData();
     }
     onCheckedEmail(e) {
         this.setState({ notificationEmail: e.target.checked });
@@ -75,14 +75,17 @@ class Adduser extends Component {
     }
     toggle = () => {
         this.props.isaddusermodal();
+        this.setState({
+            firstname: '',
+            lastname: '',
+            phonenumber: '',
+            email: '',
+            role: '',
+            oraganization: '',
+            userstepdata: [],
+        })
     }
     nextuser = async() => {
-        this.validator.showMessageFor('FirstName')
-        this.validator.showMessageFor('Lastname')
-        this.validator.showMessageFor('oraganizations')
-        this.validator.showMessageFor('label')
-        this.validator.showMessageFor('role')
-        this.validator.showMessageFor('Email')
         if (this.validator.allValid()) {
             let { fetchPrimaryLocation } = this.props;
             await fetchPrimaryLocation(this.state.oraganization.value);
@@ -101,6 +104,18 @@ class Adduser extends Component {
             this.setState({ addnextmodaluser: !this.state.addnextmodaluser });
             this.setState({ userstepdata: data });
             this.setState({ notitype: 'primarylocation' });
+            this.setState({
+                firstname: '',
+                lastname: '',
+                phonenumber: '',
+                email: '',
+                role: '',
+                oraganization: '',
+                userstepdata: [],
+            })
+        } else {
+            this.validator.showMessages();
+            this.forceUpdate();
         }
         this.props.shownoti('');
     }
@@ -113,7 +128,7 @@ class Adduser extends Component {
 
     render() {
         const { User, Location, Status } = this.props.data;
-        let roleadduser = User.roleitem.rows && User.roleitem.rows.map(function (item) {
+        let roleadduser = User.roledata.rows && User.roledata.rows.map(function (item) {
             return { value: item.id, label: item.name };
         })
         let oraguseritem = Location.orgnizationdata && Location.orgnizationdata.map(function (item) {
@@ -143,6 +158,7 @@ class Adduser extends Component {
                                             <FormGroup>
                                                 <Label for="Firstname">First Name*</Label>
                                                 <Input type='text' id="Firstname"
+                                                placeholder="Enter Firstname"
                                                     onChange={(e) => this.setState({ firstname: e.target.value })} value={this.state.firstname} />
                                                 {this.validator.message('FirstName', this.state.firstname, 'required|alpha_num')}
                                             </FormGroup>
@@ -150,7 +166,7 @@ class Adduser extends Component {
                                         <Col md='6'>
                                             <FormGroup>
                                                 <Label for="lastname">Last Name*</Label>
-                                                <Input type='text' id="lastname" onChange={(e) => this.setState({ lastname: e.target.value })} value={this.state.lastname} />
+                                                <Input type='text' id="lastname" placeholder="Enter Lastname"onChange={(e) => this.setState({ lastname: e.target.value })} value={this.state.lastname} />
                                                 {this.validator.message('Lastname', this.state.lastname, 'required|alpha_num')}
                                             </FormGroup>
                                         </Col>
@@ -163,6 +179,7 @@ class Adduser extends Component {
                                                     value={this.state.role}
                                                     onChange={(role) => this.setState({ role })}
                                                     options={roleadduser}
+                                                    placeholder="Select Roles"
                                                 />
                                                 {this.validator.message('role', this.state.role, 'required')}
 
@@ -171,7 +188,7 @@ class Adduser extends Component {
                                         <Col md='6'>
                                             <FormGroup>
                                                 <Label for="email">Email*</Label>
-                                                <Input type='text' id="email" onChange={(e) => this.onEmail(e)} value={this.state.email} />
+                                                <Input type='text' id="email" placeholder="Enter Email"onChange={(e) => this.onEmail(e)} value={this.state.email} />
                                                 {this.validator.message('Email', this.state.email, 'email|required')}
                                             </FormGroup>
                                         </Col>
@@ -184,6 +201,7 @@ class Adduser extends Component {
                                                     value={this.state.oraganization}
                                                     onChange={(oraganization) => this.setState({ oraganization })}
                                                     options={oraguseritem}
+                                                    placeholder="Select Organization"
                                                 />
                                                 {this.validator.message('oraganizations', this.state.oraganization, 'required')}
 
@@ -194,7 +212,7 @@ class Adduser extends Component {
                                         <Col md='12'>
                                             <FormGroup>
                                                 <Label for="phonenumber">Phone Number</Label>
-                                                <Input type='text' id="phonenumber" onChange={(e) => this.onPhonenumber(e)} value={this.state.phonenumber} />
+                                                <Input type='text' id="phonenumber" placeholder="Enter Phone Number"onChange={(e) => this.onPhonenumber(e)} value={this.state.phonenumber} />
                                                 {this.validator.message('Phonenumber', this.state.phonenumber, 'phone')}
                                             </FormGroup>
                                         </Col>
@@ -208,7 +226,7 @@ class Adduser extends Component {
                                                     <Checkbox
                                                         checked={this.state.notificationEmail}
                                                         onChange={(e) => this.onCheckedEmail(e)}
-                                                    // disabled={this.state.disabled}
+                                                    disabled={this.state.disabled}
                                                     />
                                                     &nbsp;Email
                                                     </label>&nbsp;&nbsp;&nbsp;
@@ -229,7 +247,8 @@ class Adduser extends Component {
                                 <Button color="success" onClick={() => this.nextuser()}>Next</Button>{' '}
                             </ModalFooter>
                         </Modal>
-                        {this.state.addnextmodaluser && <Primarylocation addUserData={this.state.userstepdata} requiredMessage={this.props.requiredMessage} addnextmodaluser={this.state.addnextmodaluser} isaddnextmodaluser={this.isaddnextmodaluser} isclosemodalsuser={this.isclosemodalsuser} AdduserData={this.AdduserData} />}
+                        {this.state.addnextmodaluser && <Primarylocation addUserData={this.state.userstepdata} 
+                        addnextmodaluser={this.state.addnextmodaluser} isaddnextmodaluser={this.isaddnextmodaluser} isclosemodalsuser={this.isclosemodalsuser} AdduserData={this.AdduserData} />}
                     </div>
                 </ReactCSSTransitionGroup>
             </Fragment>
@@ -241,10 +260,10 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    fetchroleitemdata: fetchroleitemdata,
+    fetchRoleData: fetchRoleData,
     addUser: addUser,
     fetchPrimaryLocation: fetchPrimaryLocation,
-    fetchorganizationdata: fetchorganizationdata,
+    fetchOrganizationData: fetchOrganizationData,
 }, dispatch)
 
 export default connect(
