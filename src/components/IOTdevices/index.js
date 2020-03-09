@@ -114,27 +114,27 @@ class IOTDevices extends Component {
             {
                 title: 'Device Id',
                 prop: 'deviceId',
-                width: 40
+                width: '50px'
             },
             {
                 title: 'Reference',
                 prop: 'reference',
-                width: '40px'
+                width: '50px'
             },
             {
                 title: 'Device Type',
                 prop: 'deviceType',
-                width: '30px'
+                width: '50px'
             },
             {
                 title: 'AppKey',
                 prop: 'appKey',
-                width: '40px'
+                width: '50px'
             },
             {
                 title: 'Network Key',
                 prop: 'networkKey',
-                width: '60px'
+                width: '50px'
             },
             {
                 title: 'Application',
@@ -170,11 +170,13 @@ class IOTDevices extends Component {
                 title: 'Actions',
                 render: (val, row) => <div><i className="lnr-pencil"
                     style={{ cursor: 'pointer' }} onClick={() => this.edit_device(row)} /></div>,
+                width: '20px'
             },
             {
                 title: 'Lora Config',
                 render: (val, row) => <div><i className="pe-7s-config"
                     style={{ cursor: 'pointer', fontSize: '20px' }} onClick={() => this.edit_loraconfig(row)} /></div>,
+                width: '20px'
             },
         ];
         return (
@@ -197,7 +199,6 @@ class IOTDevices extends Component {
                                 <CardHeader>
                                     <Row style={{ width: '100%' }}>
                                         <Col md="6" style={{ textAlign: 'left' }}>
-
                                         </Col>
                                         <Col md="6" style={{ textAlign: 'right' }} >
                                             <Button color="success" onClick={() => this.addDevice()}>Add IOT Device</Button>

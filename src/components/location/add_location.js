@@ -26,8 +26,6 @@ class AddLocation extends Component {
         nextmodal: false,
         addnextmodal: false,
         business_hours: [],
-        zone: '',
-        aggregationid: '',
         organization: '',
         property: '',
         locationtype: '',
@@ -44,8 +42,6 @@ class AddLocation extends Component {
     toggle = () => {
         this.props.isaddlocatiionmodal();
         this.setState({
-            zone: '',
-            aggregationid: '',
             organization: '',
             property: '',
             locationtype: '',
@@ -84,9 +80,7 @@ class AddLocation extends Component {
             this.setState({ nextmodal: !this.state.nextmodal });
             this.setState({ addnextmodal: !this.state.addnextmodal });
             this.props.isaddlocatiionmodal();
-            let data = {
-                zone: this.state.zone,
-                aggregateId: this.state.aggregationid,
+            let data = {              
                 entities: {
                     "id": this.state.organization.value
                 },
@@ -100,8 +94,6 @@ class AddLocation extends Component {
         }
         this.setState({ nextclick: true });
         this.setState({
-            zone: '',
-            aggregationid: '',
             organization: '',
             property: '',
             locationtype: '',
@@ -115,17 +107,8 @@ class AddLocation extends Component {
         firststepData.locationBusinessHoursList = val;
         const { addLocation } = this.props;
         addLocation(firststepData);
-        this.setState({ zone: '', aggregationid: '', organization: '', property: '', locationtype: '', label: '', nextclick: false });
+        this.setState({ organization: '', property: '', locationtype: '', label: '', nextclick: false });
         this.props.shownoti('addlocation');
-    }
-    onZone = (e) => {
-        this.setState({ zone: e.target.value })
-        this.validator.showMessageFor('Zone');
-    }
-
-    onAggregateId = (e) => {
-        this.setState({ aggregationid: e.target.value });
-        this.validator.showMessageFor('AggregationId');
     }
 
     onChngOrg = (organization) => {
@@ -192,22 +175,6 @@ class AddLocation extends Component {
                             <ModalHeader toggle={() => this.toggle()}>Add Location</ModalHeader>
                             <ModalBody>
                                 <Form>
-                                    <Row>
-                                        <Col md='6'>
-                                            <FormGroup>
-                                                <Label for="zone">Zone</Label>
-                                                <Input type='text' id="zone" placeholder="zone" onChange={(e) => this.onZone(e)} value={this.state.zone} />
-                                                {this.validator.message('Zone', this.state.zone, 'alpha_num')}
-                                            </FormGroup>
-                                        </Col>
-                                        <Col md='6'>
-                                            <FormGroup>
-                                                <Label for="aggregation_id">Aggregation ID</Label>
-                                                <Input type='text' id="aggregation_id"  placeholder="Aggregation Id"onChange={(e) => this.onAggregateId(e)} value={this.state.aggregationid} />
-                                                {this.validator.message('AggregationId', this.state.aggregationid, 'alpha_num')}
-                                            </FormGroup>
-                                        </Col>
-                                    </Row>
                                     <Row>
                                         <Col md='6'>
                                             <FormGroup>
@@ -282,8 +249,6 @@ class AddLocation extends Component {
         );
     }
 }
-
-
 
 const mapStateToProps = state => ({
     data: state,

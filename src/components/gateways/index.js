@@ -76,27 +76,27 @@ class Gateways extends Component {
             {
                 title: 'Label',
                 prop: 'label',
-                width: '50px'
+                width: '190px'
             },
             {
                 title: 'GateWay Id',
                 prop: 'gatewayId',
-                width: '40px'
+                // width: '40px'
             },
             {
                 title: 'GateWay Type',
                 prop: 'type',
-                width: '50px'
+                // width: '50px'
             },
             {
                 title: 'Location Label',
                 prop: 'locationLabel',
-                width: '70px'
+                // width: '70px'
             },
             {
                 title: 'Entity Reference',
                 prop: 'entityReference',
-                width: '20px'
+                // width: '20px'
             },
             {
                 title: 'Actions',

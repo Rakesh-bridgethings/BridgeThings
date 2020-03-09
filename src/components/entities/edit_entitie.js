@@ -69,7 +69,7 @@ class Editentitiey extends Component {
         this.setState({ loranetwork: !this.state.loranetwork })
     }
     onCheckedloranetwork = (e) => {
-        this.setState({ enablelora: e.target.checked });
+        this.setState({ enableLora: e.target.checked });
     }
     toggle = () => {
         this.props.iseditentitieymodalcancle();
@@ -79,7 +79,7 @@ class Editentitiey extends Component {
             let data = {
                 "id": this.state.id,
                 "name": this.state.name,
-                'enableLora': this.state.enablelora,
+                'enableLora': this.state.enableLora,
                 "entityType": { id: this.state.entityType.value },
                 "sector": { id: this.state.sector.value }
             };
@@ -103,7 +103,6 @@ class Editentitiey extends Component {
     }
     render() {
         const { Entities, Status } = this.props.data;
-        console.log(":::",this.state.enablelora)
         let addtypeentiti = Entities.addentititiydata && Entities.addentititiydata.map(function (item) {
             return { value: item.id, label: item.reference };
         })

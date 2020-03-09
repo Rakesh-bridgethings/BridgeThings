@@ -12,8 +12,7 @@ import IOTDevices from '../components/IOTdevices';
 import Sensors from '../components/sensors';
 import Gateways from '../components/gateways';
 import PerformanceDashboard from '../components/dashboards/performance';
-
-import { Route, Link, Switch, BrowserRouter as Router } from 'react-router-dom';
+import { Route, Link, Switch, HashRouter, BrowserRouter as Router } from 'react-router-dom';
 // import { fetchsidenavitemdata } from '../services/SideNavItem';
 // const PeroformanceDashboard = lazy(() => import('./dashboards/performance'));
 class Main extends Component {
@@ -38,6 +37,7 @@ class Main extends Component {
             enableMobileMenu,
             enablePageTabsAlt,
         } = this.props;
+        // console.log("", );
         return (
             <ResizeDetector
                 handleWidth
@@ -52,7 +52,7 @@ class Main extends Component {
                             { 'closed-sidebar-mobile': closedSmallerSidebar || width < 1250 },
                             { 'sidebar-mobile-open': enableMobileMenu },
                         )}>
-                            <Router>
+                            <HashRouter>
                                 <Header />
                                 <div className="app-main">
                                     <LeftSidebar />
@@ -73,14 +73,14 @@ class Main extends Component {
                                             <Route path="/test_dashboard" component={PerformanceDashboard} />
                                             <Route path="/locations" component={Location} />
                                             <Route path="/users" component={User} />
-                                            <Route path="/entities" component={Entities}/>
-                                             <Route path="/iotdevices" component={IOTDevices}/>
-                                             <Route path="/sensors" component={Sensors}/>
-                                             <Route path="/gateways" component={Gateways}/>
+                                            <Route path="/entities" component={Entities} />
+                                            <Route path="/iotdevices" component={IOTDevices} />
+                                            <Route path="/sensors" component={Sensors} />
+                                            <Route path="/gateways" component={Gateways} />
                                         </div>
                                     </div>
                                 </div>
-                        </Router>
+                            </HashRouter>
                         </div>
                     </Fragment>
                 )}

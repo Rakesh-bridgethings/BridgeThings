@@ -30,7 +30,7 @@ let dashboards = [
         "key": "Dashboards",
         "text": "Dashboards",
         "icon": "pe-7s-rocket",
-        "url": null,
+        "url": '/',
         "menuItems": [
             {
                 "key": "test_dashboard_2",
@@ -40,7 +40,7 @@ let dashboards = [
             {
                 "key": "test_dashboard",
                 "label": "Performance Dashboard",
-                "url": "test_dashboard"
+                "url": "#test_dashboard"
             },
             {
                 "key": "meter_electrical_usage",
@@ -180,7 +180,7 @@ let dashboards = [
         "key": "Users",
         "text": "Users",
         "icon": "icon-user-group",
-        "url": 'users',
+        "url": '#users',
         "menuItems": [
 
         ]
@@ -189,7 +189,7 @@ let dashboards = [
         "key": "Locations",
         "text": "Locations",
         "icon": "icon-buildings",
-        "url": "locations",
+        "url": "#locations",
         "menuItems": [
 
         ]
@@ -226,7 +226,7 @@ let dashboards = [
         "key": "Entities",
         "text": "Entities",
         "icon": "icon-building-2",
-        "url": "entities",
+        "url": "#entities",
         "menuItems": [
 
         ]
@@ -235,7 +235,7 @@ let dashboards = [
         "key": "IOTDevices",
         "text": "IOTDevices",
         "icon": "icon-building",
-        "url": 'iotdevices',
+        "url": '#iotdevices',
         "menuItems": [
 
         ]
@@ -244,7 +244,7 @@ let dashboards = [
         "key": "Sensors",
         "text": "Sensors",
         "icon": "icon-meter-1",
-        "url": 'sensors',
+        "url": '#sensors',
         "menuItems": [
 
         ]
@@ -253,7 +253,7 @@ let dashboards = [
         "key": "Gateways",
         "text": "Gateways",
         "icon": "icon-electric-tower",
-        "url": 'gateways',
+        "url": '#gateways',
         "menuItems": [
 
         ]

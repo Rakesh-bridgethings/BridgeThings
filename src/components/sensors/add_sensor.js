@@ -67,7 +67,7 @@ class Addsensor extends Component {
         const { fetchIOTDeviceData, fetchLocationData } = this.props;
         await fetchIOTDeviceData(organization.value);
         await fetchLocationData(organization.value);
-        this.setState({ seiotdevice: '', location: '' })
+        this.setState({ iotdevices: '', locations: '' })
     }
 
     onsave = async () => {

@@ -30,8 +30,6 @@ class EditLocation extends Component {
         editpropertymodal: false,
         nextmodal: false,
         editnextmodal: false,
-        zone: '',
-        aggregationid: '',
         organization: '',
         property: '',
         locationtype: '',
@@ -48,11 +46,10 @@ class EditLocation extends Component {
         getEdittedData: {},
         propertydatalist: [],
     }
+
     componentWillReceiveProps = async (props) => {
         await this.setState({
             getEditBusiness: props.getEditData,
-            zone: props.getEditData.zone,
-            aggregationid: props.getEditData.aggregateId,
             organization: props.getEditData.entityId && { value: props.getEditData.entityId, label: props.getEditData.entityReference },
             property: props.getEditData.property && { value: props.getEditData.propertyId, label: props.getEditData.property },
             locationtype: props.getEditData.locationType && { value: props.getEditData.locationType.id, label: props.getEditData.locationType.value },
@@ -65,8 +62,6 @@ class EditLocation extends Component {
 
         const getEditData = {
             id: this.props.geteditid,
-            zone: this.props.getEditData.zone,
-            aggregateId: this.props.getEditData.aggregateId,
             entities: this.props.getEditData.entityId && {
                 "id": this.props.getEditData.entityId
             },
@@ -116,8 +111,6 @@ class EditLocation extends Component {
             this.props.iseditlocatiionmodal();
             let getEdittedData = {
                 id: this.state.editid,
-                zone: this.state.zone,
-                aggregateId: this.state.aggregationid,
                 entities: {
                     "id": this.state.organization.value
                 },
@@ -150,14 +143,6 @@ class EditLocation extends Component {
         const { updatedLocationData } = this.props;
         updatedLocationData(this.state.editid, dif);
         this.props.shownoti('updatelocation');
-    }
-    onZone = (e) => {
-        this.setState({ zone: e.target.value })
-        this.validator.showMessageFor('Zone');
-    }
-    onAggregateId = (e) => {
-        this.setState({ aggregationid: e.target.value });
-        this.validator.showMessageFor('AggregationId');
     }
     onChngproperty = (property) => {
         this.setState({ property });
@@ -227,22 +212,6 @@ class EditLocation extends Component {
                             <ModalHeader toggle={() => this.toggle()}>Edit Location</ModalHeader>
                             <ModalBody>
                                 <Form>
-                                    <Row>
-                                        <Col md='6'>
-                                            <FormGroup>
-                                                <Label for="zone">Zone</Label>
-                                                <Input type='text' id="zone"  placeholder="zone"onChange={(e) => this.onZone(e)} value={this.state.zone} />
-                                                {this.validator.message('Zone', this.state.zone, 'alpha_num')}
-                                            </FormGroup>
-                                        </Col>
-                                        <Col md='6'>
-                                            <FormGroup>
-                                                <Label for="aggregation_id">Aggregation ID</Label>
-                                                <Input type='text' id="aggregation_id"  placeholder="Aggregation Id" onChange={(e) => this.onAggregateId(e)} value={this.state.aggregationid} />
-                                                {this.validator.message('AggregationId', this.state.aggregationid, 'alpha_num')}
-                                            </FormGroup>
-                                        </Col>
-                                    </Row>
                                     <Row>
                                         <Col md='6'>
                                             <FormGroup>

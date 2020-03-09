@@ -38,8 +38,6 @@ class Location extends Component {
                 "entityId": item.entityId,
                 "entityReference": item.entityReference,
                 "region": item.region,
-                "zone": item.zone,
-                "aggregateId": item.aggregateId,
                 "floor": item.floor,
                 "id": item.id,
             }
@@ -98,16 +96,9 @@ class Location extends Component {
                 prop: 'floor',
             },
             {
-                title: 'Zone',
-                prop: 'zone',
-            },
-            {
-                title: 'Aggregate Id',
-                prop: 'aggregateId',
-            },
-            {
                 title: 'Action',
                 render: (val, row) => <div><i className="lnr-pencil" style={{ cursor: 'pointer' }} onClick={() => this.edit_location(row)} />&nbsp;&nbsp;&nbsp;&nbsp;<i className="lnr-trash" style={{ cursor: 'pointer' }} onClick={() => this.delete_location(row)} /></div>,
+                width: '40px'
             }
         ];
         return (
@@ -129,16 +120,14 @@ class Location extends Component {
                             <Card className="main-card mb-3">
                                 <CardHeader>
                                     <Row style={{ width: '100%' }}>
-                                        <Col md="6" style={{ textAlign: 'left' }}>
-
-                                        </Col>
+                                        <Col md="6" style={{ textAlign: 'left' }}></Col>
                                         <Col md="6" style={{ textAlign: 'right' }} >
                                             <Button color="success" onClick={() => this.add_loc()}>Add Location</Button>
                                             <AddLocation shownoti={this.shownoti} notitype={this.state.notitype} requiredMessage={this.state.requiredMessage} addlocationmodal={this.state.addlocationmodal} isaddlocatiionmodal={this.isaddlocatiionmodal} />
                                         </Col>
                                     </Row>
                                 </CardHeader>
-                                <CardBody className='page_css'>
+                                <CardBody className='page_css' id="user_tbl">
                                     <DataTable
                                         columns={columns}
                                         initialData={this.state.alltabledata}

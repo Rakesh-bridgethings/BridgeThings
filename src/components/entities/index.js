@@ -94,18 +94,22 @@ class Entities extends Component {
             {
                 title: 'Reference',
                 prop: 'reference',
+                // width: '50px',
             },
             {
                 title: 'Name',
                 prop: 'name',
+                // width: '80px',
             },
             {
                 title: 'Type',
                 prop: 'type',
+                // width: '80px',
             },
             {
                 title: 'Sector',
                 prop: 'industrySector',
+                // width: '80px',
             },
             {
                 title: 'Lora Network',
@@ -119,6 +123,7 @@ class Entities extends Component {
                 title: 'Actions',
                 render: (val, row) => <div><i className="lnr-pencil"
                     style={{ cursor: 'pointer' }} onClick={() => this.editEntitiey(row)} /></div>,
+                width: '30px',
             }
         ];
         return (
@@ -135,7 +140,7 @@ class Entities extends Component {
                         <div>
                             <PageTitle
                                 heading="Entities"
-                                icon="pe-7s-users icon-gradient bg-mean-fruit"
+                                icon="fa fa-building-o icon-gradient bg-mean-fruit"
                             />
                             <Card className="main-card mb-3">
                                 <CardHeader>
@@ -144,16 +149,13 @@ class Entities extends Component {
                                         </Col>
                                         <Col md="6" style={{ textAlign: 'right' }} >
                                             <Button color="success"
-                                                onClick={() => this.addEntitie()}
-                                            >Add Entity
-                                            </Button>
-                                            <Addentitie shownoti={this.shownoti} notitype={this.state.notitype}
-                        
+                                                onClick={() => this.addEntitie()} >Add Entity </Button>
+                                            <Addentitie shownoti={this.shownoti} notitype={this.state.notitype}                        
                                              addentitiemodal={this.state.addentitiemodal} isaddentitimodal={this.isaddentitimodal} />
                                         </Col>
                                     </Row>
                                 </CardHeader>
-                                <CardBody className='page_css'>
+                                <CardBody className='page_css' id="user_tbl">
                                     <DataTable
                                         columns={columns}
                                         initialData={this.state.allentitidata}
@@ -164,8 +166,7 @@ class Entities extends Component {
                                         }}
                                         sortable={true}
                                     />
-                                    <Editentitiey shownoti={this.shownoti} notitype={this.state.notitype}
-                                       
+                                    <Editentitiey shownoti={this.shownoti} notitype={this.state.notitype}                                       
                                         editentitieymodal={this.state.editentitieymodal} iseditentitieymodal={this.iseditentitieymodal} entitiyeditid={this.state.entitiyeditid}
                                         entitiyeditid={this.state.id} iseditentitieymodalcancle={this.iseditentitieymodalcancle}/>
                                     <Appnetwork shownoti={this.shownoti} notitype={this.state.notitype}

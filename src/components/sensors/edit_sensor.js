@@ -51,7 +51,6 @@ class Editsensor extends Component {
             await fetchManufactureData();
             let props = this.props;
             if (props.getEditData) {
-                console.log("KKKK::::",props.getEditData)
                 const { fetchIOTDeviceData, fetchLocationData, fetchParameterData } = this.props;
                 await fetchIOTDeviceData(props.getEditData.entity.id);
                 await fetchLocationData(props.getEditData.entity.id);

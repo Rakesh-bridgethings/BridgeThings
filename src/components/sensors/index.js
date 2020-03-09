@@ -80,32 +80,32 @@ class Sensors extends Component {
             {
                 title: 'Reference',
                 prop: 'reference',
-
+                width: '150px'
             },
             {
                 title: 'ChannelNo',
                 prop: 'channelNo',
-
+                width: '50px'
             },
             {
                 title: 'Sensor Type',
                 prop: 'sensorType',
-
+                // width: '80px'
             },
             {
                 title: 'Manufacture',
                 prop: 'manufacturers',
-
+                // width: '80px'
             },
             {
                 title: 'ModelNo',
                 prop: 'modelNo',
-
+                // width: '50px'
             },
             {
                 title: 'Sensor Status',
                 prop: 'sensorStatus',
-
+                width: '50px'
             },
             {
                 title: 'Last Data At',
@@ -115,7 +115,7 @@ class Sensors extends Component {
             {
                 title: 'Actions',
                 render: (val, row) => <div><i className="lnr-pencil" style={{ cursor: 'pointer' }} onClick={() => this.editSensor(row)} /></div>,
-
+                width: '40px'
             },
         ];
         return (
@@ -148,7 +148,7 @@ class Sensors extends Component {
                                         </Col>
                                     </Row>
                                 </CardHeader>
-                                <CardBody className='page_css'>
+                                <CardBody className='page_css' id="user_tbl">
                                     <DataTable
                                         columns={columns}
                                         sortable={true}
