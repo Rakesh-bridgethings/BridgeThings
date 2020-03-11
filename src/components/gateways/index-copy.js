@@ -1,6 +1,3 @@
-/* eslint-disable array-callback-return */
-/* eslint-disable no-dupe-keys */
-/* eslint-disable no-useless-constructor */
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -8,12 +5,12 @@ import { fetchGatwaysData, fetchEditData } from '../../services/Gateway';
 import PageTitle from '../../components/includes/PageTitle';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {
-    Row, Col, Card, CardBody, CardHeader, Button,
+    Row, Col, Card, CardBody, Table, CardHeader, Button,
 } from 'reactstrap';
 import AddGateway from './add_gateway';
 import EditGateways from './edit_gateway';
+import { DataTable } from 'react-data-components';
 import Loading from '../../library/loader';
-import { MDBDataTable } from 'mdbreact';
 class Gateways extends Component {
     constructor(props) {
         super(props);
@@ -28,7 +25,7 @@ class Gateways extends Component {
     componentWillReceiveProps = (props) => {
         let data = props.data.Gateways.gatewaydata;
         let alltabledata = [];
-        data && data.map((item) => {
+        data && data.map((item, index) => {
             alltabledata.push({
                 "id": item.id,
                 "label": item.label,
@@ -36,9 +33,7 @@ class Gateways extends Component {
                 "deviceType": item.deviceType,
                 "type": item.type,
                 "locationLabel": item.locationLabel,
-                "entityReference": item.entityReference,
-               "action": <div><i className="lnr-pencil"
-                    style={{ cursor: 'pointer' }} onClick={() => this.edit_gateways(item)} /></div>,
+                "entityReference": item.entityReference
             })
         })
         this.setState({ alltabledata });
@@ -77,47 +72,40 @@ class Gateways extends Component {
     }
     render() {
         const { Gateways, Status } = this.props.data;
-        const data = {
-            columns: [
-                {
-                    label: 'Label',
-                    field: 'label',
-                    sort: 'asc',
-                    width: 200
-                },
-                {
-                    label:'GateWay Id',
-                    field:'gatewayId',
-                    sort:'asc',
-                    width:200
-                },
-                {
-                    label:'GateWay Type',
-                    field:'type',
-                    sort:'asc',
-                    width:200
-                },
-                {
-                    label:'Location Label',
-                    field:'locationLabel',
-                    sort:'asc',
-                    width:200
-                },
-                {
-                    label: 'Entity Reference',
-                    field: 'entityReference',
-                    sort:'asc',
-                    width:200
-                },
-                {
-                    label: 'Action',
-                    field: 'action',
-                    width: '50px'
-                },
-
-            ],
-            rows: this.state.alltabledata
-        }
+        const columns = [
+            {
+                title: 'Label',
+                prop: 'label',
+                width: '190px'
+            },
+            {
+                title: 'GateWay Id',
+                prop: 'gatewayId',
+                // width: '40px'
+            },
+            {
+                title: 'GateWay Type',
+                prop: 'type',
+                // width: '50px'
+            },
+            {
+                title: 'Location Label',
+                prop: 'locationLabel',
+                // width: '70px'
+            },
+            {
+                title: 'Entity Reference',
+                prop: 'entityReference',
+                // width: '20px'
+            },
+            {
+                title: 'Actions',
+                render: (val, row) => <div><i className="lnr-pencil"
+                    style={{ cursor: 'pointer' }} onClick={() => this.edit_gateways(row)} /></div>,
+                width: '50px'
+            },
+        ];
+        // console.log("editdata::", this.state.editdata, "gateways::", Gateways.editdata);
         return (
             <Fragment>
                 {Status.loading && <Loading />}
@@ -145,15 +133,14 @@ class Gateways extends Component {
                                     </Row>
                                 </CardHeader>
                                 <CardBody className='page_css' id="user_tbl">
-                                <MDBDataTable
-                                        striped
-                                        bordered
-                                        hover
-                                        btn 
-                                        responsive
-                                        info={false}
-                                        data={data}
-                                        order={['label', 'desc'], ['gatewayId', 'desc'], ['deviceType', 'desc'], ['locationLabel', 'desc'] , ['entityReference', 'desc']}
+                                    <DataTable
+                                        columns={columns}
+                                        initialData={this.state.alltabledata}
+                                        initialPageLength={10}
+                                        initialSortBy={{
+                                            prop: "label", prop: "gatewayId", prop: "deviceType", prop: "type", prop: "locationLabel", prop: "entityReference", order: 'descending'
+                                        }}
+                                        sortable={true}
                                     />
                                     {this.state.editdata !== '' && <EditGateways shownoti={this.shownoti} notitype={this.state.notitype} editgatewaymodal={this.state.editgatewaymodal} iseditgatewaymodal={this.iseditgatewaymodal} getEditData={Gateways.editdata} iseditgatewaymodalcancle={this.iseditgatewaymodalcancle} />}
                                 </CardBody>

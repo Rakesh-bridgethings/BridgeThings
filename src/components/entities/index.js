@@ -10,8 +10,13 @@ import {
     Row, Col, Card, CardBody, CardHeader, Button,
 } from 'reactstrap';
 import { DataTable } from 'react-data-components';
+import { MDBDataTable } from 'mdbreact';
+
+// import ReactTable from "react-table";
+// import "react-table/react-table.css";
 import Loading from '../../library/loader';
 import Addentitie from './add_entitie';
+
 class Entities extends Component {
     constructor(props) {
         super(props);
@@ -25,8 +30,8 @@ class Entities extends Component {
         loranetworkmodal: false,
         closemodal:true,
         checked:false,
-
     }
+
     componentWillReceiveProps = (props) => {
         let data1 = props.data.Entities.entitiydata;
         let allentitidata = [];
@@ -38,7 +43,10 @@ class Entities extends Component {
                 "type": item.type,
                 "industrySector": item.industrySector,
                 "enableLora": item.enableLora,
-            })
+                "loranetwork": <div><i className={`pe-7s-signal lora_network ${item.enableLora === true ? 'greennetwork' : 'rednetwork'}`}   style={{ cursor: 'pointer' }} 
+                checked={item.enableLora && item.enableLora === 1 ? true : false} onClick={() => this.onlora_network(item)}  /></div>,
+                "action": <div><i className="lnr-pencil" style={{ cursor: 'pointer' }} onClick={() => this.editEntitiey(item.id)} /></div>,
+            })           
         })
         this.setState({ allentitidata });
     }
@@ -57,9 +65,9 @@ class Entities extends Component {
         this.setState({ notitype: 'addentitie' });
         this.setState({ notitype: '' });
     }
-    editEntitiey = (item) => {
+    editEntitiey = (id) => {
         const { editentitiey } = this.props;
-        editentitiey(item.id);
+        editentitiey(id);
         this.setState({ editentitieymodal: !this.state.editentitieymodal });
         this.setState({ notitype: 'editentitiey' });
         this.setState({ notitype: '' });
@@ -126,6 +134,45 @@ class Entities extends Component {
                 width: '30px',
             }
         ];
+        const data = {
+            columns: [
+                {
+                    label: 'Reference',
+                    field: 'reference',
+                    sort: 'asc',
+                    width: 200
+                },
+                {
+                    label: 'Name',
+                    field: 'name',
+                    sort: 'asc',
+                    width: 200
+                },   
+                {
+                    label: 'Type',
+                    field: 'type',
+                    sort: 'asc',
+                    width: 200
+                },                  
+                {
+                    label: 'Sector',
+                    field: 'industrySector',
+                    sort: 'asc',
+                    width: 200
+                },
+                {
+                    label: 'Lora Network',
+                    field: 'loranetwork',
+                    width: '50px'
+                },
+                {
+                    label: 'Action',
+                    field: 'action',
+                    width: '50px'
+                },
+            ],
+            rows: this.state.allentitidata
+        }
         return (
             <Fragment>
                 {Status.loading && <Loading />}
@@ -156,7 +203,7 @@ class Entities extends Component {
                                     </Row>
                                 </CardHeader>
                                 <CardBody className='page_css' id="user_tbl">
-                                    <DataTable
+                                    {/* <DataTable
                                         columns={columns}
                                         initialData={this.state.allentitidata}
                                         initialPageLength={10}
@@ -165,6 +212,20 @@ class Entities extends Component {
                                              prop: 'type',  prop: 'reference',  order: 'descending',
                                         }}
                                         sortable={true}
+                                    /> */}
+                                    <MDBDataTable
+                                        striped
+                                        bordered
+                                        hover                                        
+                                        // responsiveXl
+                                        // responsiveSm
+                                        // responsiveMd
+                                        // searchLabel="q" 
+                                        btn 
+                                        responsive
+                                        info={false}
+                                        data={data}
+                                        order={['industrySector', 'desc'], ['name', 'desc'], ['type', 'desc'], ['reference', 'desc'] }
                                     />
                                     <Editentitiey shownoti={this.shownoti} notitype={this.state.notitype}                                       
                                         editentitieymodal={this.state.editentitieymodal} iseditentitieymodal={this.iseditentitieymodal} entitiyeditid={this.state.entitiyeditid}
@@ -187,7 +248,6 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => bindActionCreators({
     fetchEntitiesData: fetchEntitiesData,
     editentitiey: editentitiey
-
 }, dispatch)
 export default connect(
     mapStateToProps,

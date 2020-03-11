@@ -1,7 +1,5 @@
-/* eslint-disable array-callback-return */
-/* eslint-disable no-useless-constructor */
-/* eslint-disable no-dupe-keys */
 import React, { Component, Fragment } from 'react';
+import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { fetchLocationItemData, editLocation } from '../../services/Location';
@@ -13,13 +11,14 @@ import {
 import AddLocation from './add_location';
 import EditLocation from './edit_location';
 import DeleteLocation from './delete_location';
-import { MDBDataTable } from 'mdbreact';
+import { DataTable } from 'react-data-components';
 import Loading from '../../library/loader';
+
 class Location extends Component {
     constructor(props) {
         super(props);
     }
-    state = {      
+    state = {
         addlocationmodal: false,
         alltabledata: [],
         editlocationmodal: false,
@@ -32,7 +31,7 @@ class Location extends Component {
     componentWillReceiveProps = (props) => {
         let data = props.data.Location.locationdata;
         let alltabledata = [];
-        data && data.map((item) => {
+        data && data.map((item, index) => {
             alltabledata.push({
                 "property": item.property,
                 "propertyId": item.propertyId,
@@ -41,7 +40,6 @@ class Location extends Component {
                 "region": item.region,
                 "floor": item.floor,
                 "id": item.id,
-               "action": <div><i className="lnr-pencil" style={{ cursor: 'pointer' }} onClick={() => this.edit_location(item)} />&nbsp;&nbsp;&nbsp;&nbsp;<i className="lnr-trash" style={{ cursor: 'pointer' }} onClick={() => this.delete_location(item)} /></div>,
             }
             )
         })
@@ -80,41 +78,29 @@ class Location extends Component {
     }
     render() {
         const { Location, Status } = this.props.data;
-        const data = {
-            columns: [
-                {
-                    label: 'Organization',
-                    field: 'entityReference',
-                    sort: 'asc',
-                    width: 200
-                },
-                {
-                    label:'Region',
-                    field:'region',
-                    sort:'asc',
-                    width:200
-                },
-                {
-                    label:'Property',
-                    field:'property',
-                    sort:'asc',
-                    width:200
-                },
-                {
-                    label:'Floor',
-                    field:'floor',
-                    sort:'asc',
-                    width:200
-                },
-
-                {
-                    label:'Action',
-                    field:'action',
-                    width:'50px'
-                },
-            ],
-            rows: this.state.alltabledata
-        }
+        const columns = [
+            {
+                title: 'Organization',
+                prop: 'entityReference',
+            },
+            {
+                title: 'Region',
+                prop: 'region',
+            },
+            {
+                title: 'Property',
+                prop: 'property',
+            },
+            {
+                title: 'Floor',
+                prop: 'floor',
+            },
+            {
+                title: 'Action',
+                render: (val, row) => <div><i className="lnr-pencil" style={{ cursor: 'pointer' }} onClick={() => this.edit_location(row)} />&nbsp;&nbsp;&nbsp;&nbsp;<i className="lnr-trash" style={{ cursor: 'pointer' }} onClick={() => this.delete_location(row)} /></div>,
+                width: '40px'
+            }
+        ];
         return (
             <Fragment>
                 {Status.loading && <Loading />}
@@ -142,15 +128,13 @@ class Location extends Component {
                                     </Row>
                                 </CardHeader>
                                 <CardBody className='page_css' id="user_tbl">
-                                    <MDBDataTable
-                                        striped
-                                        bordered
-                                        hover
-                                        btn 
-                                        responsive
-                                        info={false}
-                                        data={data}
-                                        order={['entityReference', 'desc'], ['region', 'desc'], ['floor', 'desc'], ['property', 'desc'] }
+                                    <DataTable
+                                        columns={columns}
+                                        initialData={this.state.alltabledata}
+                                        initialPageLength={10}
+                                        initialSortBy={{ prop: 'entityReference',prop:'region',prop:'property' ,prop:
+                                        'floor', prop:'aggregateId',prop:'zone',order: 'descending' }}
+                                        sortable={true}
                                     />
                                     <EditLocation shownoti={this.shownoti} notitype={this.state.notitype} requiredMessage={this.state.requiredMessage} editlocationmodal={this.state.editlocationmodal} iseditlocatiionmodal={this.iseditlocatiionmodal} geteditid={this.state.geteditid} getEditData={Location.editdata} />
                                     <DeleteLocation shownoti={this.shownoti} notitype={this.state.notitype} requiredMessage={this.state.requiredMessage} getdeleteid={this.state.getdeleteid} deletelocationmodal={this.state.deletelocationmodal} isdeletelocationmodal={this.isdeletelocationmodal} />

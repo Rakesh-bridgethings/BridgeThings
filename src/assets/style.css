@@ -225,5 +225,29 @@ ul.pagination {
 }
 
 
+[data-test="table-foot"] {
+    display: none;
+}
 
+/* [data-test="datatable-pagination"] {
+    position: relative;
+    width: 100%;
+    top: -45px;
+    right: -30px;
+} */
+
+.dataTables_filter input {
+    width: 300px;
+}
+.dataTables_filter {
+    float: right;
+}
+
+[data-test="datatable-head"] th.sorting {
+    width: 50px;
+}
+
+#user_tbl .user_list [data-test="datatable-head"] th:last-child {
+    width: 115px;
+}
 

@@ -10,7 +10,7 @@ import {
 import AddIOTDevice from './add_device';
 import EditIOTDevice from './edit_device';
 import LoraConfig from './lora_config';
-import { DataTable } from 'react-data-components';
+import { MDBDataTable } from 'mdbreact';
 import Loading from '../../library/loader';
 
 class IOTDevices extends Component {
@@ -45,8 +45,9 @@ class IOTDevices extends Component {
                 "lastConfigAt": item.lastConfigAt,
                 "createdAt": item.createdAt,
                 "lastModifiedAt": item.lastModifiedAt,
-            }
-            )
+                'action': <div><i className="lnr-pencil" style={{ cursor: 'pointer' }} onClick={() => this.edit_device(item)} /></div>,
+                'loraconfig': <div><i className="pe-7s-config" style={{ cursor: 'pointer', fontSize: '20px' }} onClick={() => this.edit_loraconfig(item)} /></div>
+            })
         })
         this.setState({ alltabledata });
     }
@@ -70,7 +71,7 @@ class IOTDevices extends Component {
     edit_loraconfig = async (row) => {
         let { fetchLoraConfig } = this.props;
         await fetchLoraConfig(row.deviceId);
-        let {IOTDevice} = this.props.data;
+        let { IOTDevice } = this.props.data;
         IOTDevice.loraconfigdata && this.setState({ loraconfig: IOTDevice.loraconfigdata, deviceId: row.deviceId });
         if (IOTDevice.loraconfigdata) {
             this.setState({ loraconfigmodal: true });
@@ -110,75 +111,87 @@ class IOTDevices extends Component {
 
     render() {
         const { IOTDevice, Status } = this.props.data;
-        const columns = [
-            {
-                title: 'Device Id',
-                prop: 'deviceId',
-                width: '50px'
-            },
-            {
-                title: 'Reference',
-                prop: 'reference',
-                width: '50px'
-            },
-            {
-                title: 'Device Type',
-                prop: 'deviceType',
-                width: '50px'
-            },
-            {
-                title: 'AppKey',
-                prop: 'appKey',
-                width: '50px'
-            },
-            {
-                title: 'Network Key',
-                prop: 'networkKey',
-                width: '50px'
-            },
-            {
-                title: 'Application',
-                prop: 'application',
-                width: '60px'
-            },
-            {
-                title: 'Duty Cycle Min',
-                prop: 'dutyCycleMin',
-                width: '20px'
-            },
-            {
-                title: 'Status',
-                prop: 'status',
-                width: '20px'
-            },
-            // {
-            //     title: 'LastConfigAt',
-            //     prop: 'lastConfigAt',
-            //     width: '30px'
-            // },
-            // {
-            //     title: 'CreatedAt',
-            //     prop: 'createdAt',
-            //     width: '30px'
-            // },
-            // {
-            //     title: 'LastModifiedAt',
-            //     prop: 'lastModifiedAt',
-            //     width: '30px'
-            // },
-            {
-                title: 'Actions',
-                render: (val, row) => <div><i className="lnr-pencil"
-                    style={{ cursor: 'pointer' }} onClick={() => this.edit_device(row)} /></div>,
-                width: '20px'
-            },
-            {
-                title: 'Lora Config',
-                render: (val, row) => <div><i className="pe-7s-config"
-                    style={{ cursor: 'pointer', fontSize: '20px' }} onClick={() => this.edit_loraconfig(row)} /></div>,
-                width: '20px'
-            },
-        ];
+        const data = {
+            columns: [
+                {
+                    label: 'Device Id',
+                    field: 'deviceId',
+                    sort: 'asc',
+                    width: '100px'
+                },
+                {
+                    label: 'Reference',
+                    field: 'reference',
+                    sort: 'asc',
+                    width: 100
+                },
+                {
+                    label: 'Device Type',
+                    field: 'deviceType',
+                    sort: 'asc',
+                    width: 100
+                },
+                {
+                    label: 'AppKey',
+                    field: 'appKey',
+                    sort: 'asc',
+                    width: 100
+                },
+                {
+                    label: 'Network Key',
+                    field: 'networkKey',
+                    sort: 'asc',
+                    width: 100
+                },
+                {
+                    label: 'Application',
+                    field: 'application',
+                    sort: 'asc',
+                    width: '60px'
+                },
+                {
+                    label: 'Duty Cycle Min',
+                    field: 'dutyCycleMin',
+                    sort: 'asc',
+                    width: 100
+                },
+                {
+                    label: 'Status',
+                    field: 'status',
+                    sort: 'asc',
+                    width: 10
+                },
+                // {
+                //     label: 'LastConfigAt',
+                //     field: 'lastConfigAt',
+                // sort: 'asc',
+                //     width: '30px'
+                // },
+                // {
+                //     label: 'CreatedAt',
+                //     field: 'createdAt',
+                // sort: 'asc',
+                //     width: '30px'
+                // },
+                // {
+                //     label: 'LastModifiedAt',
+                //     field: 'lastModifiedAt',
+                // sort: 'asc',
+                //     width: '30px'
+                // },
+                {
+                    label: 'Actions',
+                    field: 'action',
+                    width: '20px'
+                },
+                {
+                    label: 'Lora Config',
+                    field: 'loraconfig',
+                    width: '20px'
+                },
+            ],
+            rows: this.state.alltabledata
+        }
         return (
             <Fragment>
                 {Status.loading && <Loading />}
@@ -207,14 +220,19 @@ class IOTDevices extends Component {
                                     </Row>
                                 </CardHeader>
                                 <CardBody className='page_css' id="user_tbl">
-                                    <DataTable
-                                        columns={columns}
-                                        initialData={this.state.alltabledata}
-                                        initialPageLength={10}
-                                        initialSortBy={{
-                                            prop: 'entityReference', prop: "deviceId", prop: "reference", prop: "deviceType", prop: "appKey", prop: "networkKey", prop: "application", prop: "dutyCycleMin", prop: "status", prop: "lastConfigAt", prop: "createdAt", prop: "lastModifiedAt", order: 'descending'
-                                        }}
-                                        sortable={true}
+                                    <MDBDataTable
+                                        striped
+                                        bordered
+                                        hover
+                                        // responsiveXl
+                                        // responsiveSm
+                                        // responsiveMd
+                                        // searchLabel="q" 
+                                        btn
+                                        responsive
+                                        info={false}
+                                        data={data}
+                                        order={['entityReference', 'desc'], ['deviceId', 'desc'], ['reference', 'desc'], ['deviceType', 'desc'], ['appKey', 'desc'], ['networkKey', 'desc'], ['application', 'desc'], ['dutyCycleMin', 'desc'], ['status', 'desc'], ['lastConfigAt', 'desc'], ['createdAt', 'desc'], ['lastModifiedAt', 'desc']}
                                     />
                                     {IOTDevice.editdata && <EditIOTDevice shownoti={this.shownoti} notitype={this.state.notitype} editdevicemodal={this.state.editdevicemodal} iseditdevicemodal={this.iseditdevicemodal} getEditData={IOTDevice.editdata} iseditdevicemodalcancle={this.iseditdevicemodalcancle} />}
                                     {this.state.loraconfig !== '' && this.state.loraconfig.length > 0 && <LoraConfig loraconfigmodal={this.state.loraconfigmodal} isloraconfigmodal={this.isloraconfigmodal} isloraconfigmodalcancle={this.isloraconfigmodalcancle} shownoti={this.shownoti} notitype={this.state.notitype} deviceId={this.state.deviceId} loraconfig={this.state.loraconfig} />}

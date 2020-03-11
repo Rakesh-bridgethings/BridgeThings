@@ -137,7 +137,7 @@ class EditGateway extends Component {
                             </Fragment>
                         }
                         <Modal isOpen={this.props.editgatewaymodal} toggle={() => this.toggle()} className={this.props.className} id='add_location'>
-                            <ModalHeader toggle={() => this.toggle()}>Add Gateway</ModalHeader>
+                            <ModalHeader toggle={() => this.toggle()}>Edit Gateway</ModalHeader>
                             <ModalBody>
                                     <Form>
                                         <Row>

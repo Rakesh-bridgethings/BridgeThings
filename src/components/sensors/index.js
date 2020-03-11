@@ -7,7 +7,7 @@ import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {
     Row, Col, Card, CardBody, CardHeader, Button,
 } from 'reactstrap';
-import { DataTable } from 'react-data-components';
+import { MDBDataTable } from 'mdbreact';
 import Loading from '../../library/loader';
 import Addsensor from './add_sensor';
 import EditSensor from './edit_sensor';
@@ -35,6 +35,7 @@ class Sensors extends Component {
                 "lastDataAt": item.lastDataAt,
                 "floor": item.floor,
                 "id": item.id,
+                "action": <div><i className="lnr-pencil" style={{ cursor: 'pointer' }} onClick={() => this.editSensor(item)} /></div>,
             })
         })
         this.setState({ alltablesensdata });
@@ -66,7 +67,7 @@ class Sensors extends Component {
         this.setState({ notitype: '' });
     }
 
-    editSensor = async(row) => {
+    editSensor = async (row) => {
         let { fetchEditSensorData } = this.props;
         await fetchEditSensorData(row.id);
         this.setState({ editsensormodal: !this.state.editsensormodal });
@@ -76,48 +77,57 @@ class Sensors extends Component {
 
     render() {
         const { Status, Sensors } = this.props.data;
-        const columns = [
-            {
-                title: 'Reference',
-                prop: 'reference',
-                width: '150px'
-            },
-            {
-                title: 'ChannelNo',
-                prop: 'channelNo',
-                width: '50px'
-            },
-            {
-                title: 'Sensor Type',
-                prop: 'sensorType',
-                // width: '80px'
-            },
-            {
-                title: 'Manufacture',
-                prop: 'manufacturers',
-                // width: '80px'
-            },
-            {
-                title: 'ModelNo',
-                prop: 'modelNo',
-                // width: '50px'
-            },
-            {
-                title: 'Sensor Status',
-                prop: 'sensorStatus',
-                width: '50px'
-            },
-            {
-                title: 'Last Data At',
-                prop: 'lastDataAt',
-
-            },
-            {
-                title: 'Actions',
-                render: (val, row) => <div><i className="lnr-pencil" style={{ cursor: 'pointer' }} onClick={() => this.editSensor(row)} /></div>,
-                width: '40px'
-            },
-        ];
+        const data = {
+            columns : [
+                {
+                    label: 'Reference',
+                    field: 'reference',
+                    sort: 'asc',
+                    width: '150px'
+                },
+                {
+                    label: 'ChannelNo',
+                    field: 'channelNo',
+                    sort: 'asc',
+                    width: '50px'
+                },
+                {
+                    label: 'Sensor Type',
+                    field: 'sensorType',
+                    sort: 'asc',
+                    // width: '80px'
+                },
+                {
+                    label: 'Manufacture',
+                    field: 'manufacturers',
+                    sort: 'asc',
+                    // width: '80px'
+                },
+                {
+                    label: 'ModelNo',
+                    field: 'modelNo',
+                    sort: 'asc',
+                    // width: '50px'
+                },
+                {
+                    label: 'Sensor Status',
+                    field: 'sensorStatus',
+                    sort: 'asc',
+                    width: '50px'
+                },
+                {
+                    label: 'Last Data At',
+                    field: 'lastDataAt',
+                    sort: 'asc',
+            
+                },
+                {
+                    label: 'Actions',
+                    field: 'action',
+                },
+            ],
+            rows: this.state.alltablesensdata
+        }
         return (
             <Fragment>
                 {Status.loading && <Loading />}
@@ -149,12 +159,15 @@ class Sensors extends Component {
                                     </Row>
                                 </CardHeader>
                                 <CardBody className='page_css' id="user_tbl">
-                                    <DataTable
-                                        columns={columns}
-                                        sortable={true}
-                                        initialData={this.state.alltablesensdata}
-                                        initialPageLength={10}
-                                        initialSortBy={{ prop: 'channelNo', prop: 'sensorStatus', prop:'reference',prop:'sensorType',prop:'manufacturers',prop:'modelNo',prop:'lastDataAt',order: 'descending' }}
+                                    <MDBDataTable
+                                        striped
+                                        bordered
+                                        hover
+                                        btn
+                                        responsive
+                                        info={false}
+                                        data={data}
+                                        order={['channelNo', 'desc'], ['sensorStatus', 'desc'], ['sensorType', 'desc'], ['manufacturers', 'desc'], ['modelNo', 'desc'], ['lastDataAt', 'desc']}
                                     />
                                     {Sensors.editdata && <EditSensor shownoti={this.shownoti} notitype={this.state.notitype} editsensormodal={this.state.editsensormodal} iseditsensoemodal={this.iseditsensoemodal} iseditsensoemodalcancle={this.iseditsensoemodalcancle} getEditData={Sensors.editdata} />}
                                 </CardBody>
